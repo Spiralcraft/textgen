@@ -1,0 +1,423 @@
+<fo:block font-size="16pt">
+  <%if expression="($pledgePostTallySearch.achievalStartDate!=null) || ($pledgePostTallySearch.achievalEndDate!=null)"%> 
+    Achieval Date Post Tally Summary
+  <%else/%> 
+    Generation Date Post Tally Summary
+  <%/if%>
+</fo:block>
+<fo:block font-size="16pt">
+  <%if expression="($pledgePostTallySearch.achievalStartDate!=null) || ($pledgePostTallySearch.achievalEndDate!=null)"%> 
+    Achieval date from <%=$pledgePostTallySearch.achievalStartDate.format("dd/MM/yyyy")/%> to <%=$pledgePostTallySearch.achievalEndDate.format("dd/MM/yyyy")/%>
+  <%else/%> 
+    Generated date from <%=$pledgePostTallySearch.generatedStartDate.format("dd/MM/yyyy")/%> to <%=$pledgePostTallySearch.generatedEndDate.format("dd/MM/yyyy")/%>
+  <%/if%>
+</fo:block>
+
+<fo:table 
+  table-layout="fixed"
+  padding-top="2pt"
+  padding-bottom="2pt"
+  padding-before="2pt"
+  padding-after="2pt"
+  >
+  <fo:table-column 
+    column-width="1.25in" 
+  />
+  <fo:table-column 
+    column-width="1in" 
+  />
+  <fo:table-column 
+    column-width="1in" 
+  />
+  <fo:table-column 
+    column-width=".75in" 
+  />
+  <fo:table-column 
+    column-width=".75in" 
+  />
+  <fo:table-column 
+    column-width="1in" 
+  />
+  <fo:table-column 
+    column-width="1in" 
+  />
+  
+  <fo:table-body 
+    font-family="sans-serif" 
+    font-weight="normal" 
+    font-size="12pt"
+    line-height="12pt"
+    >
+    
+    <%iterate expression="detail" order="summary.campaign.title"%>
+      <!-- for each campaign -->
+
+      <%iterate expression="detail"%>
+        <!-- for each currency type -->
+
+        <fo:table-row
+          >
+          <fo:table-cell
+            border-color="black" 
+            border-style="solid" 
+            border-width="0.15pt"
+            padding-left="2pt"
+            padding-right="2pt"
+            padding-before="2pt"
+            padding-after="2pt"
+            text-align="center"
+            >
+            <fo:block font-size="12pt">Currency: <%=summary.currencyType.htmlSymbol/%></fo:block>
+          </fo:table-cell>
+          <fo:table-cell
+            border-color="black" 
+            border-style="solid" 
+            border-width="0.15pt"
+            padding-left="2pt"
+            padding-right="2pt"
+            padding-before="2pt"
+            padding-after="2pt"
+            text-align="center"
+            >
+            <fo:block font-size="12pt">Campaign</fo:block>
+          </fo:table-cell>
+          <fo:table-cell
+            border-color="black" 
+            border-style="solid" 
+            border-width="0.15pt"
+            padding-left="2pt"
+            padding-right="2pt"
+            padding-before="2pt"
+            padding-after="2pt"
+            text-align="center"
+            >
+            <fo:block font-size="12pt">
+              <%if expression="($pledgePostTallySearch.achievalStartDate!=null) || ($pledgePostTallySearch.achievalEndDate!=null)"%> 
+              Achieval Date
+              <%else/%> 
+              Post Tally
+              <%/if%>
+            </fo:block>
+          </fo:table-cell>      
+          <fo:table-cell
+            border-color="black" 
+            border-style="solid" 
+            border-width="0.15pt"
+            padding-left="2pt"
+            padding-right="2pt"
+            padding-before="2pt"
+            padding-after="2pt"
+            text-align="center"
+            >
+            <fo:block font-size="12pt">Type</fo:block>
+          </fo:table-cell>
+          <fo:table-cell
+            border-color="black" 
+            border-style="solid" 
+            border-width="0.15pt"
+            padding-left="2pt"
+            padding-right="2pt"
+            padding-before="2pt"
+            padding-after="2pt"
+            text-align="center"
+            >
+            <fo:block font-size="12pt">Gift Aid</fo:block>
+          </fo:table-cell>
+          <fo:table-cell
+            border-color="black" 
+            border-style="solid" 
+            border-width="0.15pt"
+            padding-left="2pt"
+            padding-right="2pt"
+            padding-before="2pt"
+            padding-after="2pt"
+            text-align="center"
+            >
+            <fo:block font-size="12pt">Achievals</fo:block>
+          </fo:table-cell>
+          <fo:table-cell
+            border-color="black" 
+            border-style="solid" 
+            border-width="0.15pt"
+            padding-left="2pt"
+            padding-right="2pt"
+            padding-before="2pt"
+            padding-after="2pt"
+            text-align="center"
+            >
+            <fo:block font-size="12pt">Annual Value</fo:block>
+          </fo:table-cell>
+        </fo:table-row>
+
+        <%if expression="($pledgePostTallySearch.achievalStartDate!=null) || ($pledgePostTallySearch.achievalEndDate!=null)"%> 
+          <%iterate expression="detail" order="summary.achievalDay"%>
+            <!-- for each post tally -->
+
+            <%iterate expression="detail"%>      
+              <!-- for each one of (callback | not callback) -->
+
+              <%iterate expression="detail"%>      
+                <!-- for each one of (gift aid | not gift aid) -->
+
+                <fo:table-row
+                  >
+                  <fo:table-cell
+                    >
+                  </fo:table-cell>
+                  <fo:table-cell
+                    border-color="black" 
+                    border-style="solid" 
+                    border-width="0.15pt"
+                    padding-left="2pt"
+                    padding-right="2pt"
+                    padding-before="2pt"
+                    padding-after="2pt"
+                    >
+                    <fo:block font-size="10pt">
+                      <%=summary.campaign.client.title/%>
+                      <%=summary.campaign.title/%>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell
+                    border-color="black" 
+                    border-style="solid" 
+                    border-width="0.15pt"
+                    padding-left="2pt"
+                    padding-right="2pt"
+                    padding-before="2pt"
+                    padding-after="2pt"
+                    >
+                    <fo:block font-size="10pt">
+                      <%if expression="($pledgePostTallySearch.achievalStartDate!=null) || ($pledgePostTallySearch.achievalEndDate!=null)"%> 
+                        <%=summary.achievalDay.format("dd/MM/yyyy")/%>
+                      <%else/%> 
+                        <%=summary.postTally.generatedTime.format("dd/MM/yyyy")/%>
+                      <%/if%>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell
+                    border-color="black" 
+                    border-style="solid" 
+                    border-width="0.15pt"
+                    padding-left="2pt"
+                    padding-right="2pt"
+                    padding-before="2pt"
+                    padding-after="2pt"
+                    >
+                    <fo:block font-size="10pt">
+                      <%if expression="summary.callback"%> 
+                        Callback
+                      <%else/%> 
+                        Street Achieval
+                      <%/if%>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell
+                    border-color="black" 
+                    border-style="solid" 
+                    border-width="0.15pt"
+                    padding-left="2pt"
+                    padding-right="2pt"
+                    padding-before="2pt"
+                    padding-after="2pt"
+                    >
+                    <fo:block font-size="10pt">
+                      <%if expression="summary.giftAid"%> 
+                        gift aid
+                      <%else/%> 
+                        no gift aid
+                      <%/if%>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell
+                    border-color="black" 
+                    border-style="solid" 
+                    border-width="0.15pt"
+                    padding-left="2pt"
+                    padding-right="2pt"
+                    padding-before="2pt"
+                    padding-after="2pt"
+                    text-align="right"
+                    >
+                    <fo:block font-size="10pt"><%=summary.achievalCount/%></fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell
+                    border-color="black" 
+                    border-style="solid" 
+                    border-width="0.15pt"
+                    padding-left="2pt"
+                    padding-right="2pt"
+                    padding-before="2pt"
+                    padding-after="2pt"
+                    text-align="right"
+                    >
+                    <fo:block font-size="10pt"><%=summary.annualValue/%></fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+              <%/iterate%>
+            <%/iterate%>
+          <%/iterate%>
+        <%else/%> 
+          <%iterate expression="detail" order="summary.postTally.generatedTime"%>
+            <%iterate expression="detail"%>      
+              <%iterate expression="detail"%>      
+                <fo:table-row
+                  >
+                  <fo:table-cell
+                    >
+                  </fo:table-cell>
+                  <fo:table-cell
+                    border-color="black" 
+                    border-style="solid" 
+                    border-width="0.15pt"
+                    padding-left="2pt"
+                    padding-right="2pt"
+                    padding-before="2pt"
+                    padding-after="2pt"
+                    >
+                    <fo:block font-size="10pt">
+                      <%=summary.campaign.client.title/%>
+                      <%=summary.campaign.title/%>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell
+                    border-color="black" 
+                    border-style="solid" 
+                    border-width="0.15pt"
+                    padding-left="2pt"
+                    padding-right="2pt"
+                    padding-before="2pt"
+                    padding-after="2pt"
+                    >
+                    <fo:block font-size="10pt">
+                      <%if expression="($pledgePostTallySearch.achievalStartDate!=null) || ($pledgePostTallySearch.achievalEndDate!=null)"%> 
+                        <%=summary.achievalDay.format("dd/MM/yyyy")/%>
+                      <%else/%> 
+                        <%=summary.postTally.generatedTime.format("dd/MM/yyyy")/%>
+                      <%/if%>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell
+                    border-color="black" 
+                    border-style="solid" 
+                    border-width="0.15pt"
+                    padding-left="2pt"
+                    padding-right="2pt"
+                    padding-before="2pt"
+                    padding-after="2pt"
+                    >
+                    <fo:block font-size="10pt">
+                      <%if expression="summary.callback"%> 
+                        Callback
+                      <%else/%> 
+                        Street Achieval
+                      <%/if%>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell
+                    border-color="black" 
+                    border-style="solid" 
+                    border-width="0.15pt"
+                    padding-left="2pt"
+                    padding-right="2pt"
+                    padding-before="2pt"
+                    padding-after="2pt"
+                    >
+                    <fo:block font-size="10pt">
+                      <%if expression="summary.giftAid"%> 
+                        gift aid
+                      <%else/%> 
+                        no gift aid
+                      <%/if%>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell
+                    border-color="black" 
+                    border-style="solid" 
+                    border-width="0.15pt"
+                    padding-left="2pt"
+                    padding-right="2pt"
+                    padding-before="2pt"
+                    padding-after="2pt"
+                    text-align="right"
+                    >
+                    <fo:block font-size="10pt"><%=summary.achievalCount/%></fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell
+                    border-color="black" 
+                    border-style="solid" 
+                    border-width="0.15pt"
+                    padding-left="2pt"
+                    padding-right="2pt"
+                    padding-before="2pt"
+                    padding-after="2pt"
+                    text-align="right"
+                    >
+                    <fo:block font-size="10pt"><%=summary.annualValue/%></fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+              <%/iterate%>
+            <%/iterate%>
+          <%/iterate%>
+        <%/if%>
+        
+        
+        
+        <fo:table-row
+          >
+          <fo:table-cell/>
+          <fo:table-cell/>
+          <fo:table-cell/>
+          <fo:table-cell/>
+          <fo:table-cell
+            border-color="black" 
+            border-style="solid" 
+            border-width="0.15pt"
+            padding-left="2pt"
+            padding-right="2pt"
+            padding-before="2pt"
+            padding-after="2pt"
+            text-align="right"
+            >
+            <fo:block font-size="12pt">Totals</fo:block>
+          </fo:table-cell>
+          <fo:table-cell
+            border-color="black" 
+            border-style="solid" 
+            border-width="0.15pt"
+            padding-left="2pt"
+            padding-right="2pt"
+            padding-before="2pt"
+            padding-after="2pt"
+            text-align="right"
+            >
+            <fo:block font-size="10pt"><%=summary.achievalCount/%></fo:block>
+          </fo:table-cell>
+          <fo:table-cell
+            border-color="black" 
+            border-style="solid" 
+            border-width="0.15pt"
+            padding-left="2pt"
+            padding-right="2pt"
+            padding-before="2pt"
+            padding-after="2pt"
+            text-align="right"
+            >
+            <fo:block font-size="10pt"><%=summary.currencyType.htmlSymbol/%> <%=summary.annualValue/%></fo:block>
+          </fo:table-cell>
+          
+        </fo:table-row>
+        <fo:table-row
+          >
+          <fo:table-cell padding-after="16pt"/>
+          <fo:table-cell/>
+          <fo:table-cell/>
+          <fo:table-cell/>
+          <fo:table-cell/>
+          <fo:table-cell/>
+          <fo:table-cell/>
+        </fo:table-row>
+      <%/iterate%>
+    <%/iterate%>
+  </fo:table-body>
+</fo:table>
