@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>spiralcraft-textgen: Architecture</title>
+  <meta content="Mike Toth" name="author">
+</head>
+<body vlink="#ff0000" alink="#000088" link="#0000ff"
+ style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);">
+<h1>Spiralcraft</h1>
+<hr style="width: 100%; height: 2px;">
+<h2>spiralcraft-textgen module: Architecture</h2>
+<h3>Processing Lifecycle</h3>
+A TGL compilation unit goes through a number of stages during its
+processing lifecycle <br>
+<h4>Compilation Stage</h4>
+The Parser separates the compilation unit into text and tags, which are
+fed to the Compiler as they are read. The Compiler assembles the
+collection of text and tags into a tree of TextUnits and ElementUnits.
+A single tree of Units is associated with a unique compilation unit.<br>
+<br>
+Each distinct ElementUnit in a TGL compilation unit is associated with
+an unique AssemblyClass, which is a subclass of the AssemblyClass or
+Java Class associated with the namespace qualified tag name of the
+Element. <br>
+<br>
+The TGL Attributes associated with the Element are transposed into
+property specifiers for this AssemblyClass. This uses the introspection
+and configuration mechanisms of SpiralBuilder to configure Elements.<br>
+<br>
+A compiled TGL compilation unit is represented by an instance of the
+RootUnit class, which in turn references the rest of the Unit tree. <br>
+<br>
+<h4>Binding Stage</h4>
+When the application context has been appropriately configured, one or
+more Element trees can be instantiated from the RootUnit and bound to
+the application context. <br>
+<br>
+The Binding operation accepts 2 parameters- the parent Assembly
+(optional) and the Focus for expression resolution.<br>
+<br>
+The parent Assembly is used when application specific Element Assembly
+classes are coded to work in an application specific context. The
+parent Assembly allows access to that design level context. <br>
+<br>
+The Focus is the primary means for resolving expressions in TGL. Each
+Element in the tree can simply inherit the focus of its parent, or
+introduce a new level of indirection. Some Elements (mainly iterators)
+will add a Focus which changes the subject so that subject based
+expressions (anonymous dot references) will resolve to an appropriate
+context. Other Elements may add or change the Context namespace in the
+focus.<br>
+<br>
+<hr style="width: 100%; height: 2px;"><br>
+To Do: There is currently no way to indicate that an attribute contains
+an expression instead of a textual value. Currently, attribute
+assignments are used as property specifiers in the Assembly classes
+which make up the Element tree. If these were treated as expressions
+with respect to the Assembly tree, they would be slighly misleading
+because they would not take into account the 'run time' Focus, which is
+used to evaluate expression elements. WE WANT TO FOCUS ON THE DATA
+PROVIDED BY THE ELEMENT, NOT THE ELEMENT ITSELF.<br>
+<br>
+So currently, expressions in attributes are expressed as textual values
+applied to Elements, which must do their own binding to the Focus
+supplied through the Element tree.<br>
+<br>
+It would be nice to avoid using special prefixes (a.k.a. the Microsoft
+hack of using ~ before a stirng to indicate an expression). Maybe
+attribute="value" or attribute='expression'. Any kind of GUI though
+would need an extra flag for indicate data type. Maybe the attribute
+name could be altered- attribute="value" or attribute.x="expression".
+Options::<br>
+<br>
+<ul>
+  <li>attribute="value"&nbsp; attribute.x="expression"</li>
+  <li>attribute="value"&nbsp; attribute=="expression"</li>
+  <li>attribute="value"&nbsp; attribute=$"expression"</li>
+  <li>attribute="value"&nbsp; attribute='expression'<br>
+Requires an entity to escape ' within expressions- not too bad, though<br>
+  </li>
+  <li>attribute="value"&nbsp; attribute=expression<br>
+This is the most aesthetically pleasing, IMHO, but we don't know how to
+delimit cleanly.</li>
+</ul>
+We also need to find a way to apply our own Focus to the assembly when
+instantiating. This would allow expressions to be resolved in an
+appropriate context. This might be accomplished by changed the
+-subject- of the assembly to the subject of the Focus- but we want to
+access Context in attribute expressions as well. Can we really have it
+both ways? We don't get to provide a focus when instantiating
+Assemblies. Then again, the "globalized" nature of Context can result
+in namespace collisions any way you look at it. Not the best data model
+to use, unless you enforce localized Context or manage the scope
+carefully. Scope management would start to fall to individual Elements,
+and should probably be supported by the API. <br>
+<br>
+Perhaps the solution to this problem is to treat ALL attribute values
+as expressions, since output text is more easily provided outside of
+Tags. In this case, we should use single quotes to reduce escape
+problems with double quotes in text. We can use a \ escape for single
+quotes. This will require custom attribute parser, which isn't too bad.
+We can then provide internal support for binding expressions and
+managing scope within the Element API- Elements can declare
+attributes/properties appropriate for binding to the runtime context
+and indicate to their common base class how they want to handle scoping
+and an other issues. This is ultimately how the code layer and the
+runtime language layer can communicate. <br>
+<br>
+So now that we've eliminated our ability to use propertySpecifiers to
+bind to Elements, we need another way. Perhaps we need to create
+bindings between the expression and the property of the Element
+specified by the attribute name. This is ideally done at bind time (go
+figure?)<br>
+<hr style="width: 100%; height: 2px;"><br>
+To Do: Another issue to solve is the referencing of other TGL
+compilation units. We need to avoid introducing redundant compilation
+stages triggered from bind stages. This might be accomplished by a
+compiler directive. THIS IS REQUIRED TO IMPLEMENT SSI. <br>
+<br>
+We might want to figure out a way of translating the context in this
+case- aka. explicit paramaterization<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<h4><br>
+</h4>
+<br>
+<br>
+<h3>???</h3>
+<br>
+</body>
+</html>

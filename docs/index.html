@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+</head>
+<body alink="#000099" vlink="#990099" link="#000099"
+ style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);">
+<h1>Spiralcraft</h1>
+<hr style="width: 100%; height: 2px;">
+<h2>spiralcraft-textgen module</h2>
+The spiralcraft-textgen module provides a system for generating serial
+text output tailored to some application specific context. The term
+"serial text output" refers to any output encoded as text which can be
+generated more or less in the order in which it is output. This
+encompasses a broad variety of formats including:<br>
+<ul>
+  <li>HTML, for customized web page or document generation<br>
+  </li>
+  <li>XML and variants, for data driven output of configuration files,
+XSL driven PDFs, application data, etc.</li>
+  <li>MIME documents for customized e-mail generation<br>
+  </li>
+  <li>os and service configuration files for automated configuration
+management<br>
+  </li>
+  <li>log files</li>
+  <li>messages output by text based GUI components</li>
+  <li>plain old text files<br>
+  </li>
+</ul>
+The primary means for programming the generation system is an tag based
+markup language called Text Generation Language (<span
+ style="font-weight: bold;">TGL</span>). An Element API allows Java
+developers to provide additional capabilities to TGL enabled
+applications&nbsp; through the creation of custom Elements. The Element
+API provides a means for custom Elements to communicate with each
+other, the application specific container, and the generation system
+itself.<br>
+<br>
+The spiralcraft-textgen module is designed to be embedded within an
+application specific Container. The Container is responsible for
+establishing a context for TGL authors to code against. The Container
+should perform the following services:<br>
+<ul>
+  <li>Provide for the storage and retrieval TGL compilation units.
+These units may be stored on disk, retrieved from the web, associated
+with database data, etc. <br>
+  </li>
+  <li>Populate the spiralcraft.lang root context in order to provide a
+namespace for expression binding. For example, web containers may
+provide "Application", "Session", "User" and "Page" attributes or
+collections. Highly specific database related containers (eg. Invoice
+generators) may provide business objects for use in expressions.</li>
+  <li>Drive the compilation, instantiation and generation processes in
+a manner most efficient to the usage context.<br>
+  </li>
+  <li>Deliver the output of the TGL blocks as appropriate.<br>
+  </li>
+  <li>Optionally provide container specific tags which provide
+application specific control to TGL authors.</li>
+</ul>
+<br>
+<h3>Contents</h3>
+<ul>
+  <li><a href="architecture.html">Architecture</a><br>
+  </li>
+</ul>
+<h3>Syntax</h3>
+TGL is a tag based markup language loosly based on a combination of XML
+and JSP/ASP. Some highlights of the syntax include:<br>
+<ul>
+  <li>&lt;% %&gt; tag delimiters, orthogonal to XML/SGML syntax for
+ease of use when generating documents based on &lt; &gt; tag
+delimiters- ie. HTML and XML documents:<br>
+    <br>
+    <span style="font-family: monospace;">&lt;img
+src="&lt;%=data.imageSource%&gt;"&gt;</span><br>
+    <br>
+  </li>
+  <li>XML style Elements, with Attributes, defined by named start and
+end tags, or empty tags: <br>
+    <br>
+    <span style="font-family: monospace;">&lt;%<span
+ style="font-style: italic;">tag</span>%&gt; content &lt;%<span
+ style="font-family: mon;"><span style="font-style: italic;">/</span></span><span
+ style="font-style: italic;">tag</span>%&gt;<br>
+&lt;%<span style="font-style: italic;">emptyTag</span>/%&gt;<br>
+    <br>
+    </span></li>
+  <li>JSP style directives to control compile-time options:<br>
+    <br>
+    <span style="font-family: monospace;">&lt;%@namespace
+widgets="java:/spiralcraft.stuff.widgets"/%&gt;<br>
+    <br>
+    </span></li>
+  <li><span style="font-family: monospace;"></span>XML style
+namespaces, semantically mapped to code resources to easily import
+custom tag libraries<span style="font-family: monospace;"><br>
+    <br>
+&lt;%widgets:MyWidget%&gt;Some content for the
+widget&lt;%/widgets:MyWidget%&gt;<br>
+    <br>
+    </span></li>
+  <li>JSP style expression evaluation for easy template substitution,
+using spiralcraft.lang syntax, resolved against application specific
+context:<br>
+    <br>
+    <span style="font-family: monospace;">Hello
+&lt;%=Customer.name/%&gt;<br>
+    <br>
+    </span></li>
+  <li><span style="font-family: monospace;"></span>Root element is
+implied- ie. Zero, one or many TGL elements can be inserted into a
+document without requiring an explicit single element root.</li>
+  <li>No context assumptions. Unlike JSP/ASP TGL does not assume that
+it is in a web context. <br>
+  </li>
+</ul>
+<br>
+<br>
+<br>
+A TGL compilation unit is any block of content interspersed with zero,
+one or more Elements. A block of zero length is a valid compilation
+unit.<br>
+<br>
+&nbsp; Compilation-Unit -&gt; Block<br>
+&nbsp;&nbsp; <br>
+&nbsp; Block -&gt; [[text] [Element],...]<br>
+<br>
+An Element consists of either a matched pair of a Start-Tag and an
+End-Tag surrounding a Block, or an Empty-Tag.<br>
+<br>
+&nbsp; Element -&gt; Start-Tag Block End-Tag<br>
+&nbsp; Element -&gt; Empty Tag<br>
+<br>
+(TBC...)<br>
+<br>
+<br>
+</body>
+</html>
