@@ -71,10 +71,10 @@ public class Compiler
     }
     else
     {
-      CodeUnit codeUnit=new CodeUnit(code);
+      ElementUnit elementUnit=new ElementUnit(code);
       _unit.addChild(codeUnit);
-      if (codeUnit.isOpen())
-      { _unit=codeUnit;
+      if (elementUnit.isOpen())
+      { _unit=elementUnit;
       }
     }
   }

@@ -13,7 +13,7 @@ import java.io.Writer;
 import java.io.IOException;
 
 /**
- * The root of a given TextGenML document
+ * The root of a TGL compilation unit
  */
 public class RootUnit
   extends Unit

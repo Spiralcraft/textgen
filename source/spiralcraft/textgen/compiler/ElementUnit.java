@@ -25,9 +25,10 @@ import spiralcraft.textgen.ParseException;
 import spiralcraft.textgen.Tag;
 
 /**
- * A Unit which contains literal text
+ * A Unit which represents an Element delimited by start and end tag(s) or
+ *   signified by an empty tag
  */
-public class CodeUnit
+public class ElementUnit
   extends Unit
 {
   private static final URI _DEFAULT_TAG_PACKAGE
@@ -43,7 +44,7 @@ public class CodeUnit
   private Expression _expression;
   
   
-  public CodeUnit(CharSequence code)
+  public ElementUnit(CharSequence code)
     throws ParseException
   { 
     _open=!(code.charAt(code.length()-1)=='/');
