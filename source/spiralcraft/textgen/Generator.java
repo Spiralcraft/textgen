@@ -23,7 +23,7 @@ public class Generator
 {
 
   private final RootUnit _root;
-  private Tag _tag;
+  private Element _element;
 
   /**
    * Construct a Generator from the given source
@@ -42,7 +42,7 @@ public class Generator
     throws GeneratorException
   { 
     try
-    { _tag=_root.bind(null,focus);
+    { _element=_root.bind(null,focus);
     }
     catch (BindException x)
     { throw new GeneratorException(x);
@@ -54,7 +54,7 @@ public class Generator
   
   public void write(Writer writer)
     throws IOException
-  { _tag.write(writer);
+  { _element.write(writer);
   }
 
   /**

@@ -3,7 +3,7 @@ package spiralcraft.textgen.compiler;
 import java.util.LinkedList;
 
 import spiralcraft.textgen.ParseException;
-import spiralcraft.textgen.Tag;
+import spiralcraft.textgen.Element;
 
 import spiralcraft.builder.Assembly;
 import spiralcraft.builder.BuildException;
@@ -12,7 +12,7 @@ import spiralcraft.lang.BindException;
 
 /**
  * A Unit of text generation which represents a
- *   node in the tree structure of a TextGenML document.
+ *   node in the tree structure of a TGL block.
  */
 public abstract class Unit
 {
@@ -61,24 +61,24 @@ public abstract class Unit
   }
   
   /**
-   * Create a tree of Tags bound into an application context (the Assembly)
-   *   which implements the functional behavior specified by the TextGenML 
+   * Create a tree of Elements bound into an application context (the Assembly)
+   *   which implements the functional behavior specified by the TGL 
    *   document.
    */
-  public abstract Tag bind(Assembly parent,Tag parentTag)
+  public abstract Element bind(Assembly parent,Element parentElement)
     throws BuildException,BindException;
 
-  protected void bindChildren(Assembly assembly,Tag tag)
+  protected void bindChildren(Assembly assembly,Element element)
     throws BuildException,BindException
   {
     Unit[] children=getChildren();
     if (children.length>0)
     { 
-      Tag[] childTags=new Tag[children.length];
+      Element[] childElements=new Element[children.length];
       for (int i=0;i<children.length;i++)
-      { childTags[i]=children[i].bind(assembly,tag);
+      { childElements[i]=children[i].bind(assembly,element);
       }
-      tag.setChildren(childTags);
+      element.setChildren(childElements);
     }
   }
     

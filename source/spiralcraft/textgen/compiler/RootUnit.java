@@ -1,7 +1,7 @@
 package spiralcraft.textgen.compiler;
 
 import spiralcraft.textgen.ParseException;
-import spiralcraft.textgen.Tag;
+import spiralcraft.textgen.Element;
 
 import spiralcraft.builder.Assembly;
 import spiralcraft.builder.BuildException;
@@ -18,22 +18,22 @@ import java.io.IOException;
 public class RootUnit
   extends Unit
 {
-  public RootTag bind(Assembly parent,Focus focus)
+  public RootElement bind(Assembly parent,Focus focus)
     throws BuildException,BindException
   { 
-    RootTag tag=new RootTag();
-    tag.setFocus(focus);
-    bindChildren(parent,tag);
-    return tag;
+    RootElement element=new RootElement();
+    element.setFocus(focus);
+    bindChildren(parent,element);
+    return element;
   }
   
-  public Tag bind(Assembly parent,Tag parentTag)
+  public Element bind(Assembly parent,Element parentElement)
     throws BuildException,BindException
   { 
-    Tag tag=new RootTag();
-    tag.bind(parentTag);
-    bindChildren(parent,tag);
-    return tag;
+    Element element=new RootElement();
+    element.bind(parentElement);
+    bindChildren(parent,element);
+    return element;
   }
   
   
@@ -41,8 +41,8 @@ public class RootUnit
   { return super.toString()+"[root]";
   }  
 
-  class RootTag
-    extends Tag
+  class RootElement
+    extends Element
   {
     private Focus _focus;
     

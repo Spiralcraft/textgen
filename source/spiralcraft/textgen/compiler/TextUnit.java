@@ -4,7 +4,7 @@ import java.io.Writer;
 import java.io.IOException;
 
 import spiralcraft.textgen.ParseException;
-import spiralcraft.textgen.Tag;
+import spiralcraft.textgen.Element;
 
 import spiralcraft.builder.Assembly;
 
@@ -24,12 +24,12 @@ public class TextUnit
   { return super.toString()+"[text]";
   }
   
-  public Tag bind(Assembly parent,Tag parentTag)
-  { return new TextTag();
+  public Element bind(Assembly parent,Element parentElement)
+  { return new TextElement();
   }
   
-  class TextTag
-    extends Tag
+  class TextElement
+    extends Element
   {
     public void write(Writer writer)
       throws IOException

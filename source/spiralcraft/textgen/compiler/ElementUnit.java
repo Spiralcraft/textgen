@@ -22,7 +22,7 @@ import java.io.Writer;
 import java.io.IOException;
 
 import spiralcraft.textgen.ParseException;
-import spiralcraft.textgen.Tag;
+import spiralcraft.textgen.Element;
 
 /**
  * A Unit which represents an Element delimited by start and end tag(s) or
@@ -31,14 +31,14 @@ import spiralcraft.textgen.Tag;
 public class ElementUnit
   extends Unit
 {
-  private static final URI _DEFAULT_TAG_PACKAGE
-    =URI.create("java:/spiralcraft/textgen/tags/");
+  private static final URI _DEFAULT_ELEMENT_PACKAGE
+    =URI.create("java:/spiralcraft/textgen/elements/");
   
   private final CharSequence _code;
   private boolean _open=true;
   private AssemblyClass _assemblyClass;
-  private URI _tagPackage;
-  private String _tagName;
+  private URI _elementPackage;
+  private String _elementName;
   private Attribute[] _attributes;
   
   private Expression _expression;
@@ -56,17 +56,17 @@ public class ElementUnit
     }
     
     if (_code.charAt(0)=='=')
-    { readExpressionTag();
+    { readExpressionElement();
     }
     else
-    { readStandardTag();
+    { readStandardElement();
     }
     if (!_open)
     { close();
     }
   }
   
-  private void readExpressionTag()
+  private void readExpressionElement()
     throws ParseException
   { 
     CharSequence expressionText;
@@ -85,7 +85,7 @@ public class ElementUnit
     }
   }
   
-  private void readStandardTag()
+  private void readStandardElement()
     throws ParseException
   { 
     
@@ -101,13 +101,13 @@ public class ElementUnit
       int nspos=name.indexOf(':');
       if (nspos>-1)
       { 
-        _tagPackage=resolveNamespace(name.substring(0,nspos));
-        _tagName=name.substring(nspos+1);
+        _elementPackage=resolveNamespace(name.substring(0,nspos));
+        _elementName=name.substring(nspos+1);
       }
       else
       { 
-        _tagPackage=_DEFAULT_TAG_PACKAGE;
-        _tagName=name;
+        _elementPackage=_DEFAULT_ELEMENT_PACKAGE;
+        _elementName=name;
       }
       _attributes=tagReader.getAttributes();
     }
@@ -136,8 +136,8 @@ public class ElementUnit
       {
         _assemblyClass=new AssemblyClass
           (null
-          ,_tagPackage
-          ,Character.toUpperCase(_tagName.charAt(0))+_tagName.substring(1)
+          ,_elementPackage
+          ,Character.toUpperCase(_elementName.charAt(0))+_elementName.substring(1)
           ,null
           ,null
           );
@@ -163,23 +163,23 @@ public class ElementUnit
     }
   }
 
-  public Tag bind(Assembly parent,Tag parentTag)
+  public Element bind(Assembly parent,Element parentElement)
     throws BuildException,BindException
   { 
     if (_expression!=null)
     { 
-      Tag tag=new ExpressionTag();
-      tag.bind(parentTag);
-      return tag;
+      Element element=new ExpressionElement();
+      element.bind(parentElement);
+      return element;
     }
     else
     {
       Assembly assembly=_assemblyClass.newInstance(parent);
-      Tag tag=(Tag) assembly.getSubject().get();
+      Element element=(Element) assembly.getSubject().get();
       
-      tag.bind(parentTag);
-      bindChildren(assembly,tag);
-      return tag;
+      element.bind(parentElement);
+      bindChildren(assembly,element);
+      return element;
     }
   }
 
@@ -187,13 +187,13 @@ public class ElementUnit
   { return super.toString()+"[name="+getName()+"]";
   }
   
-  class ExpressionTag
-    extends Tag
+  class ExpressionElement
+    extends Element
   { 
     
     private Channel _source;
     
-    public void bind(Tag parent)
+    public void bind(Element parent)
       throws BindException
     { 
       super.bind(parent);

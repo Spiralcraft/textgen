@@ -7,26 +7,26 @@ import java.io.Writer;
 import java.io.IOException;
 
 /**
- * A stateful processing unit in a TextGenML document,
- *   associated with a CodeUnit node in the
+ * A stateful processing unit in a TGL block
+ *   associated with an ElementUnit node in the
  *   document structure.
  *
- * A tree of Tags is generated each time the Unit tree
+ * A tree of Elements is generated each time the Unit tree
  *   in the document is bound to an application context.
  */
-public abstract class Tag
+public abstract class Element
 { 
-  private Tag[] _children;
-  private Tag _parent;
+  private Element[] _children;
+  private Element _parent;
   
   /**
    * Called when binding Units
    */
-  public void setChildren(Tag[] children)
+  public void setChildren(Element[] children)
   { _children=children;
   }
 
-  public Tag[] getChildren()
+  public Element[] getChildren()
   { return _children;
   }
   
@@ -36,10 +36,10 @@ public abstract class Tag
   
   /**
    * Called when binding Units. When this method is called,
-   *   a Tag's ancestors will be visible but its children
+   *   a Element's ancestors will be visible but its children
    *   will not be.
    */
-  public void bind(Tag parent)
+  public void bind(Element parent)
     throws BindException
   { _parent=parent;
   }

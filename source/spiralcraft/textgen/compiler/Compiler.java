@@ -3,7 +3,7 @@ package spiralcraft.textgen.compiler;
 import spiralcraft.text.Trimmer;
 
 import spiralcraft.textgen.ParseException;
-import spiralcraft.textgen.Tag;
+import spiralcraft.textgen.Element;
 
 /**
  * Compiles a CharSequence containing Text Generation Markup Language
@@ -72,7 +72,7 @@ public class Compiler
     else
     {
       ElementUnit elementUnit=new ElementUnit(code);
-      _unit.addChild(codeUnit);
+      _unit.addChild(elementUnit);
       if (elementUnit.isOpen())
       { _unit=elementUnit;
       }
