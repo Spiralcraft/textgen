@@ -5,9 +5,10 @@ import java.io.Writer;
 import java.io.PrintWriter;
 
 import spiralcraft.textgen.compiler.Compiler;
-import spiralcraft.textgen.compiler.RootUnit;
+import spiralcraft.textgen.compiler.CompilationUnit;
 import spiralcraft.textgen.compiler.Unit;
 
+import spiralcraft.text.ParseException;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
@@ -22,7 +23,7 @@ import spiralcraft.builder.BuildException;
 public class Generator
 {
 
-  private final RootUnit _root;
+  private final CompilationUnit _root;
   private Element _element;
 
   /**
@@ -30,9 +31,14 @@ public class Generator
    */
   public Generator(CharSequence source)
     throws GeneratorException
-  { 
+  {  
     Compiler compiler=new Compiler();
-    _root=compiler.compile(source);
+    try
+    { _root=compiler.compile(source);
+    }
+    catch (ParseException x)
+    { throw new GeneratorException(x);
+    }
   }
   
   /**

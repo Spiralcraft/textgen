@@ -3,25 +3,22 @@ package spiralcraft.textgen.compiler;
 import java.io.Writer;
 import java.io.IOException;
 
-import spiralcraft.textgen.ParseException;
 import spiralcraft.textgen.Element;
 
 import spiralcraft.builder.Assembly;
 
+import spiralcraft.text.markup.ContentUnit;
+
 /**
  * A Unit which contains literal text
  */
-public class TextUnit
-  extends Unit
+public class TglContentUnit
+  extends ContentUnit
+  implements TglUnit
 {
-  private CharSequence _text;
   
-  public TextUnit(CharSequence text)
-  { _text=text;
-  }
-  
-  public String toString()
-  { return super.toString()+"[text]";
+  public TglContentUnit(CharSequence content)
+  { super(content);
   }
   
   public Element bind(Assembly parent,Element parentElement)
@@ -34,9 +31,10 @@ public class TextUnit
     public void write(Writer writer)
       throws IOException
     { 
-      int len=_text.length();
+      CharSequence content=getContent();
+      int len=content.length();
       for (int i=0;i<len;i++)
-      { writer.write(_text.charAt(i));
+      { writer.write(content.charAt(i));
       }
     }
   }

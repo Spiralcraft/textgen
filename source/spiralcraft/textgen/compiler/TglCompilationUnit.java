@@ -1,7 +1,9 @@
 package spiralcraft.textgen.compiler;
 
-import spiralcraft.textgen.ParseException;
 import spiralcraft.textgen.Element;
+
+import spiralcraft.text.markup.CompilationUnit;
+import spiralcraft.text.markup.Unit;
 
 import spiralcraft.builder.Assembly;
 import spiralcraft.builder.BuildException;
@@ -15,8 +17,9 @@ import java.io.IOException;
 /**
  * The root of a TGL compilation unit
  */
-public class RootUnit
-  extends Unit
+public class TglCompilationUnit
+  extends CompilationUnit
+  implements TglUnit
 {
   public RootElement bind(Assembly parent,Focus focus)
     throws BuildException,BindException
@@ -35,12 +38,25 @@ public class RootUnit
     bindChildren(parent,element);
     return element;
   }
-  
-  
-  public String toString()
-  { return super.toString()+"[root]";
-  }  
 
+  private void bindChildren(Assembly assembly,Element element)
+    throws BuildException,BindException
+  {
+    Unit[] children=getChildren();
+    if (children.length>0)
+    { 
+      Element[] childElements=new Element[children.length];
+      for (int i=0;i<children.length;i++)
+      { 
+        
+        if (children[i] instanceof TglUnit)
+        { childElements[i]=((TglUnit) children[i]).bind(assembly,element);
+        }
+      }
+      element.setChildren(childElements);
+    }
+  }
+  
   class RootElement
     extends Element
   {

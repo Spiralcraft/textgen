@@ -21,15 +21,19 @@ import java.net.URI;
 import java.io.Writer;
 import java.io.IOException;
 
-import spiralcraft.textgen.ParseException;
 import spiralcraft.textgen.Element;
+
+import spiralcraft.text.markup.Unit;
+import spiralcraft.text.markup.MarkupUnit;
+import spiralcraft.text.markup.MarkupException;
 
 /**
  * A Unit which represents an Element delimited by start and end tag(s) or
  *   signified by an empty tag
  */
 public class ElementUnit
-  extends Unit
+  extends MarkupUnit
+  implements TglUnit
 {
   private static final URI _DEFAULT_ELEMENT_PACKAGE
     =URI.create("java:/spiralcraft/textgen/elements/");
@@ -43,17 +47,17 @@ public class ElementUnit
   
   private Expression _expression;
   
-  
   public ElementUnit(CharSequence code)
-    throws ParseException
+    throws MarkupException
   { 
+    super(code);
     _open=!(code.charAt(code.length()-1)=='/');
-    if (_open)
-    { _code=code;
+    if (!_open)
+    { code=code.subSequence(0,code.length()-1);
     }
-    else
-    { _code=code.subSequence(0,code.length()-1);
-    }
+
+    
+    _code=code;
     
     if (_code.charAt(0)=='=')
     { readExpressionElement();
@@ -67,7 +71,7 @@ public class ElementUnit
   }
   
   private void readExpressionElement()
-    throws ParseException
+    throws MarkupException
   { 
     CharSequence expressionText;
     if (_code.charAt(1)=='=')
@@ -81,12 +85,12 @@ public class ElementUnit
     { _expression=Expression.parse(expressionText.toString());
     }
     catch (spiralcraft.lang.ParseException x)
-    { throw new ParseException(x);
+    { throw new MarkupException(x);
     }
   }
   
   private void readStandardElement()
-    throws ParseException
+    throws MarkupException
   { 
     
     try
@@ -112,14 +116,14 @@ public class ElementUnit
       _attributes=tagReader.getAttributes();
     }
     catch (spiralcraft.xml.ParseException x)
-    { throw new ParseException(x);
+    { throw new MarkupException(x);
     }
 
   }
   
   private URI resolveNamespace(String namespaceId)
-    throws ParseException
-  { throw new ParseException("Unknown namespace "+namespaceId);
+    throws MarkupException
+  { throw new MarkupException("Unknown namespace "+namespaceId);
   }
   
   public boolean isOpen()
@@ -127,7 +131,7 @@ public class ElementUnit
   }
 
   public void close()
-    throws ParseException
+    throws MarkupException
   {
     _open=false;
     if (_expression==null)
@@ -158,7 +162,7 @@ public class ElementUnit
         _assemblyClass.resolve();
       }
       catch (BuildException x)
-      { throw new ParseException(x);
+      { throw new MarkupException(x);
       }
     }
   }
@@ -183,9 +187,24 @@ public class ElementUnit
     }
   }
 
-  public String toString()
-  { return super.toString()+"[name="+getName()+"]";
+  private void bindChildren(Assembly assembly,Element element)
+    throws BuildException,BindException
+  {
+    Unit[] children=getChildren();
+    if (children.length>0)
+    { 
+      Element[] childElements=new Element[children.length];
+      for (int i=0;i<children.length;i++)
+      { 
+        
+        if (children[i] instanceof TglUnit)
+        { childElements[i]=((TglUnit) children[i]).bind(assembly,element);
+        }
+      }
+      element.setChildren(childElements);
+    }
   }
+  
   
   class ExpressionElement
     extends Element

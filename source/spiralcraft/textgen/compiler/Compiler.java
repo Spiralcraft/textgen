@@ -2,8 +2,11 @@ package spiralcraft.textgen.compiler;
 
 import spiralcraft.text.Trimmer;
 
-import spiralcraft.textgen.ParseException;
+import spiralcraft.text.markup.MarkupCompiler;
+import spiralcraft.text.markup.CompilationUnit;
+
 import spiralcraft.textgen.Element;
+import spiralcraft.textgen.SyntaxException;
 
 /**
  * Compiles a CharSequence containing Text Generation Markup Language
@@ -11,60 +14,43 @@ import spiralcraft.textgen.Element;
  *   context.
  */
 public class Compiler
-  implements ContentHandler
+  extends MarkupCompiler
 {
   
-  private final Parser _parser;
   private final Trimmer _trimmer=new Trimmer("\r\n\t ");
-  private Unit _unit;
   
-  public Compiler()
-  { 
-    _parser=new Parser();
-    _parser.setContentHandler(this);
-  }
-  
-  public synchronized RootUnit compile(CharSequence sequence)
-    throws ParseException
-  { 
-    _unit=new RootUnit();
-    _parser.parse(sequence);
-    if (!(_unit instanceof RootUnit))
-    { throw new ParseException("Unexpected end of input. Expected <%/"+_unit.getName()+"%>");
-    }
-    return (RootUnit)  _unit;
+  public Compiler()                
+  { super("<%","%>");
   }
 
-  public void handleText(CharSequence text)
-  { _unit.addChild(new TextUnit(text));
+  public CompilationUnit createCompilationUnit()
+  { return new TglCompilationUnit();
   }
   
-  public void handleCode(CharSequence code)
-    throws ParseException
+  public void handleMarkup(CharSequence code)
+    throws Exception
   { 
     code=_trimmer.trim(code);
     if (code.charAt(0)=='/')
     { 
       // End tag case
       String unitName=code.subSequence(1,code.length()).toString();
-      String expectName=_unit.getName();
+      String expectName=getUnit().getName();
       if (unitName.equals(expectName))
-      { 
-        _unit.close();
-        _unit=_unit.getParent();
+      { closeUnit();
       }
       else
       { 
         if (expectName!=null)
         { 
-          throw new ParseException
+          throw new SyntaxException
             ("Mismatched end tag. Found <%/"+unitName+"%>"
             +", expecting <%/"+expectName+"%>"
             );
         }
         else
         {
-          throw new ParseException
+          throw new SyntaxException
             ("Unexpected end tag <%/"+unitName+"%>- no tags are open");
         }
       }
@@ -72,10 +58,7 @@ public class Compiler
     else
     {
       ElementUnit elementUnit=new ElementUnit(code);
-      _unit.addChild(elementUnit);
-      if (elementUnit.isOpen())
-      { _unit=elementUnit;
-      }
+      addUnit(elementUnit);
     }
   }
 }
