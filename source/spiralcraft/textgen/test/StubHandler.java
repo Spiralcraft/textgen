@@ -1,6 +1,6 @@
 package spiralcraft.textgen.test;
 
-import spiralcraft.textgen.ContentHandler;
+import spiralcraft.textgen.compiler.ContentHandler;
 
 import java.io.PrintWriter;
 

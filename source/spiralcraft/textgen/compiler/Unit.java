@@ -1,6 +1,9 @@
-package spiralcraft.textgen;
+package spiralcraft.textgen.compiler;
 
 import java.util.LinkedList;
+
+import spiralcraft.textgen.ParseException;
+import spiralcraft.textgen.Tag;
 
 import spiralcraft.builder.Assembly;
 import spiralcraft.builder.BuildException;

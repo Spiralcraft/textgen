@@ -1,7 +1,10 @@
-package spiralcraft.textgen;
+package spiralcraft.textgen.compiler;
 
 import java.io.Writer;
 import java.io.IOException;
+
+import spiralcraft.textgen.ParseException;
+import spiralcraft.textgen.Tag;
 
 import spiralcraft.builder.Assembly;
 

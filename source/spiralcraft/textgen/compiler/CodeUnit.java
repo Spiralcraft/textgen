@@ -1,4 +1,4 @@
-package spiralcraft.textgen;
+package spiralcraft.textgen.compiler;
 
 import spiralcraft.util.StringUtil;
 
@@ -20,6 +20,9 @@ import java.net.URI;
 
 import java.io.Writer;
 import java.io.IOException;
+
+import spiralcraft.textgen.ParseException;
+import spiralcraft.textgen.Tag;
 
 /**
  * A Unit which contains literal text

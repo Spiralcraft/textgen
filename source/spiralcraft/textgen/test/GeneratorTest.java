@@ -2,10 +2,7 @@ package spiralcraft.textgen.test;
 
 import spiralcraft.stream.StreamUtil;
 
-import spiralcraft.textgen.Compiler;
-import spiralcraft.textgen.Unit;
-import spiralcraft.textgen.RootUnit;
-import spiralcraft.textgen.Tag;
+import spiralcraft.textgen.Generator;
 
 import spiralcraft.lang.BeanFocus;
 
@@ -31,12 +28,11 @@ public class GeneratorTest
     String content=new String(StreamUtil.readBytes(in));
     in.close();
 
-    Compiler compiler=new Compiler();
-    RootUnit unit=compiler.compile(content);
-    Tag tag=unit.bind(null,new BeanFocus(new GeneratorTest()));
+    Generator generator=new Generator(content);
+    generator.bind(new BeanFocus(new GeneratorTest()));
     
     Writer writer=new OutputStreamWriter(System.out);
-    tag.write(writer);
+    generator.write(writer);
     writer.flush();
 
     Clock clock=Clock.instance();
@@ -48,7 +44,7 @@ public class GeneratorTest
     long iterations=0;
     while (true)
     { 
-      tag.write(stringWriter);
+      generator.write(stringWriter);
       stringWriter.getBuffer().setLength(0);
       iterations++;
       if (clock.approxTimeMillis()-time>duration)
@@ -60,12 +56,4 @@ public class GeneratorTest
     
   }
   
-  public static void dump(Unit unit,String linePrefix)
-  {
-    System.out.println(linePrefix+unit.toString());
-    Unit[] children=unit.getChildren();
-    for (int i=0;i<children.length;i++)
-    { dump(children[i],linePrefix+"  ");
-    }
-  }  
 }

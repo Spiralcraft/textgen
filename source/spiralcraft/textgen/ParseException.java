@@ -1,7 +1,7 @@
 package spiralcraft.textgen;
 
 public class ParseException
-  extends Exception
+  extends GeneratorException
 {
   public ParseException(String message)
   { super(message);

@@ -1,6 +1,9 @@
-package spiralcraft.textgen;
+package spiralcraft.textgen.compiler;
 
 import spiralcraft.text.Trimmer;
+
+import spiralcraft.textgen.ParseException;
+import spiralcraft.textgen.Tag;
 
 /**
  * Compiles a CharSequence containing Text Generation Markup Language

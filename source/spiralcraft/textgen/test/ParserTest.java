@@ -2,8 +2,8 @@ package spiralcraft.textgen.test;
 
 import spiralcraft.stream.StreamUtil;
 
-import spiralcraft.textgen.Parser;
-import spiralcraft.textgen.ContentHandler;
+import spiralcraft.textgen.compiler.Parser;
+import spiralcraft.textgen.compiler.ContentHandler;
 
 import java.io.InputStream;
 import java.io.OutputStreamWriter;

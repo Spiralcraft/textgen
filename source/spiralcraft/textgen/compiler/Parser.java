@@ -1,6 +1,8 @@
-package spiralcraft.textgen;
+package spiralcraft.textgen.compiler;
 
 import spiralcraft.text.KmpMatcher;
+
+import spiralcraft.textgen.ParseException;
 
 /**
  * Parser for text generation markup language.

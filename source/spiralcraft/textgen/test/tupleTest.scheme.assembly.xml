@@ -1,0 +1,15 @@
+<tuple:Scheme
+  xmlns:tuple="java:/spiralcraft/tuple"
+  xmlns:types="java:/spiralcraft/tuple/types"
+  >
+  <fields>
+    <tuple:Field>
+      <name>os_name</name>
+      <type><types:String/></type>
+    </tuple:Field>
+    <tuple:Field>
+      <name>java_version</name>
+      <type><types:String/></type>
+    </tuple:Field>
+  </fields>
+</tuple:Scheme>

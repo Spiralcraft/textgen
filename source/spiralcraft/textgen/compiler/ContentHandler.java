@@ -1,4 +1,6 @@
-package spiralcraft.textgen;
+package spiralcraft.textgen.compiler;
+
+import spiralcraft.textgen.ParseException;
 
 public interface ContentHandler
 {
