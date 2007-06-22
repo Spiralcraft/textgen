@@ -1,2 +1,0 @@
-os.name=[<%=os_name/%>]
-java.version=[<%=java_version/%>]

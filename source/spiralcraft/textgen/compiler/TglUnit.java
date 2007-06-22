@@ -14,30 +14,37 @@
 //
 package spiralcraft.textgen.compiler;
 
-import java.util.LinkedList;
+import java.io.PrintWriter;
 
-import spiralcraft.textgen.MarkupException;
 import spiralcraft.textgen.Element;
 
-import spiralcraft.builder.Assembly;
-import spiralcraft.builder.BuildException;
+import spiralcraft.text.markup.Unit;
 
 import spiralcraft.lang.BindException;
+
 
 /**
  * A Unit of text generation which represents a
  *   node in the tree structure of a TGL block.
  */
-public interface TglUnit
+public abstract class TglUnit
+  extends Unit<TglUnit>
 {
   
   /**
-   * Create a tree of Elements bound into an application context (the Assembly)
-   *   which implements the functional behavior specified by the TGL 
-   *   document.
+   * <P>Create a tree of Elements bound into an application context
+   *   (the Assembly) which implements the functional behavior 
+   *   specified by the TGL document.
    */
-  public Element bind(Assembly parent,Element parentElement)
-    throws BuildException,BindException;
+  public abstract Element bind(Element parentElement)
+    throws BindException;
 
+  public void dumpTree(PrintWriter writer,String linePrefix)
+  { 
+    writer.println(linePrefix+toString());
+    for (TglUnit unit: children)
+    { unit.dumpTree(writer,linePrefix+"  ");
+    }
+  }  
   
 }

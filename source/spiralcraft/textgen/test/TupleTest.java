@@ -14,77 +14,99 @@
 //
 package spiralcraft.textgen.test;
 
-import spiralcraft.stream.StreamUtil;
-import spiralcraft.stream.url.URLResource;
 
 import spiralcraft.textgen.Generator;
+import spiralcraft.textgen.Element;
 
-import spiralcraft.lang.BeanFocus;
+import spiralcraft.data.sax.DataReader;
+
+import spiralcraft.data.Tuple;
+import spiralcraft.data.Aggregate;
+
+import spiralcraft.data.Type;
+import spiralcraft.data.TypeResolver;
+
+import spiralcraft.data.lang.TupleFocus;
+import spiralcraft.data.lang.CursorBinding;
+
+import spiralcraft.data.spi.ListCursor;
+
+import spiralcraft.data.transport.Cursor;
+
 import spiralcraft.lang.DefaultFocus;
 
-import spiralcraft.tuple.Scheme;
-import spiralcraft.tuple.Field;
-import spiralcraft.tuple.Tuple;
-
-import spiralcraft.tuple.lang.TupleBinding;
-
-import spiralcraft.tuple.builder.AssemblyScheme;
-
-import spiralcraft.tuple.spi.ArrayTuple;
-
-
-import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+
 import java.io.Writer;
 
-import java.net.URL;
+import java.net.URI;
 
-import java.util.Dictionary;
-import java.util.Iterator;
-
-import spiralcraft.time.Clock;
 
 public class TupleTest
 {
   public static void main(String[] args)
     throws Exception
   {
+    singleTuple();
+    listCursor();
     
-    URL assemblyURL
-      =GeneratorTest.class.getResource("tupleTest.scheme.assembly.xml");
-    
-    InputStream in
-      =GeneratorTest.class.getResourceAsStream("tupleTest.textgen");
+  }
+  
+  public static void singleTuple()
+    throws Exception
+  {
+    URI dataURI
+      =GeneratorTest.class.getResource("model.data.xml").toURI();
+  
+    Tuple tuple
+      =(Tuple) new DataReader().readFromURI(dataURI,null);
 
-    String content=new String(StreamUtil.readBytes(in));
-    in.close();
+    URI uri=URI.create("java:/spiralcraft/textgen/test/tupleTest.tgl");
 
-    
 
-    Scheme scheme=new AssemblyScheme(new URLResource(assemblyURL));
-    
-    Tuple tuple=new ArrayTuple(scheme);
-    
-    TupleBinding binding=new TupleBinding(scheme);
-    binding.set(tuple);
-    
-    Dictionary dict=System.getProperties();
-    Iterator it=scheme.getFields().iterator();
-    while (it.hasNext())
-    { 
-      Field field=(Field) it.next();
-      tuple.set(field,dict.get(field.getName().replace('_','.')));
-    }
+
+    TupleFocus<Tuple> focus=new TupleFocus<Tuple>(tuple.getType().getScheme());
+    focus.setTuple(tuple);
+
+    Generator generator=new Generator(uri);    
+    Element element=generator.bind(focus);
 
     Writer writer=new OutputStreamWriter(System.out);
-    
-    Generator generator=new Generator(content);
-    generator.bind(new DefaultFocus(binding));
-    generator.write(writer);
-
+    element.write(writer);
     writer.flush();
+    
   }
     
+  @SuppressWarnings("unchecked") // Cast Object to Aggregate
+  public static void listCursor()
+    throws Exception
+  {
+    URI dataURI=URI.create
+      ("java:/spiralcraft/data/test/example/Customer.data.xml");
+    
+    URI typeURI=URI.create
+      ("java:/spiralcraft/data/test/example/Customer.list");
+    
+    Type type=TypeResolver.getTypeResolver().resolve(typeURI);
+
+    Aggregate<Tuple> list
+      =(Aggregate<Tuple>) new DataReader().readFromURI(dataURI,type);
+
+    URI uri=URI.create("java:/spiralcraft/textgen/test/cursorTest.tgl");
+
+
+    Cursor<Tuple> listCursor=new ListCursor<Tuple>(list);
+    
+    DefaultFocus<Tuple> focus
+      =new DefaultFocus<Tuple>(new CursorBinding<Tuple>(listCursor));
+
+
+    Generator generator=new Generator(uri);    
+    Element element=generator.bind(focus);
+
+    Writer writer=new OutputStreamWriter(System.out);
+    element.write(writer);
+    writer.flush();
+
+  }
 }

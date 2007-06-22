@@ -15,24 +15,38 @@
 package spiralcraft.textgen.elements;
 
 import spiralcraft.lang.BindException;
-import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
+import spiralcraft.lang.DefaultFocus;
 import spiralcraft.lang.Optic;
+import spiralcraft.lang.Expression;
+
+import spiralcraft.lang.decorators.IterationDecorator;
+
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.compiler.TglUnit;
 
-import java.io.IOException;
 import java.io.Writer;
+
+import java.io.IOException;
 import java.util.List;
 
-public class If
+/**
+ * Iterate through an Iterable or an Array
+ */
+public class Iterate
   extends Element
 {
-  private Expression<Boolean> expression;
-  private Optic<Boolean> target;
   
-  public void setX(Expression<Boolean> expression)
+  private Expression<?> expression;
+  private Focus focus;
+  private IterationDecorator iterator;
+  
+  public void setX(Expression expression)
   { this.expression=expression;
+  }
+  
+  public Focus getFocus()
+  { return focus;
   }
   
 
@@ -41,26 +55,36 @@ public class If
     throws BindException
   { 
     Focus<?> parentFocus=parent.getFocus();
-    
+    Optic<?> target=null;
     if (expression!=null)
-    { target=parentFocus.<Boolean>bind(expression);
+    { target=parentFocus.bind(expression);
     }
     else
-    { target=(Optic<Boolean>) parentFocus.getSubject();
+    { target=parentFocus.getSubject();
     }
     
-    if (!Boolean.class.isAssignableFrom(target.getContentType()))
-    { throw new BindException
-        ("<%If%> requires a boolean expression, not a "+target.getContentType());
+    iterator=
+      target.<IterationDecorator>decorate(IterationDecorator.class);
+    
+    if (iterator==null)
+    { 
+      throw new BindException
+        ("Cannot iterate through a "+target.getContentType().getName());
     }
+    
+    focus=(new DefaultFocus(iterator));
+    
     bindChildren(childUnits);
   }
   
   public void write(Writer out)
     throws IOException
   { 
-    if (target.get())
-    { writeChildren(out);
+    iterator.reset();
+    while (iterator.hasNext())
+    { 
+      iterator.next();
+      writeChildren(out);
     }
   }
 }

@@ -14,10 +14,9 @@
 //
 package spiralcraft.textgen.test;
 
-import spiralcraft.stream.StreamUtil;
+import spiralcraft.vfs.StreamUtil;
 
-import spiralcraft.textgen.compiler.Parser;
-import spiralcraft.textgen.compiler.ContentHandler;
+import spiralcraft.text.markup.MarkupParser;
 
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
@@ -34,15 +33,15 @@ public class ParserTest
     throws Exception
   {
     InputStream in
-      =ParserTest.class.getResourceAsStream("bigSyntaxTest.textgen");
+      =ParserTest.class.getResourceAsStream("bigSyntaxTest.tgl");
     
     String content=new String(StreamUtil.readBytes(in));
     in.close();
 
-    Parser parser=new Parser();
+    MarkupParser parser=new MarkupParser("<%","%>");
 
     StubHandler handler=new StubHandler();
-    parser.setContentHandler(handler);
+    parser.setMarkupHandler(handler);
 
     handler.setDebugWriter(new PrintWriter(new OutputStreamWriter(System.out),true));    
     parser.parse(content);

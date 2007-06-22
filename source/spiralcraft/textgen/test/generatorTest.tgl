@@ -1,0 +1,14 @@
+Class: [<%=class.name/%>]
+
+Title: [<%=title/%>]
+
+Aliases:
+<%Iterate x="aliases" %>
+-- Alias: <%=./%>
+<%/Iterate%>
+
+Aliases again:
+<%Iterate x="aliases" %>
+-- Alias: <%=./%>
+<%/Iterate%>
+

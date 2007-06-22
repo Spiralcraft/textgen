@@ -17,54 +17,131 @@ package spiralcraft.textgen;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
 
+import spiralcraft.builder.Assembly;
+
 import java.io.Writer;
 import java.io.IOException;
+import java.util.List;
+
+import spiralcraft.textgen.compiler.TglUnit;
+
+
+import java.net.URI;
 
 /**
- * A stateful processing unit in a TGL block
- *   associated with an ElementUnit node in the
- *   document structure.
- *
- * A tree of Elements is generated each time the Unit tree
- *   in the document is bound to an application context.
+ * <P>A unit of output in a TGL document.
+ * 
+ * <P>An Element may contain other Elements and/or content, forming a tree of
+ *   Elements which generate output.
+ *   
+ * <P>The Elements associate with application specific runtime context via the
+ *   Focus, which is provided to the root Element by the container. Elements may
+ *   extend this Focus to refine the context for their child elements. The
+ *   spiralcraft.lang expression language is used to access application context
+ *   through this Focus.
+ *   
+ * <P>Elements are beans which are instantiated and configured 
+ *   (ie. parameterized) using the spiralcraft.builder package. Each Element
+ *   is associated with an Assembly. The Assembly provides a means for 
+ *   Elements to access the Element structure itself.
+ * 
+ * <P>Elements are created by first instantiating them and applying the bean
+ *   properties specified in their TGL declarations. The Element is then bound
+ *   to its already bound parent Element, where it is able to bind any
+ *   expressions to the Focus provided by its parent element. 
  */
 public abstract class Element
 { 
-  private Element[] _children;
-  private Element _parent;
+  private Element[] children;
+  private Element parent;
+  private Assembly assembly;
+  private String id;
+
+  /**
+   * Specify an id for this Element and make it visible to the expression
+   *   language when used anywhere inside this element. 
+   */
+  public void setId(String id)
+  { this.id=id;
+  }
+  
+  public String getId()
+  { return id;
+  }
   
   /**
-   * Called when binding Units
+   * @return The Focus associated with this Element. Defaults to the parent
+   *   Element's Focus, unless overridden.
    */
-  public void setChildren(Element[] children)
-  { _children=children;
+  public Focus getFocus()
+  { 
+    if (parent!=null)
+    { return parent.getFocus();
+    }
+    return null;
+  }
+  
+  /**
+   * @return The context URI associated with this Element, which is generally
+   *   the URI of the directory that contains the TGL source file. 
+   */
+  public URI getContextURI()
+  {
+    if (parent!=null)
+    { return parent.getContextURI();
+    }
+    return null;
   }
 
-  public Element[] getChildren()
-  { return _children;
-  }
-  
-  public Focus getFocus()
-  { return _parent.getFocus();
+  /**
+   * @return The Assembly from which this Element was instantiated
+   */
+  public Assembly getAssembly()
+  { return assembly;
   }
   
   /**
-   * Called when binding Units. When this method is called,
-   *   a Element's ancestors will be visible but its children
-   *   will not be.
+   * Specify the Assembly from which this Element was instantiated. Used
+   *   internally only.
    */
-  public void bind(Element parent)
+  public void setAssembly(Assembly assembly)
+  { this.assembly=assembly;
+  }
+  
+  /**
+   * Called when binding Units. This method should call
+   *   TglUnit.bind() on the child units at an appropriate time. The default
+   *   behavior is to bind all the childUnits.
+   */
+  public void bind(Element parent,List<TglUnit> childUnits)
     throws BindException
-  { _parent=parent;
+  { 
+    this.parent=parent;
+    bindChildren(childUnits);
+  }
+
+  protected void bindChildren
+    (List<TglUnit> childUnits
+    )
+    throws BindException
+  {
+    if (childUnits!=null)
+    { 
+      children=new Element[childUnits.size()];
+      int i=0;
+      for (TglUnit child: childUnits)
+      { children[i++]=child.bind(this);
+      }
+    }
   }
 
   protected void writeChildren(Writer writer)
     throws IOException
   {
-    if (_children!=null)
+    if (children!=null)
     { 
-      for (int i=0;i<_children.length;i++)
-      { _children[i].write(writer);
+      for (int i=0;i<children.length;i++)
+      { children[i].write(writer);
       }
     }
   }

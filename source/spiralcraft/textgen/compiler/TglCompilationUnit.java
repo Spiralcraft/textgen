@@ -16,11 +16,6 @@ package spiralcraft.textgen.compiler;
 
 import spiralcraft.textgen.Element;
 
-import spiralcraft.text.markup.CompilationUnit;
-import spiralcraft.text.markup.Unit;
-
-import spiralcraft.builder.Assembly;
-import spiralcraft.builder.BuildException;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
@@ -28,47 +23,37 @@ import spiralcraft.lang.Focus;
 import java.io.Writer;
 import java.io.IOException;
 
+import java.net.URI;
+
+
 /**
- * The root of a TGL compilation unit
+ * A compilation unit (ie. a file or other container) of tgl markup.
  */
 public class TglCompilationUnit
-  extends CompilationUnit
-  implements TglUnit
+  extends TglUnit
 {
-  public RootElement bind(Assembly parent,Focus focus)
-    throws BuildException,BindException
-  { 
-    RootElement element=new RootElement();
-    element.setFocus(focus);
-    bindChildren(parent,element);
-    return element;
+  private final URI sourceURI;
+  
+  public TglCompilationUnit(URI sourceURI)
+  { this.sourceURI=sourceURI;
   }
   
-  public Element bind(Assembly parent,Element parentElement)
-    throws BuildException,BindException
+  public Element bind(Focus focus)
+    throws BindException
+  {
+    RootElement element=new RootElement();
+    element.setFocus(focus);
+    element.bind(null,children);
+    return element;
+    
+  }
+  
+  public Element bind(Element parentElement)
+    throws BindException
   { 
     Element element=new RootElement();
-    element.bind(parentElement);
-    bindChildren(parent,element);
+    element.bind(parentElement,children);
     return element;
-  }
-
-  private void bindChildren(Assembly assembly,Element element)
-    throws BuildException,BindException
-  {
-    Unit[] children=getChildren();
-    if (children.length>0)
-    { 
-      Element[] childElements=new Element[children.length];
-      for (int i=0;i<children.length;i++)
-      { 
-        
-        if (children[i] instanceof TglUnit)
-        { childElements[i]=((TglUnit) children[i]).bind(assembly,element);
-        }
-      }
-      element.setChildren(childElements);
-    }
   }
   
   class RootElement
@@ -78,6 +63,10 @@ public class TglCompilationUnit
     
     public void setFocus(Focus focus)
     { _focus=focus;
+    }
+    
+    public URI getContextURI()
+    { return sourceURI;
     }
     
     public Focus getFocus()

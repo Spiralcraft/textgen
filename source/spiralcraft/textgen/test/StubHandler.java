@@ -14,12 +14,15 @@
 //
 package spiralcraft.textgen.test;
 
-import spiralcraft.textgen.compiler.ContentHandler;
+import spiralcraft.text.markup.MarkupHandler;
 
 import java.io.PrintWriter;
 
+import spiralcraft.text.ParsePosition;
+
+
 public class StubHandler
-  implements ContentHandler
+  implements MarkupHandler
 { 
   private PrintWriter _debugWriter;
 
@@ -27,7 +30,7 @@ public class StubHandler
   { _debugWriter=writer;
   }
   
-  public void handleText(CharSequence text)
+  public void handleContent(CharSequence text)
   {
     if (_debugWriter!=null)
     {
@@ -37,7 +40,7 @@ public class StubHandler
     }
   }
   
-  public void handleCode(CharSequence code)
+  public void handleMarkup(CharSequence code)
   {
     if (_debugWriter!=null)
     {
@@ -46,4 +49,9 @@ public class StubHandler
       _debugWriter.println("/CODE");
     }
   }
+  
+  public void setPosition(ParsePosition position)
+  {
+  }
+  
 }

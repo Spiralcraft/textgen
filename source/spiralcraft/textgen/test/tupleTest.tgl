@@ -1,0 +1,4 @@
+id=[<%=id/%>]
+displayName=[<%=displayName/%>]
+address.city=[<%=address.city/%>]
+

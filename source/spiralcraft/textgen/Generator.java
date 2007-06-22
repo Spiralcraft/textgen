@@ -15,82 +15,70 @@
 package spiralcraft.textgen;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.io.PrintWriter;
 
-import spiralcraft.textgen.compiler.Compiler;
-import spiralcraft.textgen.compiler.CompilationUnit;
-import spiralcraft.textgen.compiler.Unit;
+import spiralcraft.text.io.ResourceCharSequence;
+
+import spiralcraft.textgen.compiler.TglCompiler;
+import spiralcraft.textgen.compiler.TglCompilationUnit;
 
 import spiralcraft.text.ParseException;
+import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
 
-import spiralcraft.builder.BuildException;
+
+import java.net.URI;
 
 /**
- * Generates textual output from application data. 
+ * Generates textual output from application data exposed by the
+ *   spiralcraft.lang expression language.
  *
- * Represents a compiled unit of textgen source bound to a data Focus.
+ * Represents a compiled unit of textgen source bound to a 
+ *   spiralcraft.data Focus.
  */
 public class Generator
 {
 
-  private final CompilationUnit _root;
-  private Element _element;
-
+  private final TglCompilationUnit root;
+  private final URI sourceURI;
+  
   /**
    * Construct a Generator from the given source
    */
-  public Generator(CharSequence source)
-    throws GeneratorException
+  public Generator(URI sourceURI)
+    throws IOException,ParseException,MarkupException
   {  
-    Compiler compiler=new Compiler();
-    try
-    { _root=compiler.compile(source);
-    }
-    catch (ParseException x)
-    { throw new GeneratorException(x);
-    }
+    this.sourceURI=sourceURI; 
+    CharSequence sequence = new ResourceCharSequence(sourceURI);
+    TglCompiler tglCompiler=new TglCompiler();
+    root=new TglCompilationUnit(sourceURI);
+    tglCompiler.compile(root,sequence);
+  }
+  
+  public URI getSourceURI()
+  { return sourceURI;
   }
   
   /**
    * Bind the Generator to an application Focus.
    */
-  public void bind(Focus focus)
-    throws GeneratorException
+  public Element bind(Focus focus)
+    throws BindException
   { 
-    try
-    { _element=_root.bind(null,focus);
-    }
-    catch (BindException x)
-    { throw new GeneratorException(x);
-    }
-    catch (BuildException x)
-    { throw new GeneratorException(x);
-    }
+    Element element=root.bind(focus);
+    return element;
   }
   
-  public void write(Writer writer)
-    throws IOException
-  { _element.write(writer);
-  }
 
   /**
    * Output debugging information about the structure of the source
    */
   public void debug(PrintWriter writer)
-  { debug(writer,_root,"");
+  { root.dumpTree(writer,"");
   }
   
-  private void debug(PrintWriter writer,Unit unit,String linePrefix)
-  {
-    writer.println(linePrefix+unit.toString());
-    Unit[] children=unit.getChildren();
-    for (int i=0;i<children.length;i++)
-    { debug(writer,children[i],linePrefix+"  ");
-    }
-  }  
+
   
 }

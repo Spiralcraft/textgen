@@ -14,18 +14,18 @@
 //
 package spiralcraft.textgen.test;
 
-import spiralcraft.stream.StreamUtil;
 
 import spiralcraft.textgen.Generator;
 
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BeanFocus;
 
-import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 import spiralcraft.time.Clock;
+
+import java.net.URI;
 
 /**
  * Parser for text generation markup language.
@@ -35,13 +35,10 @@ public class CompilerTest
   public static void main(String[] args)
     throws Exception
   {
-    InputStream in
-      =ParserTest.class.getResourceAsStream("generatorTest.textgen");
-    
-    String content=new String(StreamUtil.readBytes(in));
-    in.close();
-
-    Generator generator=new Generator(content);
+    URI uri=URI.create("java:/spiralcraft/textgen/test/generatorTest.tgl");
+    Generator generator
+      =new Generator
+        (uri);
     generator.debug(new PrintWriter(new OutputStreamWriter(System.out)));
 
     Clock clock=Clock.instance();
@@ -52,7 +49,7 @@ public class CompilerTest
     Focus focus=new BeanFocus(new CompilerTest());
     while (true)
     { 
-      generator=new Generator(content);
+      generator=new Generator(uri);
       generator.bind(focus);
       iterations++;
       if (clock.approxTimeMillis()-time>duration)

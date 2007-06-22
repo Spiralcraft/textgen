@@ -17,32 +17,43 @@ package spiralcraft.textgen.compiler;
 import spiralcraft.text.Trimmer;
 
 import spiralcraft.text.markup.MarkupCompiler;
-import spiralcraft.text.markup.CompilationUnit;
+import spiralcraft.text.markup.MarkupException;
 
-import spiralcraft.textgen.Element;
-import spiralcraft.textgen.SyntaxException;
+import spiralcraft.text.ParseException;
+
 
 /**
- * Compiles a CharSequence containing Text Generation Markup Language
+ * <P>Compiles a CharSequence containing Text Generation Markup Language
  *   into a tree of Units that can later be bound to an application
  *   context.
+ * 
+ * <P>Each unit in the tree is either a TglContentUnit, which contains literal
+ *   text, or a TglElementUnit, which represents a functionality specified by 
+ *   a markup element.
+ *   
+ * <P>The MarkupCompiler superclass provides the basic mechanism to parse 
+ *   an abstract template-style markup language. The TglCompiler further
+ *   specifies this mechanism by introducing specific standard delimiters
+ *   (&lt;% %&gt;) as well as the concept of open and closed tags.
  */
-public class Compiler
-  extends MarkupCompiler
+public class TglCompiler
+  extends MarkupCompiler<TglUnit>
 {
   
   private final Trimmer _trimmer=new Trimmer("\r\n\t ");
   
-  public Compiler()                
-  { super("<%","%>");
+  public TglCompiler()                
+  { 
+    super("<%","%>");
   }
 
-  public CompilationUnit createCompilationUnit()
-  { return new TglCompilationUnit();
+  
+  public void handleContent(CharSequence content)
+  { pushUnit(new TglContentUnit(content));
   }
   
   public void handleMarkup(CharSequence code)
-    throws Exception
+    throws MarkupException,ParseException
   { 
     code=_trimmer.trim(code);
     if (code.charAt(0)=='/')
@@ -57,22 +68,23 @@ public class Compiler
       { 
         if (expectName!=null)
         { 
-          throw new SyntaxException
+          throw new MarkupException
             ("Mismatched end tag. Found <%/"+unitName+"%>"
             +", expecting <%/"+expectName+"%>"
+            ,position
             );
         }
         else
         {
-          throw new SyntaxException
-            ("Unexpected end tag <%/"+unitName+"%>- no tags are open");
+          throw new MarkupException
+            ("Unexpected end tag <%/"+unitName+"%>- no tags are open",position);
         }
       }
     }
     else
     {
-      ElementUnit elementUnit=new ElementUnit(code);
-      addUnit(elementUnit);
+      TglElementUnit tglElementUnit=new TglElementUnit(code,position);
+      pushUnit(tglElementUnit);
     }
   }
 }
