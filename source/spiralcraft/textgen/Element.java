@@ -19,8 +19,8 @@ import spiralcraft.lang.BindException;
 
 import spiralcraft.builder.Assembly;
 
-import java.io.Writer;
 import java.io.IOException;
+
 import java.util.List;
 
 import spiralcraft.textgen.compiler.TglUnit;
@@ -34,6 +34,11 @@ import java.net.URI;
  * <P>An Element may contain other Elements and/or content, forming a tree of
  *   Elements which generate output.
  *   
+ * <P>Elements are multi-threaded, and thus should not maintain execution
+ *   state internally. An element must resolve its state within the write()
+ *   method, and may use the GenerationContext object to make items available
+ *   to sub-elements.
+ *   
  * <P>The Elements associate with application specific runtime context via the
  *   Focus, which is provided to the root Element by the container. Elements may
  *   extend this Focus to refine the context for their child elements. The
@@ -43,7 +48,8 @@ import java.net.URI;
  * <P>Elements are beans which are instantiated and configured 
  *   (ie. parameterized) using the spiralcraft.builder package. Each Element
  *   is associated with an Assembly. The Assembly provides a means for 
- *   Elements to access the Element structure itself.
+ *   Elements to associate with other elements in the Element structure
+ *   without those elements being adjacent to each other.
  * 
  * <P>Elements are created by first instantiating them and applying the bean
  *   properties specified in their TGL declarations. The Element is then bound
@@ -135,13 +141,13 @@ public abstract class Element
     }
   }
 
-  protected void writeChildren(Writer writer)
+  protected void writeChildren(GenerationContext context)
     throws IOException
   {
     if (children!=null)
     { 
       for (int i=0;i<children.length;i++)
-      { children[i].write(writer);
+      { children[i].write(context);
       }
     }
   }
@@ -149,6 +155,6 @@ public abstract class Element
   /**
    * Recursively perform processing and write output
    */
-  public abstract void write(Writer writer)
+  public abstract void write(GenerationContext context)
     throws IOException;
 }

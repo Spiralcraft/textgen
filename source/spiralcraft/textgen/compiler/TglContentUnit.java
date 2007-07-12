@@ -14,10 +14,10 @@
 //
 package spiralcraft.textgen.compiler;
 
-import java.io.Writer;
 import java.io.IOException;
 
 import spiralcraft.textgen.Element;
+import spiralcraft.textgen.GenerationContext;
 
 
 /**
@@ -39,13 +39,9 @@ public class TglContentUnit
   class TextElement
     extends Element
   {
-    public void write(Writer writer)
+    public void write(GenerationContext context)
       throws IOException
-    { 
-      int len=content.length();
-      for (int i=0;i<len;i++)
-      { writer.write(content.charAt(i));
-      }
+    { context.getWriter().write(content.toString());
     }
   }
 }

@@ -32,12 +32,12 @@ import spiralcraft.xml.TagReader;
 
 import java.net.URI;
 
-import java.io.Writer;
 import java.io.IOException;
 
 import java.util.List;
 
 import spiralcraft.textgen.Element;
+import spiralcraft.textgen.GenerationContext;
 
 import spiralcraft.text.markup.MarkupException;
 
@@ -225,6 +225,7 @@ public class TglElementUnit
     
     private Channel _source;
     
+    @SuppressWarnings("unchecked") // Heterogeneous use of lang package
     public void bind(Element parent,List<TglUnit> children)
       throws BindException
     { 
@@ -232,12 +233,12 @@ public class TglElementUnit
       _source=getFocus().bind(expression);
     }
     
-    public void write(Writer out)
+    public void write(GenerationContext context)
       throws IOException
     { 
       Object value=_source.get();
       if (value!=null)
-      { out.write(value.toString());
+      { context.getWriter().write(value.toString());
       }
     }
   }

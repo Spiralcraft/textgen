@@ -15,12 +15,12 @@
 package spiralcraft.textgen.compiler;
 
 import spiralcraft.textgen.Element;
+import spiralcraft.textgen.GenerationContext;
 
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
 
-import java.io.Writer;
 import java.io.IOException;
 
 import java.net.URI;
@@ -77,9 +77,9 @@ public class TglCompilationUnit
       return super.getFocus();
     }
     
-    public void write(Writer out)
+    public void write(GenerationContext context)
       throws IOException
-    { writeChildren(out);
+    { writeChildren(context);
     }
   }
 }

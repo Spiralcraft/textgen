@@ -14,6 +14,7 @@ import spiralcraft.vfs.AbstractResource;
 
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.Generator;
+import spiralcraft.textgen.GenerationContext;
 
 import spiralcraft.text.ParseException;
 import spiralcraft.text.markup.MarkupException;
@@ -170,7 +171,8 @@ public class MetaTranslator
       
       ByteArrayOutputStream out = new ByteArrayOutputStream();
       OutputStreamWriter writer=new OutputStreamWriter(out);
-      element.write(writer);
+      GenerationContext context=generator.createGenerationContext(writer);
+      element.write(context);
       writer.flush();
       out.close();
       

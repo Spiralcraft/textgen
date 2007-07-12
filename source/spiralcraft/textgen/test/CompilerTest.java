@@ -32,6 +32,7 @@ import java.net.URI;
  */
 public class CompilerTest
 {
+  @SuppressWarnings("unchecked") // Heterogeneous use of lang package
   public static void main(String[] args)
     throws Exception
   {

@@ -17,15 +17,19 @@ package spiralcraft.textgen.elements;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.DefaultFocus;
-import spiralcraft.lang.Optic;
+import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
+import spiralcraft.lang.IterationDecorator;
+import spiralcraft.lang.IterationContext;
 
-import spiralcraft.lang.decorators.IterationDecorator;
+import spiralcraft.lang.spi.ThreadLocalBinding;
+import spiralcraft.lang.spi.BeanReflector;
 
 import spiralcraft.textgen.Element;
+import spiralcraft.textgen.GenerationContext;
+
 import spiralcraft.textgen.compiler.TglUnit;
 
-import java.io.Writer;
 
 import java.io.IOException;
 import java.util.List;
@@ -39,7 +43,9 @@ public class Iterate
   
   private Expression<?> expression;
   private Focus focus;
-  private IterationDecorator iterator;
+  private IterationDecorator decorator;
+  private ThreadLocalBinding<IterationContext> iterationContextBinding;
+
   
   public void setX(Expression expression)
   { this.expression=expression;
@@ -55,7 +61,7 @@ public class Iterate
     throws BindException
   { 
     Focus<?> parentFocus=parent.getFocus();
-    Optic<?> target=null;
+    Channel<?> target=null;
     if (expression!=null)
     { target=parentFocus.bind(expression);
     }
@@ -63,28 +69,43 @@ public class Iterate
     { target=parentFocus.getSubject();
     }
     
-    iterator=
+    decorator=
       target.<IterationDecorator>decorate(IterationDecorator.class);
     
-    if (iterator==null)
+    if (decorator==null)
     { 
       throw new BindException
         ("Cannot iterate through a "+target.getContentType().getName());
     }
     
-    focus=(new DefaultFocus(iterator));
+    iterationContextBinding
+      =new ThreadLocalBinding<IterationContext>
+        (BeanReflector.<IterationContext>getInstance(IterationContext.class)
+        );
+    
+    focus=new DefaultFocus
+      (decorator.createComponentBinding(iterationContextBinding));
     
     bindChildren(childUnits);
   }
   
-  public void write(Writer out)
+  public void write(GenerationContext genContext)
     throws IOException
   { 
-    iterator.reset();
-    while (iterator.hasNext())
-    { 
-      iterator.next();
-      writeChildren(out);
+    IterationContext context = decorator.iterator();
+
+    iterationContextBinding.push(context);
+
+    try
+    {
+      while (context.hasNext())
+      { 
+        context.next();
+        writeChildren(genContext);
+      }
+    }
+    finally
+    { iterationContextBinding.pop();
     }
   }
 }

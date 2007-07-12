@@ -16,6 +16,7 @@ package spiralcraft.textgen;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Writer;
 
 import spiralcraft.text.io.ResourceCharSequence;
 
@@ -72,6 +73,10 @@ public class Generator
   }
   
 
+  public GenerationContext createGenerationContext(Writer writer)
+  { return new GenerationContext(writer);
+  }
+  
   /**
    * Output debugging information about the structure of the source
    */

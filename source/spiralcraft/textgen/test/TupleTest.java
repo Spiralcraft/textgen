@@ -15,6 +15,7 @@
 package spiralcraft.textgen.test;
 
 
+import spiralcraft.textgen.GenerationContext;
 import spiralcraft.textgen.Generator;
 import spiralcraft.textgen.Element;
 
@@ -27,13 +28,11 @@ import spiralcraft.data.Type;
 import spiralcraft.data.TypeResolver;
 
 import spiralcraft.data.lang.TupleFocus;
-import spiralcraft.data.lang.CursorBinding;
-
-import spiralcraft.data.spi.ListCursor;
-
-import spiralcraft.data.transport.Cursor;
+import spiralcraft.data.lang.DataReflector;
 
 import spiralcraft.lang.DefaultFocus;
+
+import spiralcraft.lang.spi.SimpleBinding;
 
 import java.io.OutputStreamWriter;
 
@@ -72,7 +71,8 @@ public class TupleTest
     Element element=generator.bind(focus);
 
     Writer writer=new OutputStreamWriter(System.out);
-    element.write(writer);
+    GenerationContext context=generator.createGenerationContext(writer);
+    element.write(context);
     writer.flush();
     
   }
@@ -94,18 +94,19 @@ public class TupleTest
 
     URI uri=URI.create("java:/spiralcraft/textgen/test/cursorTest.tgl");
 
-
-    Cursor<Tuple> listCursor=new ListCursor<Tuple>(list);
+    SimpleBinding binding
+      =new SimpleBinding(DataReflector.getInstance(list.getType()),list,false);
     
-    DefaultFocus<Tuple> focus
-      =new DefaultFocus<Tuple>(new CursorBinding<Tuple>(listCursor));
+    DefaultFocus<Aggregate> focus
+      =new DefaultFocus<Aggregate>(binding);
 
 
     Generator generator=new Generator(uri);    
     Element element=generator.bind(focus);
 
     Writer writer=new OutputStreamWriter(System.out);
-    element.write(writer);
+    GenerationContext context=generator.createGenerationContext(writer);
+    element.write(context);
     writer.flush();
 
   }

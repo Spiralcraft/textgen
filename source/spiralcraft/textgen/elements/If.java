@@ -17,19 +17,22 @@ package spiralcraft.textgen.elements;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.Optic;
+import spiralcraft.lang.Channel;
+
 import spiralcraft.textgen.Element;
+import spiralcraft.textgen.GenerationContext;
+
 import spiralcraft.textgen.compiler.TglUnit;
 
 import java.io.IOException;
-import java.io.Writer;
+
 import java.util.List;
 
 public class If
   extends Element
 {
   private Expression<Boolean> expression;
-  private Optic<Boolean> target;
+  private Channel<Boolean> target;
   
   public void setX(Expression<Boolean> expression)
   { this.expression=expression;
@@ -46,7 +49,7 @@ public class If
     { target=parentFocus.<Boolean>bind(expression);
     }
     else
-    { target=(Optic<Boolean>) parentFocus.getSubject();
+    { target=(Channel<Boolean>) parentFocus.getSubject();
     }
     
     if (!Boolean.class.isAssignableFrom(target.getContentType()))
@@ -56,11 +59,11 @@ public class If
     bindChildren(childUnits);
   }
   
-  public void write(Writer out)
+  public void write(GenerationContext context)
     throws IOException
   { 
     if (target.get())
-    { writeChildren(out);
+    { writeChildren(context);
     }
   }
 }

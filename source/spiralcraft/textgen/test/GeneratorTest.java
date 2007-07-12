@@ -16,6 +16,7 @@ package spiralcraft.textgen.test;
 
 
 import spiralcraft.textgen.Generator;
+import spiralcraft.textgen.GenerationContext;
 import spiralcraft.textgen.Element;
 
 import spiralcraft.lang.BeanFocus;
@@ -34,6 +35,7 @@ import spiralcraft.data.persist.XmlAssembly;
  */
 public class GeneratorTest
 {
+  @SuppressWarnings("unchecked") // Heterogeneous use of lang package
   public static void main(String ... args)
     throws Exception
   {
@@ -46,13 +48,15 @@ public class GeneratorTest
     Element element
       =generator.bind
         (new BeanFocus
-          (new XmlAssembly(URI.create("java:/spiralcraft/builder/test/MyWidget"),null)
+          (new XmlAssembly
+              (URI.create("java:/spiralcraft/builder/test/MyWidget.assy"),null)
           .get()
           )
         );
 
     Writer writer=new OutputStreamWriter(System.out);
-    element.write(writer);
+    GenerationContext context=generator.createGenerationContext(writer);
+    element.write(context);
     writer.flush();
 
     if (false)
@@ -62,11 +66,11 @@ public class GeneratorTest
       long duration=5000;
 
       StringWriter stringWriter=new StringWriter();
-
+      context.setWriter(stringWriter);
       long iterations=0;
       while (true)
       { 
-        element.write(stringWriter);
+        element.write(context);
         stringWriter.getBuffer().setLength(0);
         iterations++;
         if (clock.approxTimeMillis()-time>duration)

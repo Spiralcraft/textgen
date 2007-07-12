@@ -4,8 +4,8 @@ t.setTemplateURI
 		("source/spiralcraft/textgen/test/resource.tgl")
  	);
 r=t.translate
-	(spiralcraft.stream.Resolver.getInstance().resolve(URI.create("smoke.bsh"))
+	(spiralcraft.vfs.Resolver.getInstance().resolve(URI.create("smoke.bsh"))
 	,URI.create
 	  ("source/spiralcraft/textgen/test/resource.tgl.info")
 	);
-spiralcraft.stream.StreamUtil.copyRaw(r.getInputStream(),System.out,8192);
+spiralcraft.vfs.StreamUtil.copyRaw(r.getInputStream(),System.out,8192);

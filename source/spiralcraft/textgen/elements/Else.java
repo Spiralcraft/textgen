@@ -15,13 +15,13 @@
 package spiralcraft.textgen.elements;
 
 import spiralcraft.textgen.Element;
+import spiralcraft.textgen.GenerationContext;
 
-import java.io.Writer;
 
 public class Else
   extends Element
 {
-  public void write(Writer out)
+  public void write(GenerationContext context)
   {
   }
 }
