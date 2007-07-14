@@ -30,7 +30,7 @@ import spiralcraft.data.TypeResolver;
 import spiralcraft.data.lang.TupleFocus;
 import spiralcraft.data.lang.DataReflector;
 
-import spiralcraft.lang.DefaultFocus;
+import spiralcraft.lang.SimpleFocus;
 
 import spiralcraft.lang.spi.SimpleBinding;
 
@@ -97,8 +97,8 @@ public class TupleTest
     SimpleBinding binding
       =new SimpleBinding(DataReflector.getInstance(list.getType()),list,false);
     
-    DefaultFocus<Aggregate> focus
-      =new DefaultFocus<Aggregate>(binding);
+    SimpleFocus<Aggregate> focus
+      =new SimpleFocus<Aggregate>(binding);
 
 
     Generator generator=new Generator(uri);    

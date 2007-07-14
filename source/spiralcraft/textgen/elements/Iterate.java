@@ -16,7 +16,7 @@ package spiralcraft.textgen.elements;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.DefaultFocus;
+import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.IterationDecorator;
@@ -37,21 +37,22 @@ import java.util.List;
 /**
  * Iterate through an Iterable or an Array
  */
+@SuppressWarnings("unchecked") // Runtime type resolution
 public class Iterate
   extends Element
 {
   
   private Expression<?> expression;
-  private Focus focus;
+  private Focus<?> focus;
   private IterationDecorator decorator;
   private ThreadLocalBinding<IterationContext> iterationContextBinding;
 
   
-  public void setX(Expression expression)
+  public void setX(Expression<?> expression)
   { this.expression=expression;
   }
   
-  public Focus getFocus()
+  public Focus<?> getFocus()
   { return focus;
   }
   
@@ -83,7 +84,7 @@ public class Iterate
         (BeanReflector.<IterationContext>getInstance(IterationContext.class)
         );
     
-    focus=new DefaultFocus
+    focus=new SimpleFocus
       (decorator.createComponentBinding(iterationContextBinding));
     
     bindChildren(childUnits);

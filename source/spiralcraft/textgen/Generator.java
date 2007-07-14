@@ -65,7 +65,7 @@ public class Generator
   /**
    * Bind the Generator to an application Focus.
    */
-  public Element bind(Focus focus)
+  public Element bind(Focus<?> focus)
     throws BindException
   { 
     Element element=root.bind(focus);

@@ -61,7 +61,7 @@ public class TglElementUnit
   private String elementName;
   private Attribute[] attributes;
   
-  private Expression expression;
+  private Expression<?> expression;
   private ParsePosition position;
   
   public TglElementUnit(CharSequence code,ParsePosition position)
@@ -205,8 +205,8 @@ public class TglElementUnit
     {
       try
       {
-        Assembly parentAssembly=parentElement.getAssembly();
-        Assembly assembly=assemblyClass.newInstance(parentAssembly);
+        Assembly<?> parentAssembly=parentElement.getAssembly();
+        Assembly<?> assembly=assemblyClass.newInstance(parentAssembly);
         Element element=(Element) assembly.getSubject().get();
         element.setAssembly(assembly);
       
@@ -223,7 +223,7 @@ public class TglElementUnit
     extends Element
   { 
     
-    private Channel _source;
+    private Channel<?> _source;
     
     @SuppressWarnings("unchecked") // Heterogeneous use of lang package
     public void bind(Element parent,List<TglUnit> children)

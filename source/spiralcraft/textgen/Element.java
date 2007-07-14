@@ -60,7 +60,7 @@ public abstract class Element
 { 
   private Element[] children;
   private Element parent;
-  private Assembly assembly;
+  private Assembly<?> assembly;
   private String id;
 
   /**
@@ -79,7 +79,7 @@ public abstract class Element
    * @return The Focus associated with this Element. Defaults to the parent
    *   Element's Focus, unless overridden.
    */
-  public Focus getFocus()
+  public Focus<?> getFocus()
   { 
     if (parent!=null)
     { return parent.getFocus();
@@ -102,7 +102,7 @@ public abstract class Element
   /**
    * @return The Assembly from which this Element was instantiated
    */
-  public Assembly getAssembly()
+  public Assembly<?> getAssembly()
   { return assembly;
   }
   
@@ -110,7 +110,7 @@ public abstract class Element
    * Specify the Assembly from which this Element was instantiated. Used
    *   internally only.
    */
-  public void setAssembly(Assembly assembly)
+  public void setAssembly(Assembly<?> assembly)
   { this.assembly=assembly;
   }
   

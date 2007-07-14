@@ -38,7 +38,7 @@ public class TglCompilationUnit
   { this.sourceURI=sourceURI;
   }
   
-  public Element bind(Focus focus)
+  public Element bind(Focus<?> focus)
     throws BindException
   {
     RootElement element=new RootElement();
@@ -59,9 +59,9 @@ public class TglCompilationUnit
   class RootElement
     extends Element
   {
-    private Focus _focus;
+    private Focus<?> _focus;
     
-    public void setFocus(Focus focus)
+    public void setFocus(Focus<?> focus)
     { _focus=focus;
     }
     
@@ -69,7 +69,7 @@ public class TglCompilationUnit
     { return sourceURI;
     }
     
-    public Focus getFocus()
+    public Focus<?> getFocus()
     { 
       if (_focus!=null)
       { return _focus;
