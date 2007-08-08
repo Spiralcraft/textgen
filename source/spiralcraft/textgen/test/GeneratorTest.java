@@ -15,9 +15,11 @@
 package spiralcraft.textgen.test;
 
 
-import spiralcraft.textgen.Generator;
-import spiralcraft.textgen.GenerationContext;
 import spiralcraft.textgen.Element;
+import spiralcraft.textgen.RenderingContext;
+
+import spiralcraft.textgen.compiler.TglCompiler;
+import spiralcraft.textgen.compiler.DocletUnit;
 
 import spiralcraft.lang.BeanFocus;
 
@@ -41,12 +43,12 @@ public class GeneratorTest
   {
 
     URI uri=URI.create("java:/spiralcraft/textgen/test/generatorTest.tgl");
-      Generator generator
-        =new Generator
-          (uri);
+    DocletUnit root
+      =new TglCompiler().compile(uri);
+    
 
     Element element
-      =generator.bind
+      =root.bind
         (new BeanFocus
           (new XmlAssembly
               (URI.create("java:/spiralcraft/builder/test/MyWidget.assy"),null)
@@ -55,7 +57,7 @@ public class GeneratorTest
         );
 
     Writer writer=new OutputStreamWriter(System.out);
-    GenerationContext context=generator.createGenerationContext(writer);
+    RenderingContext context=new RenderingContext(writer);
     element.write(context);
     writer.flush();
 

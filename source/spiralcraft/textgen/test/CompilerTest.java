@@ -14,8 +14,8 @@
 //
 package spiralcraft.textgen.test;
 
-
-import spiralcraft.textgen.Generator;
+import spiralcraft.textgen.compiler.TglCompiler;
+import spiralcraft.textgen.compiler.DocletUnit;
 
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BeanFocus;
@@ -37,10 +37,10 @@ public class CompilerTest
     throws Exception
   {
     URI uri=URI.create("java:/spiralcraft/textgen/test/generatorTest.tgl");
-    Generator generator
-      =new Generator
-        (uri);
-    generator.debug(new PrintWriter(new OutputStreamWriter(System.out)));
+    TglCompiler compiler
+      =new TglCompiler();
+    DocletUnit root=compiler.compile(uri);
+    root.dumpTree(new PrintWriter(new OutputStreamWriter(System.out)),"| ");
 
     Clock clock=Clock.instance();
     long time=System.currentTimeMillis();
@@ -50,8 +50,8 @@ public class CompilerTest
     Focus focus=new BeanFocus(new CompilerTest());
     while (true)
     { 
-      generator=new Generator(uri);
-      generator.bind(focus);
+      DocletUnit unit=compiler.compile(uri);
+      unit.bind(focus);
       iterations++;
       if (clock.approxTimeMillis()-time>duration)
       { break;

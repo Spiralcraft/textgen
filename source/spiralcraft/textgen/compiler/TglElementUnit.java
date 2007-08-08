@@ -15,12 +15,6 @@
 package spiralcraft.textgen.compiler;
 
 
-
-import spiralcraft.builder.AssemblyClass;
-import spiralcraft.builder.Assembly;
-import spiralcraft.builder.PropertySpecifier;
-import spiralcraft.builder.BuildException;
-
 import spiralcraft.lang.Expression;
 
 import spiralcraft.lang.BindException;
@@ -37,7 +31,7 @@ import java.io.IOException;
 import java.util.List;
 
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.GenerationContext;
+import spiralcraft.textgen.RenderingContext;
 
 import spiralcraft.text.markup.MarkupException;
 
@@ -54,20 +48,25 @@ public class TglElementUnit
   private static final URI _DEFAULT_ELEMENT_PACKAGE
     =URI.create("java:/spiralcraft/textgen/elements/");
   
+  private final TglCompiler compiler;
   private final CharSequence code;
   private boolean open=true;
-  private AssemblyClass assemblyClass;
+  private ElementFactory elementFactory;
   private URI elementPackage;
   private String elementName;
   private Attribute[] attributes;
   
   private Expression<?> expression;
-  private ParsePosition position;
   
-  public TglElementUnit(CharSequence code,ParsePosition position)
+  public TglElementUnit
+    (TglCompiler compiler
+    ,CharSequence code
+    ,ParsePosition position
+    )
     throws ParseException
   { 
-    this.position=position;
+    this.compiler=compiler;
+    setPosition(position);
     open=!(code.charAt(code.length()-1)=='/');
     if (!open)
     { code=code.subSequence(0,code.length()-1);
@@ -103,6 +102,7 @@ public class TglElementUnit
     }
     catch (spiralcraft.lang.ParseException x)
     { 
+      ParsePosition position=getPosition().clone();
       position.setContext(expressionText);
       throw new MarkupException(position,x);
     }
@@ -136,7 +136,7 @@ public class TglElementUnit
   
   private URI resolveNamespace(String namespaceId)
     throws MarkupException
-  { throw new MarkupException("Unknown namespace "+namespaceId,position);
+  { throw new MarkupException("Unknown namespace "+namespaceId,getPosition());
   }
   
   public boolean isOpen()
@@ -149,73 +149,35 @@ public class TglElementUnit
     open=false;
     if (expression==null)
     {
-      String elementClassName=elementName;
-      try
-      {
-        assemblyClass=new AssemblyClass
-          (null
-          ,elementPackage
-          ,elementClassName
-          ,null
-          ,null
-          );
-
-        if (attributes!=null)
-        { 
-          for (int i=0;i<attributes.length;i++)
-          { 
-            assemblyClass.addPropertySpecifier
-              (new PropertySpecifier
-                (assemblyClass
-                ,attributes[i].getName()
-                ,attributes[i].getValue()
-                )
-              );
-          }
-        }
-        assemblyClass.resolve();
-      }
-      catch (BuildException x)
-      { 
-        if  (x.getCause() instanceof ClassNotFoundException)
-        { 
-          throw new MarkupException
-            (elementPackage+elementClassName+" does not resolve to an" +
-             " Assembly or a Class"
-            ,position
-            );
-        }
-        else
-        { throw new MarkupException(position,x);
-        }
-      }
+      elementFactory=compiler.createElementFactory
+        (elementPackage,elementName,attributes,getPosition());
     }
   }
 
   public Element bind(Element parentElement)
-    throws BindException
+    throws MarkupException
   { 
     if (expression!=null)
     { 
       Element element=new ExpressionElement();
-      element.bind(parentElement,children);
+      try
+      { element.bind(parentElement,children);
+      }
+      catch (BindException x)
+      { throw new MarkupException(x.toString(),getPosition(),x);
+      }
       return element;
     }
     else
     {
+      Element element=elementFactory.createElement(parentElement);
       try
-      {
-        Assembly<?> parentAssembly=parentElement.getAssembly();
-        Assembly<?> assembly=assemblyClass.newInstance(parentAssembly);
-        Element element=(Element) assembly.getSubject().get();
-        element.setAssembly(assembly);
-      
-        element.bind(parentElement,children);
-        return element;
+      { element.bind(parentElement,children);
       }
-      catch (BuildException x)
-      { throw new BindException("Error instantiating Element: "+x,x);
+      catch (BindException x)
+      { throw new MarkupException(x.toString(),getPosition(),x);
       }
+      return element;
     }
   }
 
@@ -227,13 +189,24 @@ public class TglElementUnit
     
     @SuppressWarnings("unchecked") // Heterogeneous use of lang package
     public void bind(Element parent,List<TglUnit> children)
-      throws BindException
+      throws BindException,MarkupException
     { 
       super.bind(parent,children);
-      _source=getFocus().bind(expression);
+      try
+      {
+        _source=getFocus().bind(expression);
+      }
+      catch (BindException x)
+      { 
+        throw new MarkupException
+          ("Error binding '"+expression+"': "+x.toString()
+          ,getPosition()
+          ,x
+          );
+      }
     }
     
-    public void write(GenerationContext context)
+    public void write(RenderingContext context)
       throws IOException
     { 
       Object value=_source.get();

@@ -15,11 +15,12 @@
 package spiralcraft.textgen.compiler;
 
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.GenerationContext;
+import spiralcraft.textgen.RenderingContext;
 
+import spiralcraft.text.markup.MarkupException;
 
-import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
+import spiralcraft.lang.BindException;
 
 import java.io.IOException;
 
@@ -28,31 +29,45 @@ import java.net.URI;
 
 /**
  * A compilation unit (ie. a file or other container) of tgl markup.
+ * 
+ * XXX The name "Doclet" needs to be refer to this organizational unit
  */
-public class TglCompilationUnit
+public class DocletUnit
   extends TglUnit
 {
-  private final URI sourceURI;
+  protected final URI sourceURI;
   
-  public TglCompilationUnit(URI sourceURI)
+  public DocletUnit(URI sourceURI)
   { this.sourceURI=sourceURI;
   }
   
   public Element bind(Focus<?> focus)
-    throws BindException
+    throws MarkupException
   {
     RootElement element=new RootElement();
     element.setFocus(focus);
-    element.bind(null,children);
+    
+    try
+    { element.bind(null,children);
+    }
+    catch (BindException x)
+    { throw new MarkupException(x.toString(),getPosition());
+    }
     return element;
     
   }
   
   public Element bind(Element parentElement)
-    throws BindException
+    throws MarkupException
   { 
     Element element=new RootElement();
-    element.bind(parentElement,children);
+    try
+    { element.bind(parentElement,children);
+    }
+    catch (BindException x)
+    { throw new MarkupException(x.toString(),getPosition());
+    }
+    
     return element;
   }
   
@@ -77,7 +92,7 @@ public class TglCompilationUnit
       return super.getFocus();
     }
     
-    public void write(GenerationContext context)
+    public void write(RenderingContext context)
       throws IOException
     { writeChildren(context);
     }

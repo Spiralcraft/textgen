@@ -20,9 +20,11 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.Channel;
 
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.GenerationContext;
+import spiralcraft.textgen.RenderingContext;
 
 import spiralcraft.textgen.compiler.TglUnit;
+
+import spiralcraft.text.markup.MarkupException;
 
 import java.io.IOException;
 
@@ -41,7 +43,7 @@ public class If
 
   @SuppressWarnings("unchecked") // Not using generic versions
   public void bind(Element parent,List<TglUnit> childUnits)
-    throws BindException
+    throws BindException,MarkupException
   { 
     Focus<?> parentFocus=parent.getFocus();
     
@@ -59,7 +61,7 @@ public class If
     bindChildren(childUnits);
   }
   
-  public void write(GenerationContext context)
+  public void write(RenderingContext context)
     throws IOException
   { 
     if (target.get())

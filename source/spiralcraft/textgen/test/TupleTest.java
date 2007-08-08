@@ -15,9 +15,11 @@
 package spiralcraft.textgen.test;
 
 
-import spiralcraft.textgen.GenerationContext;
-import spiralcraft.textgen.Generator;
+import spiralcraft.textgen.RenderingContext;
 import spiralcraft.textgen.Element;
+
+import spiralcraft.textgen.compiler.TglCompiler;
+import spiralcraft.textgen.compiler.DocletUnit;
 
 import spiralcraft.data.sax.DataReader;
 
@@ -67,11 +69,11 @@ public class TupleTest
     TupleFocus<Tuple> focus=new TupleFocus<Tuple>(tuple.getType().getScheme());
     focus.setTuple(tuple);
 
-    Generator generator=new Generator(uri);    
-    Element element=generator.bind(focus);
+    DocletUnit unit=new TglCompiler().compile(uri);    
+    Element element=unit.bind(focus);
 
     Writer writer=new OutputStreamWriter(System.out);
-    GenerationContext context=generator.createGenerationContext(writer);
+    RenderingContext context=new RenderingContext(writer);
     element.write(context);
     writer.flush();
     
@@ -101,11 +103,11 @@ public class TupleTest
       =new SimpleFocus<Aggregate>(binding);
 
 
-    Generator generator=new Generator(uri);    
-    Element element=generator.bind(focus);
+    DocletUnit unit=new TglCompiler().compile(uri);    
+    Element element=unit.bind(focus);
 
     Writer writer=new OutputStreamWriter(System.out);
-    GenerationContext context=generator.createGenerationContext(writer);
+    RenderingContext context=new RenderingContext(writer);
     element.write(context);
     writer.flush();
 

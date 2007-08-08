@@ -13,8 +13,9 @@ import spiralcraft.vfs.Translator;
 import spiralcraft.vfs.AbstractResource;
 
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.Generator;
-import spiralcraft.textgen.GenerationContext;
+import spiralcraft.textgen.compiler.TglCompiler;
+import spiralcraft.textgen.compiler.DocletUnit;
+import spiralcraft.textgen.RenderingContext;
 
 import spiralcraft.text.ParseException;
 import spiralcraft.text.markup.MarkupException;
@@ -36,7 +37,7 @@ public class MetaTranslator
     implements Translator
 {
   private URI templateURI;
-  private Generator generator;
+  private DocletUnit tglUnit;
   private Resource templateResource;
   private long templateLastUpdated;
 
@@ -61,7 +62,7 @@ public class MetaTranslator
   {
     long time=templateResource.getLastModified();
     
-    generator=new Generator(templateURI);
+    tglUnit=new TglCompiler().compile(templateURI);
     templateLastUpdated=time;
 
   }
@@ -76,7 +77,7 @@ public class MetaTranslator
     catch (BindException x)
     { 
       throw new IllegalArgumentException
-        ("Error binding template "+generator.getSourceURI()
+        ("Error binding template "+templateURI
         +" to "+resource.toString()
         +": "+x
         );
@@ -84,7 +85,7 @@ public class MetaTranslator
     catch (ParseException x)
     { 
       throw new IllegalArgumentException
-        ("Error parsing template "+generator.getSourceURI()
+        ("Error parsing template "+templateURI
         +" to "+resource.toString()
         +": "+x
         );
@@ -121,7 +122,7 @@ public class MetaTranslator
     
     private void bind()
       throws BindException,MarkupException
-    { element=generator.bind(focus);
+    { element=tglUnit.bind(focus);
     }
     
     private synchronized void checkLastModified()
@@ -147,7 +148,7 @@ public class MetaTranslator
       catch (ParseException x)
       { 
         throw new IOException
-          ("Error parsing template "+generator.getSourceURI()
+          ("Error parsing template "+templateURI
           +" to "+resource.toString()
           +": "+x
           );
@@ -171,7 +172,7 @@ public class MetaTranslator
       
       ByteArrayOutputStream out = new ByteArrayOutputStream();
       OutputStreamWriter writer=new OutputStreamWriter(out);
-      GenerationContext context=generator.createGenerationContext(writer);
+      RenderingContext context=new RenderingContext(writer);
       element.write(context);
       writer.flush();
       out.close();

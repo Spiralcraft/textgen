@@ -25,6 +25,7 @@ import java.util.List;
 
 import spiralcraft.textgen.compiler.TglUnit;
 
+import spiralcraft.text.markup.MarkupException;
 
 import java.net.URI;
 
@@ -53,8 +54,8 @@ import java.net.URI;
  * 
  * <P>Elements are created by first instantiating them and applying the bean
  *   properties specified in their TGL declarations. The Element is then bound
- *   to its already bound parent Element, where it is able to bind any
- *   expressions to the Focus provided by its parent element. 
+ *   to its already bound parent Element, where it is able to resolve any
+ *   expressions by binding them to the Focus provided by its parent element. 
  */
 public abstract class Element
 { 
@@ -120,7 +121,7 @@ public abstract class Element
    *   behavior is to bind all the childUnits.
    */
   public void bind(Element parent,List<TglUnit> childUnits)
-    throws BindException
+    throws BindException,MarkupException
   { 
     this.parent=parent;
     bindChildren(childUnits);
@@ -129,7 +130,7 @@ public abstract class Element
   protected void bindChildren
     (List<TglUnit> childUnits
     )
-    throws BindException
+    throws MarkupException
   {
     if (childUnits!=null)
     { 
@@ -141,7 +142,7 @@ public abstract class Element
     }
   }
 
-  protected void writeChildren(GenerationContext context)
+  protected void writeChildren(RenderingContext context)
     throws IOException
   {
     if (children!=null)
@@ -155,6 +156,6 @@ public abstract class Element
   /**
    * Recursively perform processing and write output
    */
-  public abstract void write(GenerationContext context)
+  public abstract void write(RenderingContext context)
     throws IOException;
 }

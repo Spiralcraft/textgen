@@ -26,10 +26,11 @@ import spiralcraft.lang.spi.ThreadLocalBinding;
 import spiralcraft.lang.spi.BeanReflector;
 
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.GenerationContext;
+import spiralcraft.textgen.RenderingContext;
 
 import spiralcraft.textgen.compiler.TglUnit;
 
+import spiralcraft.text.markup.MarkupException;
 
 import java.io.IOException;
 import java.util.List;
@@ -59,7 +60,7 @@ public class Iterate
 
   @SuppressWarnings("unchecked") // Not using generic versions
   public void bind(Element parent,List<TglUnit> childUnits)
-    throws BindException
+    throws BindException,MarkupException
   { 
     Focus<?> parentFocus=parent.getFocus();
     Channel<?> target=null;
@@ -84,13 +85,14 @@ public class Iterate
         (BeanReflector.<IterationContext>getInstance(IterationContext.class)
         );
     
-    focus=new SimpleFocus
+    SimpleFocus simpleFocus=new SimpleFocus
       (decorator.createComponentBinding(iterationContextBinding));
-    
+    simpleFocus.setParentFocus(parentFocus);
+    focus=simpleFocus;
     bindChildren(childUnits);
   }
   
-  public void write(GenerationContext genContext)
+  public void write(final RenderingContext genContext)
     throws IOException
   { 
     IterationContext context = decorator.iterator();

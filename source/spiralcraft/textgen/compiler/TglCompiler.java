@@ -16,25 +16,38 @@ package spiralcraft.textgen.compiler;
 
 import spiralcraft.text.Trimmer;
 
+import spiralcraft.xml.Attribute;
+
+import spiralcraft.text.io.ResourceCharSequence;
 import spiralcraft.text.markup.MarkupCompiler;
 import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.text.ParseException;
+import spiralcraft.text.ParsePosition;
 
+import java.net.URI;
+
+import java.io.IOException;
 
 /**
  * <P>Compiles a CharSequence containing Text Generation Markup Language
  *   into a tree of Units that can later be bound to an application
  *   context.
+ * </P>
  * 
  * <P>Each unit in the tree is either a TglContentUnit, which contains literal
  *   text, or a TglElementUnit, which represents a functionality specified by 
  *   a markup element.
+ * </P>
  *   
  * <P>The MarkupCompiler superclass provides the basic mechanism to parse 
  *   an abstract template-style markup language. The TglCompiler further
  *   specifies this mechanism by introducing specific standard delimiters
  *   (&lt;% %&gt;) as well as the concept of open and closed tags.
+ * </P>
+ * 
+ * <P>This TglCompiler is not thread-safe
+ * </P>
  */
 public class TglCompiler
   extends MarkupCompiler<TglUnit>
@@ -46,10 +59,39 @@ public class TglCompiler
   { 
     super("<%","%>");
   }
+  
+  public DocletUnit compile(URI sourceURI)
+    throws ParseException,IOException
+  {
+    CharSequence sequence = new ResourceCharSequence(sourceURI);
+    DocletUnit root=new DocletUnit(sourceURI);
 
+    ParsePosition position=new ParsePosition();
+    position.setIndex(0);
+    root.setPosition(position);
+    compile(root,sequence);
+    return root;
+  }
+  
+  public ElementFactory createElementFactory
+    (URI namespaceUri
+    ,String elementName
+    ,Attribute[] attributes
+    ,ParsePosition parsePosition
+    )
+    throws MarkupException
+  {
+    return new AssemblyElementFactory
+      (namespaceUri,elementName,attributes,parsePosition);
+    
+    
+  }
   
   public void handleContent(CharSequence content)
-  { pushUnit(new TglContentUnit(content));
+  { 
+    TglContentUnit unit=new TglContentUnit(content);
+    unit.setPosition(position);
+    pushUnit(unit);
   }
   
   public void handleMarkup(CharSequence code)
@@ -83,7 +125,8 @@ public class TglCompiler
     }
     else
     {
-      TglElementUnit tglElementUnit=new TglElementUnit(code,position);
+      TglElementUnit tglElementUnit
+        =new TglElementUnit(this,code,position);
       pushUnit(tglElementUnit);
     }
   }

@@ -22,16 +22,16 @@ import java.io.Writer;
  * 
  * @author mike
  */
-public class GenerationContext
+public class RenderingContext
 {
-  private final GenerationContext parent;
+  private final RenderingContext parent;
   private Writer writer;
   
   /**
    * Create a GenerationContext that does not refer to any ancestors, and sends
    *   output to the specified Writer.
    */
-  public GenerationContext(Writer writer)
+  public RenderingContext(Writer writer)
   { 
     this.parent=null;
     this.writer=writer;
@@ -43,7 +43,7 @@ public class GenerationContext
    * 
    * @param parent The parent GenerationContext
    */
-  public GenerationContext(GenerationContext parent)
+  public RenderingContext(RenderingContext parent)
   { 
     this.parent=parent;
     this.writer=this.parent.getWriter();
