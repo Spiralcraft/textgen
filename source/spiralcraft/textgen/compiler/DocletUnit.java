@@ -26,6 +26,9 @@ import java.io.IOException;
 
 import java.net.URI;
 
+import spiralcraft.vfs.Resource;
+
+import java.util.ArrayList;
 
 /**
  * A compilation unit (ie. a file or other container) of tgl markup.
@@ -35,10 +38,49 @@ import java.net.URI;
 public class DocletUnit
   extends TglUnit
 {
-  protected final URI sourceURI;
+  protected final Resource resource;
+  private final ArrayList<DocletUnit> subDocs
+    =new ArrayList<DocletUnit>();
   
-  public DocletUnit(URI sourceURI)
-  { this.sourceURI=sourceURI;
+  public DocletUnit(TglUnit parent,Resource resource)
+  { 
+    super(parent);
+    this.resource=resource;
+
+    if (parent!=null)
+    {
+      DocletUnit parentDoc=parent.findUnit(DocletUnit.class);
+      if (parentDoc!=null)
+      { parentDoc.registerSubDoclet(this);
+      }
+    }
+    
+  }
+  
+  public String getName()
+  { return "doclet";
+  }
+  
+  public URI getSourceURI()
+  { return resource.getURI();
+  }
+  
+  void registerSubDoclet(DocletUnit subDoc)
+  { subDocs.add(subDoc);
+  }
+  
+  /**
+   * @return The modification time of the most recently modified resource
+   *   in the tree.
+   */
+  public long getLastModified()
+    throws IOException
+  { 
+    long time=resource.getLastModified();
+    for (DocletUnit subDoc:subDocs)
+    { time=Math.max(time,subDoc.getLastModified());
+    }
+    return time;
   }
   
   public Element bind(Focus<?> focus)
@@ -81,7 +123,7 @@ public class DocletUnit
     }
     
     public URI getContextURI()
-    { return sourceURI;
+    { return resource.getURI();
     }
     
     public Focus<?> getFocus()

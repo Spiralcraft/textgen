@@ -17,6 +17,8 @@ package spiralcraft.textgen.compiler;
 import spiralcraft.text.Trimmer;
 
 import spiralcraft.xml.Attribute;
+import spiralcraft.xml.ParserContext;
+import spiralcraft.xml.TagReader;
 
 import spiralcraft.text.io.ResourceCharSequence;
 import spiralcraft.text.markup.MarkupCompiler;
@@ -24,6 +26,9 @@ import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.text.ParseException;
 import spiralcraft.text.ParsePosition;
+
+import spiralcraft.vfs.Resource;
+import spiralcraft.vfs.Resolver;
 
 import java.net.URI;
 
@@ -59,18 +64,50 @@ public class TglCompiler
   { 
     super("<%","%>");
   }
-  
+
+  /**
+   * Compile a resource
+   * 
+   * @param sourceURI
+   * @return
+   * @throws ParseException
+   * @throws IOException
+   */
   public DocletUnit compile(URI sourceURI)
     throws ParseException,IOException
   {
+    Resource resource=Resolver.getInstance().resolve(sourceURI);
     CharSequence sequence = new ResourceCharSequence(sourceURI);
-    DocletUnit root=new DocletUnit(sourceURI);
 
-    ParsePosition position=new ParsePosition();
-    position.setIndex(0);
-    root.setPosition(position);
+    DocletUnit root=createDocletUnit(null,resource);
+
     compile(root,sequence);
     return root;
+  }
+  
+  /**
+   * Compile a nested resource
+   * 
+   * @param sourceURI
+   * @return
+   * @throws ParseException
+   * @throws IOException
+   */
+  public DocletUnit subCompile(TglUnit parent,URI sourceURI)
+    throws ParseException,IOException
+  { 
+    Resource resource=Resolver.getInstance().resolve(sourceURI);
+    CharSequence sequence = new ResourceCharSequence(sourceURI);
+
+    DocletUnit root=createDocletUnit(parent,resource);
+    // Launch new compiler for subcompile
+    new TglCompiler().compile(root,sequence);
+    return root;
+    
+  }
+  
+  protected DocletUnit createDocletUnit(TglUnit parent,Resource resource)
+  { return new DocletUnit(parent,resource);
   }
   
   public ElementFactory createElementFactory
@@ -89,7 +126,7 @@ public class TglCompiler
   
   public void handleContent(CharSequence content)
   { 
-    TglContentUnit unit=new TglContentUnit(content);
+    ContentUnit unit=new ContentUnit(getUnit(),content);
     unit.setPosition(position);
     pushUnit(unit);
   }
@@ -123,11 +160,60 @@ public class TglCompiler
         }
       }
     }
+    else if (code.charAt(0)=='@')
+    { pushUnit(parseProcessingUnit(code));
+    }
     else
     {
-      TglElementUnit tglElementUnit
-        =new TglElementUnit(this,code,position);
+      ElementUnit tglElementUnit
+        =new ElementUnit(getUnit(),this,code,position);
       pushUnit(tglElementUnit);
     }
   }
+  
+  protected TglUnit parseProcessingUnit(CharSequence code)
+    throws ParseException,MarkupException
+  {
+    ParserContext context=new ParserContext(code.toString().substring(1));
+    TagReader tagReader=new TagReader();
+    tagReader.readTag(context);
+    
+    String name=tagReader.getTagName();
+    Attribute[] attributes=tagReader.getAttributes();
+
+    TglUnit processingUnit=resolveProcessingUnit(name,attributes);
+    if (processingUnit==null)
+    { throw new MarkupException("Unknown processing unit '"+name+"'",position);
+    }
+    if (tagReader.isClosed())
+    { processingUnit.close();
+    }
+    else if (!processingUnit.allowsChildren())
+    { 
+      throw new MarkupException
+        (processingUnit.getName()
+        +" does not accept content- close tag with '/' "
+        ,position
+        );
+    }
+    return processingUnit;
+  }
+  
+  protected TglUnit resolveProcessingUnit(String name,Attribute[] attributes)
+    throws MarkupException
+  {
+    if (name.equals("include"))
+    { return new IncludeUnit(getUnit(),this,attributes);
+    }
+    else if (name.equals("namespace"))
+    { return new NamespaceUnit(getUnit(),this,attributes);
+    }
+    else if (name.equals("comment"))
+    { return new CommentUnit(getUnit(),this,attributes);
+    }
+    else
+    { return null;
+    }
+  }
+
 }

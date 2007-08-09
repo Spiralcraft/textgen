@@ -17,9 +17,12 @@ package spiralcraft.textgen.compiler;
 import java.io.PrintWriter;
 
 import spiralcraft.textgen.Element;
+import spiralcraft.textgen.RenderingContext;
 
 import spiralcraft.text.markup.Unit;
 import spiralcraft.text.markup.MarkupException;
+
+import java.io.IOException;
 
 /**
  * A Unit of text generation which represents a
@@ -29,6 +32,16 @@ public abstract class TglUnit
   extends Unit<TglUnit>
 {
   
+  protected boolean allowsChildren=true;
+  
+  public TglUnit(TglUnit parent)
+  { super(parent);
+  }
+  
+  public boolean allowsChildren()
+  { return allowsChildren;
+  }
+    
   /**
    * <P>Create a tree of Elements bound into an application context
    *   (the Assembly) which implements the functional behavior 
@@ -45,4 +58,18 @@ public abstract class TglUnit
     }
   }  
   
+  protected Element defaultBind(Element parentElement)
+  { return new DefaultElement();
+  }
+  
+  
+}
+
+class DefaultElement
+  extends Element
+{
+  public void write(RenderingContext context)
+    throws IOException
+  { writeChildren(context);
+  }
 }

@@ -23,13 +23,16 @@ import spiralcraft.textgen.RenderingContext;
 /**
  * A Unit which contains literal text
  */
-public class TglContentUnit
+public class ContentUnit
   extends TglUnit
 {
   private final CharSequence content;
   
-  public TglContentUnit(CharSequence content)
-  { this.content=content;
+  public ContentUnit(TglUnit parent,CharSequence content)
+  { 
+    super(parent);
+    
+    this.content=content;
   }
   
   public Element bind(Element parentElement)

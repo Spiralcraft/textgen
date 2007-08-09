@@ -42,7 +42,7 @@ import spiralcraft.text.ParsePosition;
  * A Unit which represents an Element delimited by start and end tag(s) or
  *   signified by an empty tag
  */
-public class TglElementUnit
+public class ElementUnit
   extends TglUnit
 {
   private static final URI _DEFAULT_ELEMENT_PACKAGE
@@ -50,21 +50,23 @@ public class TglElementUnit
   
   private final TglCompiler compiler;
   private final CharSequence code;
-  private boolean open=true;
   private ElementFactory elementFactory;
   private URI elementPackage;
   private String elementName;
   private Attribute[] attributes;
+  private boolean open;
   
   private Expression<?> expression;
   
-  public TglElementUnit
-    (TglCompiler compiler
+  public ElementUnit
+    (TglUnit parent
+    ,TglCompiler compiler
     ,CharSequence code
     ,ParsePosition position
     )
     throws ParseException
   { 
+    super(parent);
     this.compiler=compiler;
     setPosition(position);
     open=!(code.charAt(code.length()-1)=='/');
@@ -136,13 +138,24 @@ public class TglElementUnit
   
   private URI resolveNamespace(String namespaceId)
     throws MarkupException
-  { throw new MarkupException("Unknown namespace "+namespaceId,getPosition());
+  { 
+    URI namespaceURI=null;
+    NamespaceUnit unit=this.findUnit(NamespaceUnit.class);
+    if (unit!=null)
+    { namespaceURI=unit.resolveNamespace(namespaceId);
+    }
+    if (namespaceURI==null)
+    { throw new MarkupException("Unknown namespace "+namespaceId,getPosition());
+    }
+    else
+    { return namespaceURI;
+    }
   }
   
   public boolean isOpen()
   { return open;
   }
-
+  
   public void close()
     throws MarkupException
   {
