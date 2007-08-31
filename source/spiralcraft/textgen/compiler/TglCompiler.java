@@ -16,9 +16,9 @@ package spiralcraft.textgen.compiler;
 
 import spiralcraft.text.Trimmer;
 
-import spiralcraft.xml.Attribute;
-import spiralcraft.xml.ParserContext;
-import spiralcraft.xml.TagReader;
+import spiralcraft.text.xml.Attribute;
+import spiralcraft.text.xml.ParserContext;
+import spiralcraft.text.xml.TagReader;
 
 import spiralcraft.text.io.ResourceCharSequence;
 import spiralcraft.text.markup.MarkupCompiler;
@@ -54,7 +54,7 @@ import java.io.IOException;
  * <P>This TglCompiler is not thread-safe
  * </P>
  */
-public class TglCompiler
+public class TglCompiler<T extends DocletUnit>
   extends MarkupCompiler<TglUnit>
 {
   
@@ -73,13 +73,13 @@ public class TglCompiler
    * @throws ParseException
    * @throws IOException
    */
-  public DocletUnit compile(URI sourceURI)
+  public T compile(URI sourceURI)
     throws ParseException,IOException
   {
     Resource resource=Resolver.getInstance().resolve(sourceURI);
     CharSequence sequence = new ResourceCharSequence(sourceURI);
 
-    DocletUnit root=createDocletUnit(null,resource);
+    T root=createDocletUnit(null,resource);
 
     compile(root,sequence);
     return root;
@@ -93,21 +93,26 @@ public class TglCompiler
    * @throws ParseException
    * @throws IOException
    */
-  public DocletUnit subCompile(TglUnit parent,URI sourceURI)
+  public T subCompile(TglUnit parent,URI sourceURI)
     throws ParseException,IOException
   { 
     Resource resource=Resolver.getInstance().resolve(sourceURI);
     CharSequence sequence = new ResourceCharSequence(sourceURI);
 
-    DocletUnit root=createDocletUnit(parent,resource);
+    T root=createDocletUnit(parent,resource);
     // Launch new compiler for subcompile
-    new TglCompiler().compile(root,sequence);
+    clone().compile(root,sequence);
     return root;
     
   }
   
-  protected DocletUnit createDocletUnit(TglUnit parent,Resource resource)
-  { return new DocletUnit(parent,resource);
+  protected TglCompiler<T> clone()
+  { return new TglCompiler<T>();
+  }
+  
+  @SuppressWarnings("unchecked") // Default behavior
+  protected T createDocletUnit(TglUnit parent,Resource resource)
+  { return (T) new DocletUnit(parent,resource);
   }
   
   public ElementFactory createElementFactory
@@ -167,6 +172,8 @@ public class TglCompiler
     {
       ElementUnit tglElementUnit
         =new ElementUnit(getUnit(),this,code,position);
+      System.err.println
+        ("TglCompiler: "+tglElementUnit.getName()+" open="+tglElementUnit.isOpen());
       pushUnit(tglElementUnit);
     }
   }

@@ -1,0 +1,130 @@
+//
+//Copyright (c) 1998,2007 Michael Toth
+//Spiralcraft Inc., All Rights Reserved
+//
+//This package is part of the Spiralcraft project and is licensed under
+//a multiple-license framework.
+//
+//You may not use this file except in compliance with the terms found in the
+//SPIRALCRAFT-LICENSE.txt file at the top of this distribution, or available
+//at http://www.spiralcraft.org/licensing/SPIRALCRAFT-LICENSE.txt.
+//
+//Unless otherwise agreed to in writing, this software is distributed on an
+//"AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+//
+package spiralcraft.textgen;
+
+/**
+ * <p>Represents the state of an Element in association with a specific 
+ *   context, such as a user or a particular source of data, for the purpose
+ *   of manipulating a document once the content has been generated.
+ * </p>
+ *   
+ * <h3>Elements and State</h3>
+ * 
+ * <p>The tree of Elements that make up a textgen document comprises the
+ *   document structure. A tree of ElementStates, in conjunction with
+ *   the data bindings associated with the Elements, provide the content
+ *   of the document. 
+ * </p>
+ *   
+ * <p>In the simple case, an Element may be rendered in a stateless fashion. 
+ *   The Element may be rendering multiple documents simultanously that
+ *   reference different data, using different threads. Because the Element
+ *   is stateless, no extra memory is consumed as additional threads
+ *   simultaneously render the document.
+ * </p>
+ * 
+ * <p>In some cases, it is desirable for an Element to keep track of some
+ *   stateful information so that this information can be manipulated or
+ *   processed before the document is generated, or so the document can be
+ *   generated multiple times with minor changes without repeating expensive
+ *   computations. For example, this functionality is broadly applicable to
+ *   data entry mechanisms which use text-based output such as web based forms
+ *   or character based user interfaces. The ElementState class provides a 
+ *   container for this state that is managed by the EventContext that Elements
+ *   access through a variety of methods.
+ * </p>
+ *   
+ * <p>In many cases, a single Element is rendered multiple times within a
+ *   document in the context of an iteration of some sort. For each element 
+ *   in the iteration, a rendering takes place that outputs different data.
+ *   In this case, for each rendering, a different ElementState object and
+ *   resulting subtree may be created. This is necessary in order to provide
+ *   proper context when an event is directed at one of the many
+ *   items in an iteration- for example, the manipulation of a 'detail' line
+ *   item in a document. 
+ * </p>
+ *   
+ * <h3>Data structure</h3>
+ * 
+ * <p>ElementState objects are organized into a tree structure.
+ *   An ElementState is always associated with an instance of an Element,
+ *   and is normally referenced by the parent Element's ElementState using a
+ *   simple array that parallels the parent Element's child list.
+ * </p>
+ * 
+ * <p>An Element retrieves its ElementState from the EventContext, which tracks
+ *   progress through the Element tree and maintains a reference to the 
+ *   ElementState that corresponds to the current in-process Element.
+ * </p>
+ * 
+ * <p>When an Element is contained in some form of Iteration, the element that
+ *   does the Iteration will store an intermediate ElementState subtree for
+ *   each unit of the Iteration.
+ * </p>
+ * 
+ * @author mike
+ *
+ */
+public class ElementState<T>
+{
+
+  private ElementState<?> parent;
+  private final ElementState<?>[] children;
+  private T value;
+    
+  public ElementState(int numChildren)
+  { 
+    System.err.println("ElementState: new "+toString());
+    this.children=new ElementState[numChildren];
+  }
+  
+  void setParent(ElementState<?> parent)
+  { this.parent=parent;
+  }
+  
+  public ElementState<?> getParent()
+  { return parent;
+  }
+  
+  public ElementState<?> getChild(int index)
+  { 
+    if (children==null)
+    { throw new IndexOutOfBoundsException("This ElementState has no children");
+    }
+    else
+    { return children[index];
+    }
+  }
+  
+  
+  public void setChild(int index,ElementState<?> child)
+  { 
+    children[index]=child;
+    if (child!=null)
+    { child.setParent(this);
+    }
+  }
+  
+  public T getValue()
+  { return value;
+  }
+  
+  public void setValue(T value)
+  { this.value=value;
+  }
+  
+}
+
+

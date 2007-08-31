@@ -22,19 +22,22 @@ import java.io.Writer;
  * 
  * @author mike
  */
-public class RenderingContext
+public class EventContext
 {
-  private final RenderingContext parent;
+  private final EventContext parent;
   private Writer writer;
+  private ElementState<?> elementState;
+  private final boolean stateful;
   
   /**
    * Create a GenerationContext that does not refer to any ancestors, and sends
    *   output to the specified Writer.
    */
-  public RenderingContext(Writer writer)
+  public EventContext(Writer writer,boolean stateful)
   { 
     this.parent=null;
     this.writer=writer;
+    this.stateful=stateful;
   }
   
   /**
@@ -43,19 +46,56 @@ public class RenderingContext
    * 
    * @param parent The parent GenerationContext
    */
-  public RenderingContext(RenderingContext parent)
+  public EventContext(EventContext parent)
   { 
     this.parent=parent;
     this.writer=this.parent.getWriter();
+    this.stateful=parent.isStateful();
   }
   
+  /** 
+   * @return The Writer to which output will be rendered
+   */
   public Writer getWriter()
   { return writer;
   }
   
+  /** 
+   * Provide the Writer to which output will be rendered
+   */
   public void setWriter(Writer writer)
   { this.writer=writer;
   }
   
+  /**
+   * 
+   * @return The state of the current Element, set by this Element's parent
+   *   via setState()
+   */
+  public ElementState<?> getState()
+  { return elementState;
+  }
+
+  /**
+   * Provide the ElementState associated with a child element, immediately
+   *   before that childElement is rendered or messaged.
+   * 
+   * @param state
+   */
+  public void setState(ElementState<?> state)
+  { elementState=state;
+  }
+  
+  /**
+   * <p>A stateful rendering or messaging allows for direct
+   *   manipulation of document content, but costs memory and CPU.
+   * </p>
+   * 
+   * @return Whether ElementStates should be created and maintained for
+   *   components.
+   */
+  public boolean isStateful()
+  { return stateful;
+  }
   
 }

@@ -20,9 +20,9 @@ import spiralcraft.lang.Expression;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 
-import spiralcraft.xml.Attribute;
-import spiralcraft.xml.ParserContext;
-import spiralcraft.xml.TagReader;
+import spiralcraft.text.xml.Attribute;
+import spiralcraft.text.xml.ParserContext;
+import spiralcraft.text.xml.TagReader;
 
 import java.net.URI;
 
@@ -31,7 +31,8 @@ import java.io.IOException;
 import java.util.List;
 
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.RenderingContext;
+import spiralcraft.textgen.EventContext;
+
 
 import spiralcraft.text.markup.MarkupException;
 
@@ -48,7 +49,7 @@ public class ElementUnit
   private static final URI _DEFAULT_ELEMENT_PACKAGE
     =URI.create("java:/spiralcraft/textgen/elements/");
   
-  private final TglCompiler compiler;
+  private final TglCompiler<?> compiler;
   private final CharSequence code;
   private ElementFactory elementFactory;
   private URI elementPackage;
@@ -60,7 +61,7 @@ public class ElementUnit
   
   public ElementUnit
     (TglUnit parent
-    ,TglCompiler compiler
+    ,TglCompiler<?> compiler
     ,CharSequence code
     ,ParsePosition position
     )
@@ -69,11 +70,13 @@ public class ElementUnit
     super(parent);
     this.compiler=compiler;
     setPosition(position);
+    
+    /*
     open=!(code.charAt(code.length()-1)=='/');
     if (!open)
     { code=code.subSequence(0,code.length()-1);
     }
-
+    */
     
     this.code=code;
     
@@ -92,11 +95,19 @@ public class ElementUnit
     throws MarkupException
   { 
     CharSequence expressionText;
+    if (code.charAt(code.length()-1)!='/')
+    { 
+      throw new MarkupException
+        ("Expression tag must be empty (close with '/>')"
+        ,getPosition().clone()
+        );
+    }
+    
     if (code.charAt(1)=='=')
-    { expressionText=code.subSequence(2,code.length());
+    { expressionText=code.subSequence(2,code.length()-1);
     }
     else
-    { expressionText=code.subSequence(1,code.length());
+    { expressionText=code.subSequence(1,code.length()-1);
     }
     
     try
@@ -108,6 +119,7 @@ public class ElementUnit
       position.setContext(expressionText);
       throw new MarkupException(position,x);
     }
+    open=false;
   }
   
   private void readStandardElement()
@@ -133,6 +145,7 @@ public class ElementUnit
       elementName=name;
     }
     attributes=tagReader.getAttributes();
+    open=!tagReader.isClosed();
 
   }
   
@@ -167,14 +180,15 @@ public class ElementUnit
     }
   }
 
-  public Element bind(Element parentElement)
+  public Element<?> bind(Element<?> parentElement)
     throws MarkupException
   { 
     if (expression!=null)
     { 
-      Element element=new ExpressionElement();
+      Element<?> element=new ExpressionElement();
+      element.setParent(parentElement);
       try
-      { element.bind(parentElement,children);
+      { element.bind(children);
       }
       catch (BindException x)
       { throw new MarkupException(x.toString(),getPosition(),x);
@@ -183,9 +197,9 @@ public class ElementUnit
     }
     else
     {
-      Element element=elementFactory.createElement(parentElement);
+      Element<?> element=elementFactory.createElement(parentElement);
       try
-      { element.bind(parentElement,children);
+      { element.bind(children);
       }
       catch (BindException x)
       { throw new MarkupException(x.toString(),getPosition(),x);
@@ -195,16 +209,17 @@ public class ElementUnit
   }
 
   class ExpressionElement
-    extends Element
+    extends Element<Void>
   { 
     
     private Channel<?> _source;
     
+    @Override
     @SuppressWarnings("unchecked") // Heterogeneous use of lang package
-    public void bind(Element parent,List<TglUnit> children)
+    public void bind(List<TglUnit> children)
       throws BindException,MarkupException
     { 
-      super.bind(parent,children);
+      super.bind(children);
       try
       {
         _source=getFocus().bind(expression);
@@ -219,7 +234,7 @@ public class ElementUnit
       }
     }
     
-    public void write(RenderingContext context)
+    public void render(EventContext context)
       throws IOException
     { 
       Object value=_source.get();

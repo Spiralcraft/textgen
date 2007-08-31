@@ -22,6 +22,7 @@ import spiralcraft.builder.Assembly;
 import java.io.IOException;
 
 import java.util.List;
+import java.util.LinkedList;
 
 import spiralcraft.textgen.compiler.TglUnit;
 
@@ -29,16 +30,18 @@ import spiralcraft.text.markup.MarkupException;
 
 import java.net.URI;
 
+import spiralcraft.util.ArrayUtil;
+
 /**
- * <P>A unit of output in a TGL document.
+ * <P>A compositional unit of a TGL document.
  * 
  * <P>An Element may contain other Elements and/or content, forming a tree of
  *   Elements which generate output.
  *   
- * <P>Elements are multi-threaded, and thus should not maintain execution
- *   state internally. An element must resolve its state within the write()
- *   method, and may use the GenerationContext object to make items available
- *   to sub-elements.
+ * <P>Elements are thread-safe, and thus must not maintain dynamic 
+ *   state internally. An element resolves its state within the render()
+ *   or message() methods, and uses the EventContext object to provide
+ *   a reference its state.
  *   
  * <P>The Elements associate with application specific runtime context via the
  *   Focus, which is provided to the root Element by the container. Elements may
@@ -57,12 +60,14 @@ import java.net.URI;
  *   to its already bound parent Element, where it is able to resolve any
  *   expressions by binding them to the Focus provided by its parent element. 
  */
-public abstract class Element
+public abstract class Element<T>
 { 
-  private Element[] children;
-  private Element parent;
+
+  private Element<?>[] children;
+  private Element<?> parent;
   private Assembly<?> assembly;
   private String id;
+  private int[] path;
 
   /**
    * Specify an id for this Element and make it visible to the expression
@@ -74,6 +79,26 @@ public abstract class Element
   
   public String getId()
   { return id;
+  }
+  
+  public int[] getPath()
+  { return path;
+  }
+  
+  public void setPath(int[] path)
+  { 
+    this.path=path;
+    System.err.println("Element.setPath(): "+ArrayUtil.format(path,"/",null));
+    if (children!=null)
+    {
+      for (int i=0;i<children.length;i++)
+      {
+        int[] childPath=new int[path.length+1];
+        System.arraycopy(path,0,childPath,0,path.length);
+        childPath[childPath.length-1]=i;
+        children[i].setPath(childPath);
+      }
+    }
   }
   
   /**
@@ -115,16 +140,36 @@ public abstract class Element
   { this.assembly=assembly;
   }
   
+  public boolean hasChildren()
+  { return children!=null && children.length>0;
+  }
+  
+  /**
+   * <p>Specify the Element that contains this Element. This is always called 
+   *   by the framework before bind() is called.
+   * </p>
+   */
+  public void setParent(Element<?> parent)
+    throws MarkupException
+  { 
+    if (this.parent!=null)
+    { throw new IllegalStateException("Parent already specified");
+    }
+    this.parent=parent;
+  }
+  
+  public Element<?> getParent()
+  { return parent;
+  }
+  
   /**
    * Called when binding Units. This method should call
    *   TglUnit.bind() on the child units at an appropriate time. The default
    *   behavior is to bind all the childUnits.
    */
-  public void bind(Element parent,List<TglUnit> childUnits)
+  public void bind(List<TglUnit> childUnits)
     throws BindException,MarkupException
-  { 
-    this.parent=parent;
-    bindChildren(childUnits);
+  { bindChildren(childUnits);
   }
 
   protected void bindChildren
@@ -142,20 +187,194 @@ public abstract class Element
     }
   }
 
-  protected void writeChildren(RenderingContext context)
-    throws IOException
+
+
+  /**
+   * <p>Recursively send a message to one or more components in the tree, to
+   *   provide an opportunity for them to update their state or any of their
+   *   bindings.
+   * </p>
+   * 
+   * <p>If a message is intended for a particular Element in the tree, the
+   *   first element of the path list will be the index of this element's
+   *   child to forward the message to. 
+   * </p>
+   * 
+   * <p>Message.isMulticast() determines whether the message is forwarded to
+   *   the entire subtree under the targeted element, as opposed to just 
+   *   the targeted element. 
+   * </p>
+   * 
+   * <p>The default behavior is to propagate the message to the appropriate
+   *  children. Subclasses which override this method should call 
+   *  this superclass method if an event should be propagated.
+   * </p>
+   * 
+   */
+  public void message
+    (EventContext context
+    ,Message message
+    ,LinkedList<Integer> path
+    )
   {
-    if (children!=null)
+    if (message.getType()==InitializeMessage.TYPE)
     { 
-      for (int i=0;i<children.length;i++)
-      { children[i].write(context);
+      if (context.getState()==null)
+      { context.setState(createState());
+      }
+    }
+    
+    if (path!=null && !path.isEmpty())
+    { messageChild(path.removeFirst(),context,message,path);
+    }
+    else if (message.isMulticast())
+    {
+      if (children!=null)
+      { 
+        for (int i=0;i<children.length;i++)
+        { messageChild(i,context,message,path);
+        }
       }
     }
   }
 
   /**
-   * Recursively perform processing and write output
+   * Call this method to message a child element.
+   * 
+   * @param context
+   * @param index
    */
-  public abstract void write(RenderingContext context)
+  protected final void messageChild
+    (int index
+    ,EventContext context
+    ,Message message
+    ,LinkedList<Integer> path
+    )
+  { 
+    if (context.isStateful())
+    {
+      ElementState<?> state=context.getState();
+      try
+      {
+        ElementState<?> childState=null;
+        if (state!=null)
+        { 
+          childState=state.getChild(index);
+          context.setState(childState);
+        }
+    
+        children[index].message(context,message,path);
+        if (context.getState()!=childState)
+        { state.setChild(index,context.getState());
+        }
+      }
+      finally
+      { context.setState(state);
+      }
+    }
+    else
+    { children[index].message(context,message,path);
+    }
+  }
+  
+
+  /**
+   * <p>Recursively perform processing and write output. The implementation
+   *   of this method should call renderChild() for each child tree that
+   *   should be rendered.
+   * </p>
+   * 
+   */
+  public abstract void render(EventContext context)
     throws IOException;
+  
+  /**
+   * Call this method to render a child element.
+   * 
+   * @param context
+   * @param index
+   * @throws IOException
+   */
+  protected void renderChild(EventContext context,int index)
+    throws IOException
+  { 
+    if (context.isStateful())
+    {
+      ElementState<?> state=context.getState();
+      try
+      {
+        ElementState<?> childState=null;
+        if (state!=null)
+        { 
+          childState=state.getChild(index);
+          context.setState(state.getChild(index));
+        }
+    
+        children[index].render(context);
+        if (context.getState()!=childState)
+        { state.setChild(index,childState);
+        }
+      }
+      finally
+      { context.setState(state);
+      }
+    }
+    else
+    { children[index].render(context);
+    }
+  }
+  
+  /**
+   * Convenience method to render all of this Element's children
+   * 
+   * @param context
+   * @throws IOException
+   */
+  protected void renderChildren(EventContext context)
+    throws IOException
+  {
+    if (children!=null)
+    { 
+      for (int i=0;i<children.length;i++)
+      { renderChild(context,i);
+      }
+    }
+  }
+
+  /**
+   * Create a new ElementState object for this Element. 
+   * 
+   * @param parentState
+   * @return An ElementState object for this Element which references the
+   *   parent's state.
+   */
+  public ElementState<T> createState()
+  { return new ElementState<T>(children!=null?children.length:0);
+  }
+  
+  /**
+   * Find an Element among this Element's ancestors/containers
+   * 
+   * @param <X>
+   * @param clazz
+   * @return The Element with the specific class, or null if none was found
+   */
+  @SuppressWarnings("unchecked") // Downcast from runtime check
+  public <X extends Element> X findElement(Class<X> clazz)
+  {
+    if (clazz.isAssignableFrom(getClass()))
+    { return (X) this;
+    }
+    else if (parent!=null)
+    { return parent.<X>findElement(clazz);
+    }
+    else
+    { return null;
+    }
+  }
+
+  public int getChildCount()
+  { return children.length;
+  }
+  
 }

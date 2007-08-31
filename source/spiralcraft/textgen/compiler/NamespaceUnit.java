@@ -17,7 +17,7 @@ package spiralcraft.textgen.compiler;
 
 import spiralcraft.textgen.Element;
 
-import spiralcraft.xml.Attribute;
+import spiralcraft.text.xml.Attribute;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -36,7 +36,11 @@ public class NamespaceUnit
   private HashMap<String,URI> map
     =new HashMap<String,URI>();
   
-  public NamespaceUnit(TglUnit parent,TglCompiler compiler,Attribute[] attribs)
+  public NamespaceUnit
+    (TglUnit parent
+    ,TglCompiler<?> compiler
+    ,Attribute[] attribs
+    )
     throws MarkupException
   { 
     super(parent);
@@ -64,7 +68,8 @@ public class NamespaceUnit
   { return map.get(namespaceId);
   }
   
-  public Element bind(Element parentElement)
+  public Element<?> bind(Element<?> parentElement)
+    throws MarkupException
   { return defaultBind(parentElement);
   }
   

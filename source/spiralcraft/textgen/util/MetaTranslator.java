@@ -15,7 +15,7 @@ import spiralcraft.vfs.AbstractResource;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.compiler.TglCompiler;
 import spiralcraft.textgen.compiler.DocletUnit;
-import spiralcraft.textgen.RenderingContext;
+import spiralcraft.textgen.EventContext;
 
 import spiralcraft.text.ParseException;
 import spiralcraft.text.markup.MarkupException;
@@ -62,7 +62,7 @@ public class MetaTranslator
   {
     long time=templateResource.getLastModified();
     
-    tglUnit=new TglCompiler().compile(templateURI);
+    tglUnit=new TglCompiler<DocletUnit>().compile(templateURI);
     templateLastUpdated=time;
 
   }
@@ -98,7 +98,7 @@ public class MetaTranslator
   {
    
     private BeanFocus<MetaResource> focus;
-    private Element element;
+    private Element<?> element;
     private Resource resource;
     private long templateLastModified;
     
@@ -172,8 +172,8 @@ public class MetaTranslator
       
       ByteArrayOutputStream out = new ByteArrayOutputStream();
       OutputStreamWriter writer=new OutputStreamWriter(out);
-      RenderingContext context=new RenderingContext(writer);
-      element.write(context);
+      EventContext context=new EventContext(writer,false);
+      element.render(context);
       writer.flush();
       out.close();
       

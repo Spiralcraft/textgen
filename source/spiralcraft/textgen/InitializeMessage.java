@@ -12,21 +12,25 @@
 // Unless otherwise agreed to in writing, this software is distributed on an
 // "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
 //
-package spiralcraft.textgen.compiler;
-
-import spiralcraft.textgen.Element;
-
-import spiralcraft.text.markup.MarkupException;
+package spiralcraft.textgen;
 
 /**
- * Provides a means for embedders of the textgen package to tailor how 
- *   Elements are created
+ * Instructs Elements to create a new ElementState or reset the existing
+ *   ElementState to an appropriate initial value.
  * 
  * @author mike
- *
  */
-public interface ElementFactory
+public class InitializeMessage
+    extends Message
 {
-  public Element<?> createElement(Element<?> parentElement)
-    throws MarkupException;
+  public static final MessageType TYPE=new MessageType();
+  
+  { multicast=true;
+  }
+  
+  public MessageType getType()
+  { return TYPE;
+  }
+  
+  
 }

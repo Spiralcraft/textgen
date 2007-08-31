@@ -15,7 +15,7 @@
 package spiralcraft.textgen.test;
 
 
-import spiralcraft.textgen.RenderingContext;
+import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Element;
 
 import spiralcraft.textgen.compiler.TglCompiler;
@@ -69,12 +69,12 @@ public class TupleTest
     TupleFocus<Tuple> focus=new TupleFocus<Tuple>(tuple.getType().getScheme());
     focus.setTuple(tuple);
 
-    DocletUnit unit=new TglCompiler().compile(uri);    
-    Element element=unit.bind(focus);
+    DocletUnit unit=new TglCompiler<DocletUnit>().compile(uri);    
+    Element<?> element=unit.bind(focus);
 
     Writer writer=new OutputStreamWriter(System.out);
-    RenderingContext context=new RenderingContext(writer);
-    element.write(context);
+    EventContext context=new EventContext(writer,false);
+    element.render(context);
     writer.flush();
     
   }
@@ -107,8 +107,8 @@ public class TupleTest
     Element element=unit.bind(focus);
 
     Writer writer=new OutputStreamWriter(System.out);
-    RenderingContext context=new RenderingContext(writer);
-    element.write(context);
+    EventContext context=new EventContext(writer,false);
+    element.render(context);
     writer.flush();
 
   }

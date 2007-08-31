@@ -14,14 +14,14 @@
 //
 package spiralcraft.textgen.elements;
 
+import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.RenderingContext;
 
 
 public class Else
-  extends Element
+  extends Element<Void>
 {
-  public void write(RenderingContext context)
+  public void render(EventContext context)
   {
   }
 }

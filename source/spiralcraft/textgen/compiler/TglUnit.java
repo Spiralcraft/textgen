@@ -16,8 +16,10 @@ package spiralcraft.textgen.compiler;
 
 import java.io.PrintWriter;
 
+import spiralcraft.lang.BindException;
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.RenderingContext;
+import spiralcraft.textgen.EventContext;
+
 
 import spiralcraft.text.markup.Unit;
 import spiralcraft.text.markup.MarkupException;
@@ -47,7 +49,7 @@ public abstract class TglUnit
    *   (the Assembly) which implements the functional behavior 
    *   specified by the TGL document.
    */
-  public abstract Element bind(Element parentElement)
+  public abstract Element<?> bind(Element<?> parentElement)
     throws MarkupException;
 
   public void dumpTree(PrintWriter writer,String linePrefix)
@@ -58,18 +60,27 @@ public abstract class TglUnit
     }
   }  
   
-  protected Element defaultBind(Element parentElement)
-  { return new DefaultElement();
+  protected Element<?> defaultBind(Element<?> parentElement)
+    throws MarkupException
+  { 
+    Element<?> element=new DefaultElement<Void>();
+    try
+    { element.bind(children);
+    }
+    catch (BindException x)
+    { throw new MarkupException(x.toString(),getPosition(),x);
+    }
+    return element;
   }
   
   
 }
 
-class DefaultElement
-  extends Element
+class DefaultElement<T>
+  extends Element<T>
 {
-  public void write(RenderingContext context)
+  public void render(EventContext context)
     throws IOException
-  { writeChildren(context);
+  { renderChildren(context);
   }
 }

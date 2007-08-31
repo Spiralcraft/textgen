@@ -19,8 +19,8 @@ import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Channel;
 
+import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.RenderingContext;
 
 import spiralcraft.textgen.compiler.TglUnit;
 
@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class If
-  extends Element
+  extends Element<Boolean>
 {
   private Expression<Boolean> expression;
   private Channel<Boolean> target;
@@ -40,12 +40,12 @@ public class If
   { this.expression=expression;
   }
   
-
+  @Override
   @SuppressWarnings("unchecked") // Not using generic versions
-  public void bind(Element parent,List<TglUnit> childUnits)
+  public void bind(List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
-    Focus<?> parentFocus=parent.getFocus();
+    Focus<?> parentFocus=getParent().getFocus();
     
     if (expression!=null)
     { target=parentFocus.<Boolean>bind(expression);
@@ -61,11 +61,11 @@ public class If
     bindChildren(childUnits);
   }
   
-  public void write(RenderingContext context)
+  public void render(EventContext context)
     throws IOException
   { 
     if (target.get())
-    { writeChildren(context);
+    { renderChildren(context);
     }
   }
 }

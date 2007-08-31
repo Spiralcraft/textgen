@@ -25,8 +25,9 @@ import spiralcraft.lang.IterationContext;
 import spiralcraft.lang.spi.ThreadLocalBinding;
 import spiralcraft.lang.spi.BeanReflector;
 
+import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.RenderingContext;
+import spiralcraft.textgen.ElementState;
 
 import spiralcraft.textgen.compiler.TglUnit;
 
@@ -40,7 +41,7 @@ import java.util.List;
  */
 @SuppressWarnings("unchecked") // Runtime type resolution
 public class Iterate
-  extends Element
+  extends Element<List<ElementState<?>>>
 {
   
   private Expression<?> expression;
@@ -57,12 +58,12 @@ public class Iterate
   { return focus;
   }
   
-
+  @Override
   @SuppressWarnings("unchecked") // Not using generic versions
-  public void bind(Element parent,List<TglUnit> childUnits)
+  public void bind(List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
-    Focus<?> parentFocus=parent.getFocus();
+    Focus<?> parentFocus=getParent().getFocus();
     Channel<?> target=null;
     if (expression!=null)
     { target=parentFocus.bind(expression);
@@ -92,7 +93,7 @@ public class Iterate
     bindChildren(childUnits);
   }
   
-  public void write(final RenderingContext genContext)
+  public void render(final EventContext genContext)
     throws IOException
   { 
     IterationContext context = decorator.iterator();
@@ -104,7 +105,7 @@ public class Iterate
       while (context.hasNext())
       { 
         context.next();
-        writeChildren(genContext);
+        renderChildren(genContext);
       }
     }
     finally

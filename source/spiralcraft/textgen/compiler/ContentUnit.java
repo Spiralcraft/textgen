@@ -17,7 +17,7 @@ package spiralcraft.textgen.compiler;
 import java.io.IOException;
 
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.RenderingContext;
+import spiralcraft.textgen.EventContext;
 
 
 /**
@@ -35,14 +35,14 @@ public class ContentUnit
     this.content=content;
   }
   
-  public Element bind(Element parentElement)
+  public Element<?> bind(Element<?> parentElement)
   { return new TextElement();
   }
   
   class TextElement
-    extends Element
+    extends Element<Void>
   {
-    public void write(RenderingContext context)
+    public void render(EventContext context)
       throws IOException
     { context.getWriter().write(content.toString());
     }

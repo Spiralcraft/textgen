@@ -41,11 +41,11 @@ import spiralcraft.time.Clock;
  * @author mike
  *
  */
-public class ResourceUnit
+public class ResourceUnit<T extends DocletUnit>
 {
-  private final TglCompiler compiler;
+  private final TglCompiler<T> compiler;
   private final Resource resource;
-  private DocletUnit unit;
+  private T unit;
   private long lastRead;
   private long lastChecked;
   private int checkFrequencyMs=-1;
@@ -56,24 +56,34 @@ public class ResourceUnit
     throws IOException
   { 
     
-    this.compiler=new TglCompiler();
+    this.compiler=createCompiler();
     this.resource=Resolver.getInstance().resolve(uri);
   }
 
   public ResourceUnit(Resource resource)
   {
-    this.compiler=new TglCompiler();
+    this.compiler=createCompiler();
     this.resource=resource;
   }
   
-  public ResourceUnit(URI uri,TglCompiler compiler)
+  /**
+   * Create the compiler. Override to use an extended implementation
+   *   of the compiler.
+   * 
+   * @return A new TglCompiler instance
+   */
+  protected TglCompiler<T> createCompiler()
+  { return new TglCompiler<T>();
+  }
+  
+  public ResourceUnit(URI uri,TglCompiler<T> compiler)
     throws IOException
   {
     this.compiler=compiler;
     this.resource=Resolver.getInstance().resolve(uri);
   }
   
-  public ResourceUnit(Resource resource,TglCompiler compiler)
+  public ResourceUnit(Resource resource,TglCompiler<T> compiler)
   {
     this.compiler=compiler;
     this.resource=resource;
@@ -133,7 +143,9 @@ public class ResourceUnit
     
     try
     {
-      long lastModified=resource.getLastModified();
+      long lastModified
+        =unit!=null?unit.getLastModified():resource.getLastModified();
+      
       if (lastModified>lastRead)
       { recompile();
       }
@@ -146,7 +158,7 @@ public class ResourceUnit
     }
   }
 
-  public Element bind(Focus<?> focus)
+  public Element<?> bind(Focus<?> focus)
     throws ParseException,IOException
   {
     DocletUnit unit=getUnit();

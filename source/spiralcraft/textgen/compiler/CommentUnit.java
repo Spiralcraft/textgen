@@ -19,9 +19,10 @@ import java.io.IOException;
 import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.RenderingContext;
+import spiralcraft.textgen.EventContext;
 
-import spiralcraft.xml.Attribute;
+
+import spiralcraft.text.xml.Attribute;
 
 /**
  * A Unit which discards its contents
@@ -31,7 +32,11 @@ public class CommentUnit
 {
   
   
-  public CommentUnit(TglUnit parent,TglCompiler compiler,Attribute[] attribs)
+  public CommentUnit
+    (TglUnit parent
+    ,TglCompiler<?> compiler
+    ,Attribute[] attribs
+    )
     throws MarkupException
   { 
     super(parent);
@@ -51,7 +56,7 @@ public class CommentUnit
   { return "@comment";
   }
   
-  public Element bind(Element parentElement)
+  public Element<?> bind(Element<?> parentElement)
     throws MarkupException
   { return new NullElement();
   }
@@ -60,9 +65,9 @@ public class CommentUnit
 }
 
 class NullElement
-  extends Element 
+  extends Element<Void>
 {
-  public void write(RenderingContext context)
+  public void render(EventContext context)
     throws IOException
   { }
 }

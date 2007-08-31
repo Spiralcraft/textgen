@@ -16,7 +16,7 @@ package spiralcraft.textgen.test;
 
 
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.RenderingContext;
+import spiralcraft.textgen.EventContext;
 
 import spiralcraft.textgen.compiler.TglCompiler;
 import spiralcraft.textgen.compiler.DocletUnit;
@@ -57,8 +57,8 @@ public class GeneratorTest
         );
 
     Writer writer=new OutputStreamWriter(System.out);
-    RenderingContext context=new RenderingContext(writer);
-    element.write(context);
+    EventContext context=new EventContext(writer,false);
+    element.render(context);
     writer.flush();
 
     if (false)
@@ -72,7 +72,7 @@ public class GeneratorTest
       long iterations=0;
       while (true)
       { 
-        element.write(context);
+        element.render(context);
         stringWriter.getBuffer().setLength(0);
         iterations++;
         if (clock.approxTimeMillis()-time>duration)

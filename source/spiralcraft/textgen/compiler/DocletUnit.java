@@ -15,9 +15,10 @@
 package spiralcraft.textgen.compiler;
 
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.RenderingContext;
+import spiralcraft.textgen.EventContext;
 
 import spiralcraft.text.markup.MarkupException;
+
 
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
@@ -33,7 +34,6 @@ import java.util.ArrayList;
 /**
  * A compilation unit (ie. a file or other container) of tgl markup.
  * 
- * XXX The name "Doclet" needs to be refer to this organizational unit
  */
 public class DocletUnit
   extends TglUnit
@@ -83,28 +83,30 @@ public class DocletUnit
     return time;
   }
   
-  public Element bind(Focus<?> focus)
+  public Element<?> bind(Focus<?> focus)
     throws MarkupException
   {
-    RootElement element=new RootElement();
+    RootElement<?> element=new RootElement<Void>();
     element.setFocus(focus);
     
     try
-    { element.bind(null,children);
+    { element.bind(children);
     }
     catch (BindException x)
     { throw new MarkupException(x.toString(),getPosition());
     }
+    element.setPath(new int[0]);
     return element;
     
   }
   
-  public Element bind(Element parentElement)
+  public Element<?> bind(Element<?> parentElement)
     throws MarkupException
   { 
-    Element element=new RootElement();
+    Element<?> element=new RootElement<Void>();
+    element.setParent(parentElement);
     try
-    { element.bind(parentElement,children);
+    { element.bind(children);
     }
     catch (BindException x)
     { throw new MarkupException(x.toString(),getPosition());
@@ -113,8 +115,8 @@ public class DocletUnit
     return element;
   }
   
-  class RootElement
-    extends Element
+  class RootElement<T>
+    extends Element<T>
   {
     private Focus<?> _focus;
     
@@ -134,9 +136,9 @@ public class DocletUnit
       return super.getFocus();
     }
     
-    public void write(RenderingContext context)
+    public void render(EventContext context)
       throws IOException
-    { writeChildren(context);
+    { renderChildren(context);
     }
   }
 }

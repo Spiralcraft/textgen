@@ -12,21 +12,24 @@
 // Unless otherwise agreed to in writing, this software is distributed on an
 // "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
 //
-package spiralcraft.textgen.compiler;
-
-import spiralcraft.textgen.Element;
-
-import spiralcraft.text.markup.MarkupException;
+package spiralcraft.textgen;
 
 /**
- * Provides a means for embedders of the textgen package to tailor how 
- *   Elements are created
+ * A directive sent down an Element tree to manipulate the state of a
+ *   textgen document before it is rendered.
  * 
  * @author mike
- *
  */
-public interface ElementFactory
+public abstract class Message
 {
-  public Element<?> createElement(Element<?> parentElement)
-    throws MarkupException;
+  protected boolean multicast;
+  
+  public boolean isMulticast()
+  { return multicast;
+  } 
+  
+  public abstract MessageType getType();
+  
+  public static class MessageType
+  { }
 }

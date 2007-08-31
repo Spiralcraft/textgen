@@ -24,7 +24,7 @@ import spiralcraft.text.ParseException;
 
 import spiralcraft.textgen.Element;
 
-import spiralcraft.xml.Attribute;
+import spiralcraft.text.xml.Attribute;
 
 /**
  * A Unit which includes another file
@@ -39,7 +39,11 @@ public class IncludeUnit
   { return "@include";
   }
   
-  public IncludeUnit(TglUnit parent,TglCompiler compiler,Attribute[] attribs)
+  public IncludeUnit
+    (TglUnit parent
+    ,TglCompiler<?> compiler
+    ,Attribute[] attribs
+    )
     throws MarkupException
   { 
     super(parent);
@@ -105,7 +109,7 @@ public class IncludeUnit
     }
   }
   
-  public Element bind(Element parentElement)
+  public Element<?> bind(Element<?> parentElement)
     throws MarkupException
   { return docletUnit.bind(parentElement.getFocus());
   }

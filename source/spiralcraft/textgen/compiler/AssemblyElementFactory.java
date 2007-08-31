@@ -11,7 +11,7 @@ import spiralcraft.text.ParsePosition;
 
 import spiralcraft.textgen.Element;
 
-import spiralcraft.xml.Attribute;
+import spiralcraft.text.xml.Attribute;
 
 import java.net.URI;
 
@@ -76,15 +76,16 @@ public class AssemblyElementFactory
     
   }
   
-  public Element createElement(Element parentElement)
+  public Element<?> createElement(Element<?> parentElement)
     throws MarkupException
   {
     Assembly<?> parentAssembly=parentElement.getAssembly();
     try
     { 
       Assembly<?> assembly=assemblyClass.newInstance(parentAssembly);
-      Element element=(Element) assembly.getSubject().get();    
+      Element<?> element=(Element<?>) assembly.getSubject().get();    
       element.setAssembly(assembly);
+      element.setParent(parentElement);
       return element;
     }
     catch (BuildException x)
