@@ -77,28 +77,53 @@ package spiralcraft.textgen;
  * @author mike
  *
  */
-public class ElementState<T>
+public class ElementState
 {
 
-  private ElementState<?> parent;
-  private final ElementState<?>[] children;
-  private T value;
-    
+  private ElementState parent;
+  private final ElementState[] children;
+  private int[] path;
+  
+  protected ElementState()
+  { children=null;
+  }
+  
   public ElementState(int numChildren)
   { 
-    System.err.println("ElementState: new "+toString());
+    // System.err.println("ElementState: new "+toString());
     this.children=new ElementState[numChildren];
   }
   
-  void setParent(ElementState<?> parent)
+  
+  void setParent(ElementState parent)
   { this.parent=parent;
   }
   
-  public ElementState<?> getParent()
+  void setPath(int[] path)
+  { this.path=path;
+  }
+  
+  /**
+   * 
+   * @return The path from the root of the ElementState tree 
+   */
+  public int[] getPath()
+  { return path;
+  }
+  
+  /**
+   * 
+   * @return The index of this ElementState within its parent ElementState
+   */
+  public int getIndex()
+  { return path[path.length-1];
+  }
+  
+  public ElementState getParent()
   { return parent;
   }
   
-  public ElementState<?> getChild(int index)
+  public ElementState getChild(int index)
   { 
     if (children==null)
     { throw new IndexOutOfBoundsException("This ElementState has no children");
@@ -108,23 +133,78 @@ public class ElementState<T>
     }
   }
   
+  /**
+   * Resolve any references to meaningful ancestor states, for example, to
+   *   propogate data contained in received messages.
+   */
+  public void resolve()
+  { }
+    
   
-  public void setChild(int index,ElementState<?> child)
+  public void setChild(int index,ElementState child)
   { 
     children[index]=child;
     if (child!=null)
-    { child.setParent(this);
+    { 
+
+      if (path==null)
+      { path=new int[0];
+      }
+      
+      int[] childPath=new int[path.length+1];
+      System.arraycopy(path,0,childPath,0,path.length);
+      childPath[childPath.length-1]=index;
+      child.setPath(childPath);      
+
+      child.setParent(this);
+      
+      child.resolve();
     }
   }
   
-  public T getValue()
-  { return value;
+  /**
+   * Find an ElementState among this ElementState's ancestors/containers
+   * 
+   * @param <X>
+   * @param clazz
+   * @return The ElementState with the specific class or interface, or null if
+   *   none was found
+   */
+  @SuppressWarnings("unchecked") // Downcast from runtime check
+  public <X> X findElementState(Class<X> clazz)
+  {
+    if (clazz.isAssignableFrom(getClass()))
+    { return (X) this;
+    }
+    else if (parent!=null)
+    { return parent.<X>findElementState(clazz);
+    }
+    else
+    { return null;
+    }
   }
   
-  public void setValue(T value)
-  { this.value=value;
+  /**
+   * <p>Return an ancestor of this state that is the specified
+   *   number of parents away.
+   * </p>
+   * 
+   * @param distance
+   * @return
+   */
+  public ElementState getAncestor(int distance)
+  { 
+    if (distance==0)
+    { return this;
+    }
+    else if (parent!=null)
+    { return parent.getAncestor(distance-1);
+    }
+    else
+    { return null;
+    }
   }
-  
+    
 }
 
 

@@ -49,7 +49,7 @@ public abstract class TglUnit
    *   (the Assembly) which implements the functional behavior 
    *   specified by the TGL document.
    */
-  public abstract Element<?> bind(Element<?> parentElement)
+  public abstract Element bind(Element parentElement)
     throws MarkupException;
 
   public void dumpTree(PrintWriter writer,String linePrefix)
@@ -60,10 +60,11 @@ public abstract class TglUnit
     }
   }  
   
-  protected Element<?> defaultBind(Element<?> parentElement)
+  protected Element defaultBind(Element parentElement)
     throws MarkupException
   { 
-    Element<?> element=new DefaultElement<Void>();
+    Element element=new DefaultElement();
+    element.setParent(parentElement);
     try
     { element.bind(children);
     }
@@ -76,8 +77,8 @@ public abstract class TglUnit
   
 }
 
-class DefaultElement<T>
-  extends Element<T>
+class DefaultElement
+  extends Element
 {
   public void render(EventContext context)
     throws IOException

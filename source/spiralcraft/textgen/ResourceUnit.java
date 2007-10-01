@@ -48,7 +48,9 @@ public class ResourceUnit<T extends DocletUnit>
   private T unit;
   private long lastRead;
   private long lastChecked;
+  private long lastRecompile;
   private int checkFrequencyMs=-1;
+  private int maxRecompileRateMs=500;
 
   private Exception exception;
 
@@ -135,6 +137,8 @@ public class ResourceUnit<T extends DocletUnit>
   public synchronized void checkState()
   {
     long now=Clock.instance().approxTimeMillis();
+    
+    // Ensure that checking does not happen too often
     if (lastChecked!=0 && now-lastChecked<checkFrequencyMs)
     { return;
     }
@@ -146,10 +150,20 @@ public class ResourceUnit<T extends DocletUnit>
       long lastModified
         =unit!=null?unit.getLastModified():resource.getLastModified();
       
-      if (lastModified>lastRead)
-      { recompile();
+      if (lastModified>lastRead
+          || (exception!=null
+              && now-maxRecompileRateMs>lastRecompile
+             )
+         )
+      { 
+        recompile();
+        lastRead=lastModified;
+        if (unit!=null)
+        { lastRead=unit.getLastModified();
+        }
       }
-      lastRead=lastModified;     
+      
+      
     }
     catch (IOException x)
     { 
@@ -158,7 +172,7 @@ public class ResourceUnit<T extends DocletUnit>
     }
   }
 
-  public Element<?> bind(Focus<?> focus)
+  public Element bind(Focus<?> focus)
     throws ParseException,IOException
   {
     DocletUnit unit=getUnit();
@@ -196,5 +210,6 @@ public class ResourceUnit<T extends DocletUnit>
       unit=null;
       exception=x;
     }
+    lastRecompile=Clock.instance().approxTimeMillis();
   }
 }

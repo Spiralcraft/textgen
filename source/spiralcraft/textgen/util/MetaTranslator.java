@@ -98,7 +98,7 @@ public class MetaTranslator
   {
    
     private BeanFocus<MetaResource> focus;
-    private Element<?> element;
+    private Element element;
     private Resource resource;
     private long templateLastModified;
     

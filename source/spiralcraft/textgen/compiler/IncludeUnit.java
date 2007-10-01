@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import spiralcraft.lang.BindException;
+
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.text.ParseException;
 
@@ -47,7 +49,7 @@ public class IncludeUnit
     throws MarkupException
   { 
     super(parent);
-    allowsChildren=false;
+    allowsChildren=true;
     
     for (Attribute attrib: attribs)
     {
@@ -109,9 +111,22 @@ public class IncludeUnit
     }
   }
   
-  public Element<?> bind(Element<?> parentElement)
+  @Override
+  public Element bind(Element parentElement)
     throws MarkupException
-  { return docletUnit.bind(parentElement.getFocus());
+  {
+    IncludeElement includeElement=new IncludeElement();
+    includeElement.setParent(parentElement);
+    
+    try
+    { includeElement.bind(children);
+    }
+    catch (BindException x)
+    { throw new MarkupException(x.toString(),getPosition());
+    }
+    
+    return includeElement;
   }
-  
+
+
 }

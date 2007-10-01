@@ -68,7 +68,7 @@ public class NamespaceUnit
   { return map.get(namespaceId);
   }
   
-  public Element<?> bind(Element<?> parentElement)
+  public Element bind(Element parentElement)
     throws MarkupException
   { return defaultBind(parentElement);
   }

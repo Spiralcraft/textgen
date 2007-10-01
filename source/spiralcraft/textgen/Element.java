@@ -1,5 +1,5 @@
 //
-// Copyright (c) 1998,2005 Michael Toth
+// Copyright (c) 1998,2007 Michael Toth
 // Spiralcraft Inc., All Rights Reserved
 //
 // This package is part of the Spiralcraft project and is licensed under
@@ -30,7 +30,6 @@ import spiralcraft.text.markup.MarkupException;
 
 import java.net.URI;
 
-import spiralcraft.util.ArrayUtil;
 
 /**
  * <P>A compositional unit of a TGL document.
@@ -60,14 +59,14 @@ import spiralcraft.util.ArrayUtil;
  *   to its already bound parent Element, where it is able to resolve any
  *   expressions by binding them to the Focus provided by its parent element. 
  */
-public abstract class Element<T>
+public abstract class Element
 { 
 
-  private Element<?>[] children;
-  private Element<?> parent;
+  private Element[] children;
+  private Element parent;
   private Assembly<?> assembly;
   private String id;
-  private int[] path;
+  // private int[] path;
 
   /**
    * Specify an id for this Element and make it visible to the expression
@@ -81,6 +80,7 @@ public abstract class Element<T>
   { return id;
   }
   
+  /*
   public int[] getPath()
   { return path;
   }
@@ -100,6 +100,7 @@ public abstract class Element<T>
       }
     }
   }
+  */
   
   /**
    * @return The Focus associated with this Element. Defaults to the parent
@@ -110,6 +111,7 @@ public abstract class Element<T>
     if (parent!=null)
     { return parent.getFocus();
     }
+    System.err.println("Element: "+getClass().getName()+" no parent, no focus");
     return null;
   }
   
@@ -149,7 +151,7 @@ public abstract class Element<T>
    *   by the framework before bind() is called.
    * </p>
    */
-  public void setParent(Element<?> parent)
+  public void setParent(Element parent)
     throws MarkupException
   { 
     if (this.parent!=null)
@@ -158,7 +160,7 @@ public abstract class Element<T>
     this.parent=parent;
   }
   
-  public Element<?> getParent()
+  public Element getParent()
   { return parent;
   }
   
@@ -216,14 +218,7 @@ public abstract class Element<T>
     ,Message message
     ,LinkedList<Integer> path
     )
-  {
-    if (message.getType()==InitializeMessage.TYPE)
-    { 
-      if (context.getState()==null)
-      { context.setState(createState());
-      }
-    }
-    
+  {    
     if (path!=null && !path.isEmpty())
     { messageChild(path.removeFirst(),context,message,path);
     }
@@ -253,20 +248,11 @@ public abstract class Element<T>
   { 
     if (context.isStateful())
     {
-      ElementState<?> state=context.getState();
+      ElementState state=context.getState();
       try
       {
-        ElementState<?> childState=null;
-        if (state!=null)
-        { 
-          childState=state.getChild(index);
-          context.setState(childState);
-        }
-    
+        context.setState(ensureChildState(state,index));
         children[index].message(context,message,path);
-        if (context.getState()!=childState)
-        { state.setChild(index,context.getState());
-        }
       }
       finally
       { context.setState(state);
@@ -277,7 +263,17 @@ public abstract class Element<T>
     }
   }
   
-
+  private ElementState ensureChildState(ElementState parentState,int index)
+  {
+    ElementState childState=parentState.getChild(index);
+    if (childState==null)
+    { 
+      childState=children[index].createState();
+      parentState.setChild(index,childState);
+    }
+    return childState;
+  }
+  
   /**
    * <p>Recursively perform processing and write output. The implementation
    *   of this method should call renderChild() for each child tree that
@@ -300,20 +296,11 @@ public abstract class Element<T>
   { 
     if (context.isStateful())
     {
-      ElementState<?> state=context.getState();
+      ElementState state=context.getState();
       try
       {
-        ElementState<?> childState=null;
-        if (state!=null)
-        { 
-          childState=state.getChild(index);
-          context.setState(state.getChild(index));
-        }
-    
+        context.setState(ensureChildState(state,index));
         children[index].render(context);
-        if (context.getState()!=childState)
-        { state.setChild(index,childState);
-        }
       }
       finally
       { context.setState(state);
@@ -348,8 +335,8 @@ public abstract class Element<T>
    * @return An ElementState object for this Element which references the
    *   parent's state.
    */
-  public ElementState<T> createState()
-  { return new ElementState<T>(children!=null?children.length:0);
+  public ElementState createState()
+  { return new ElementState(children!=null?children.length:0);
   }
   
   /**
@@ -357,10 +344,11 @@ public abstract class Element<T>
    * 
    * @param <X>
    * @param clazz
-   * @return The Element with the specific class, or null if none was found
+   * @return The Element with the specific class or interface, or null if
+   *   none was found
    */
   @SuppressWarnings("unchecked") // Downcast from runtime check
-  public <X extends Element> X findElement(Class<X> clazz)
+  public <X> X findElement(Class<X> clazz)
   {
     if (clazz.isAssignableFrom(getClass()))
     { return (X) this;
@@ -373,8 +361,46 @@ public abstract class Element<T>
     }
   }
 
+  /**
+   * <p>Find the distance from the calling element's state in the state
+   *   tree to the state of the element of the specified class.
+   * </p>
+   * 
+   * <p>This method is intended to provide an extremely efficient means
+   *   for states to resolve ancestors
+   * </p>
+   * 
+   * @param clazz
+   * @return
+   */
+  public int getStateDistance(Class<?> clazz)
+  {
+    if (clazz.isAssignableFrom(getClass()))
+    { return 0;
+    }
+    else if (parent!=null)
+    { 
+      int parentDist=parent.getStateDistance(clazz);
+      if (parentDist>-1)
+      { return parentDist+1;
+      }
+      else
+      { return -1;
+      }
+    }
+    else
+    { return -1;
+    }
+  }
+  
   public int getChildCount()
-  { return children.length;
+  { 
+    if (children!=null)
+    { return children.length;
+    }
+    else
+    { return 0;
+    }
   }
   
 }

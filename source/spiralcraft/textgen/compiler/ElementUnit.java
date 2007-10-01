@@ -180,12 +180,12 @@ public class ElementUnit
     }
   }
 
-  public Element<?> bind(Element<?> parentElement)
+  public Element bind(Element parentElement)
     throws MarkupException
   { 
     if (expression!=null)
     { 
-      Element<?> element=new ExpressionElement();
+      Element element=new ExpressionElement();
       element.setParent(parentElement);
       try
       { element.bind(children);
@@ -197,7 +197,7 @@ public class ElementUnit
     }
     else
     {
-      Element<?> element=elementFactory.createElement(parentElement);
+      Element element=elementFactory.createElement(parentElement);
       try
       { element.bind(children);
       }
@@ -209,7 +209,7 @@ public class ElementUnit
   }
 
   class ExpressionElement
-    extends Element<Void>
+    extends Element
   { 
     
     private Channel<?> _source;

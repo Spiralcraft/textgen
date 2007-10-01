@@ -16,6 +16,9 @@ package spiralcraft.textgen.compiler;
 
 import java.io.IOException;
 
+import java.util.List;
+
+import spiralcraft.lang.BindException;
 import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.Element;
@@ -25,14 +28,14 @@ import spiralcraft.textgen.EventContext;
 import spiralcraft.text.xml.Attribute;
 
 /**
- * A Unit which discards its contents
+ * A Unit which inserts the contents of an ancestral IncludeUnit
  */
-public class CommentUnit
+public class InsertUnit
   extends ProcessingUnit
 {
   
   
-  public CommentUnit
+  public InsertUnit
     (TglUnit parent
     ,TglCompiler<?> compiler
     ,Attribute[] attribs
@@ -44,7 +47,7 @@ public class CommentUnit
     if (attribs!=null && attribs.length>0)
     {
       throw new MarkupException
-        ("@comment does not accept attributes"
+        ("@insert does not accept attributes"
         ,compiler.getPosition()
         );
     }
@@ -53,21 +56,52 @@ public class CommentUnit
   
   
   public String getName()
-  { return "@comment";
+  { return "@insert";
   }
   
+  @Override
   public Element bind(Element parentElement)
     throws MarkupException
-  { return new NullElement();
+  {
+    InsertElement element=new InsertElement();
+    element.setParent(parentElement);
+    try
+    { element.bind(children);
+    }
+    catch (BindException x)
+    { throw new MarkupException(x.toString(),getPosition());
+    }
+    
+    return element;
   }
   
   
 }
 
-class NullElement
+class InsertElement
   extends Element
 {
+  private IncludeElement ancestorInclude;
+  
+  @Override
+  public void bind(List<TglUnit> children)
+    throws BindException,MarkupException
+  { 
+    ancestorInclude=findElement(IncludeElement.class);
+    super.bind(children);
+  }
+  
+  @Override
   public void render(EventContext context)
     throws IOException
-  { }
+  { 
+    if (ancestorInclude!=null)
+    { ancestorInclude.renderClosure(context);
+    }
+    else 
+    { renderChildren(context);
+    }
+    
+  }
+
 }

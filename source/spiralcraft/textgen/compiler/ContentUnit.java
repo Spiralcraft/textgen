@@ -35,12 +35,12 @@ public class ContentUnit
     this.content=content;
   }
   
-  public Element<?> bind(Element<?> parentElement)
+  public Element bind(Element parentElement)
   { return new TextElement();
   }
   
   class TextElement
-    extends Element<Void>
+    extends Element
   {
     public void render(EventContext context)
       throws IOException

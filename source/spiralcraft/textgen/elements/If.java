@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class If
-  extends Element<Boolean>
+  extends Element
 {
   private Expression<Boolean> expression;
   private Channel<Boolean> target;

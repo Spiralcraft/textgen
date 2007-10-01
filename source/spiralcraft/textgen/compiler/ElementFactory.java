@@ -27,6 +27,6 @@ import spiralcraft.text.markup.MarkupException;
  */
 public interface ElementFactory
 {
-  public Element<?> createElement(Element<?> parentElement)
+  public Element createElement(Element parentElement)
     throws MarkupException;
 }

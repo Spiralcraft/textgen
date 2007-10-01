@@ -23,31 +23,35 @@ import spiralcraft.lang.IterationDecorator;
 import spiralcraft.lang.IterationContext;
 
 import spiralcraft.lang.spi.ThreadLocalBinding;
-import spiralcraft.lang.spi.BeanReflector;
 
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.ElementState;
+import spiralcraft.textgen.IterationState;
+import spiralcraft.textgen.MementoState;
+import spiralcraft.textgen.Message;
+import spiralcraft.textgen.InitializeMessage;
 
 import spiralcraft.textgen.compiler.TglUnit;
 
 import spiralcraft.text.markup.MarkupException;
 
 import java.io.IOException;
+
 import java.util.List;
+import java.util.LinkedList;
 
 /**
  * Iterate through an Iterable or an Array
  */
 @SuppressWarnings("unchecked") // Runtime type resolution
 public class Iterate
-  extends Element<List<ElementState<?>>>
+  extends Element
 {
   
   private Expression<?> expression;
   private Focus<?> focus;
   private IterationDecorator decorator;
-  private ThreadLocalBinding<IterationContext> iterationContextBinding;
+  private ThreadLocalBinding iterationContextBinding;
 
   
   public void setX(Expression<?> expression)
@@ -81,35 +85,195 @@ public class Iterate
         ("Cannot iterate through a "+target.getContentType().getName());
     }
     
+    // iterationContextBinding
+    //  =new ThreadLocalBinding<IterationContext>
+    //    (BeanReflector.<IterationContext>getInstance(IterationContext.class)
+    //    );
+    
+    
+    // SimpleFocus simpleFocus=new SimpleFocus
+    //  (decorator.createComponentBinding(iterationContextBinding));
+    
     iterationContextBinding
-      =new ThreadLocalBinding<IterationContext>
-        (BeanReflector.<IterationContext>getInstance(IterationContext.class)
-        );
+      =new ThreadLocalBinding(decorator.getComponentReflector());
     
     SimpleFocus simpleFocus=new SimpleFocus
-      (decorator.createComponentBinding(iterationContextBinding));
+      (iterationContextBinding);
+    
     simpleFocus.setParentFocus(parentFocus);
     focus=simpleFocus;
     bindChildren(childUnits);
   }
   
+  public void message
+    (final EventContext genContext
+    ,Message message
+    ,LinkedList<Integer> path
+    )
+  {
+    IterationState state=(IterationState) genContext.getState();
+    if (genContext.isStateful())
+    {
+      if (message.getType()==InitializeMessage.TYPE)
+      {
+        // Run the default iteration for init purposes
+        
+        IterationContext context = decorator.iterator();
+
+        // iterationContextBinding.push(context);
+
+        int i=0;
+        while (context.hasNext())
+        { 
+          context.next();
+          try
+          {
+            iterationContextBinding.push(context.getValue());
+            genContext.setState(state.ensureChild(i++,context.getValue()));
+            super.message(genContext,message,path);
+          }
+          finally
+          { iterationContextBinding.pop();
+          }
+        }
+      }
+      else
+      {
+      
+        if (path==null || path.isEmpty())
+        {
+          // Follow pre-rendered iteration
+          for (MementoState childState:state)
+          { 
+            try
+            {
+              iterationContextBinding.push(childState.getValue());
+              genContext.setState(childState);
+              super.message(genContext,message,path);
+            }
+            finally
+            { iterationContextBinding.pop();
+            }
+          }
+          
+        }
+        else
+        {
+          // Follow path
+          MementoState childState=state.getChild(path.removeFirst());
+          if (childState!=null)
+          {
+            try
+            {
+              iterationContextBinding.push(childState.getValue());
+              genContext.setState(childState);
+              super.message(genContext,message,path);
+            }
+            finally
+            { iterationContextBinding.pop();
+            }
+          }
+          
+        }
+      }
+      genContext.setState(state);
+      
+    }
+    
+  }
+  
+  /**
+   * Indicate whether the iteration should be re-run from the source on
+   *   rendering. Returns true by default.
+   * 
+   * @param context
+   * @return
+   */
+  protected boolean shouldRegenerate(EventContext context)
+  { return true;
+  }
+  
   public void render(final EventContext genContext)
     throws IOException
   { 
-    IterationContext context = decorator.iterator();
-
-    iterationContextBinding.push(context);
-
-    try
+    IterationState state=(IterationState) genContext.getState();
+    
+    if (shouldRegenerate(genContext))
     {
+      IterationContext context = decorator.iterator();
+
+      // iterationContextBinding.push(context);
+
+      int i=0;
       while (context.hasNext())
       { 
         context.next();
-        renderChildren(genContext);
+        try
+        {
+          iterationContextBinding.push(context.getValue());
+          if (genContext.isStateful())
+          { genContext.setState(state.ensureChild(i++,context.getValue()));
+          }
+          renderChildren(genContext);
+        }
+        finally
+        { iterationContextBinding.pop();
+        }
       }
     }
-    finally
-    { iterationContextBinding.pop();
+    else
+    {
+      // Rerun the previous iteration
+      for (MementoState childState:state)
+      { 
+        try
+        {
+          iterationContextBinding.push(childState.getValue());
+          genContext.setState(childState);
+          renderChildren(genContext);
+        }
+        finally
+        { iterationContextBinding.pop();
+        }
+      }
     }
+    genContext.setState(state);
+  }
+  
+  /**
+   * <p>Find the distance from the calling element's state in the state
+   *   tree to the state of the element of the specified class.
+   * </p>
+   * 
+   * <p>This method overrides the same method in Element to reflect the
+   *   fact that an Iteration contributes a depth of 2 states to the 
+   *   state tree.
+   * </p>
+   * 
+   * @param clazz
+   * @return
+   */
+  @Override
+  public int getStateDistance(Class<?> clazz)
+  {
+    if (clazz.isAssignableFrom(getClass()))
+    { return 1;
+    }
+    else 
+    { 
+      int superDist=super.getStateDistance(clazz);
+      if (superDist>-1)
+      { return superDist+1;
+      }
+      else
+      { return -1;
+      }
+    }    
+  }  
+  
+  @Override
+  public IterationState createState()
+  { return new IterationState(getChildCount());
   }
 }
+

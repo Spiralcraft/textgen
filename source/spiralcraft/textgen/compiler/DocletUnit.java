@@ -18,6 +18,7 @@ import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
 
 import spiralcraft.text.markup.MarkupException;
+import spiralcraft.text.markup.Unit;
 
 
 import spiralcraft.lang.Focus;
@@ -69,6 +70,20 @@ public class DocletUnit
   { subDocs.add(subDoc);
   }
   
+  @SuppressWarnings("unchecked") // Downcast from runtime check
+  @Override
+  public Unit findUnit(Class clazz)
+  {
+    if (clazz==NamespaceUnit.class)
+    { 
+      // Stop resolving namespaces within the document
+      return null;
+    }
+    else
+    { return super.findUnit(clazz);
+    }
+  }
+  
   /**
    * @return The modification time of the most recently modified resource
    *   in the tree.
@@ -83,10 +98,10 @@ public class DocletUnit
     return time;
   }
   
-  public Element<?> bind(Focus<?> focus)
+  public Element bind(Focus<?> focus)
     throws MarkupException
   {
-    RootElement<?> element=new RootElement<Void>();
+    RootElement element=new RootElement();
     element.setFocus(focus);
     
     try
@@ -95,15 +110,15 @@ public class DocletUnit
     catch (BindException x)
     { throw new MarkupException(x.toString(),getPosition());
     }
-    element.setPath(new int[0]);
+    // element.setPath(new int[0]);
     return element;
     
   }
   
-  public Element<?> bind(Element<?> parentElement)
+  public Element bind(Element parentElement)
     throws MarkupException
   { 
-    Element<?> element=new RootElement<Void>();
+    Element element=new RootElement();
     element.setParent(parentElement);
     try
     { element.bind(children);
@@ -115,8 +130,8 @@ public class DocletUnit
     return element;
   }
   
-  class RootElement<T>
-    extends Element<T>
+  class RootElement
+    extends Element
   {
     private Focus<?> _focus;
     

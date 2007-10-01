@@ -26,7 +26,7 @@ public class EventContext
 {
   private final EventContext parent;
   private Writer writer;
-  private ElementState<?> elementState;
+  private ElementState elementState;
   private final boolean stateful;
   
   /**
@@ -72,7 +72,7 @@ public class EventContext
    * @return The state of the current Element, set by this Element's parent
    *   via setState()
    */
-  public ElementState<?> getState()
+  public ElementState getState()
   { return elementState;
   }
 
@@ -82,7 +82,7 @@ public class EventContext
    * 
    * @param state
    */
-  public void setState(ElementState<?> state)
+  public void setState(ElementState state)
   { elementState=state;
   }
   

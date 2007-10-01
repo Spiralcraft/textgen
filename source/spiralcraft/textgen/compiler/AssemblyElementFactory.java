@@ -37,7 +37,7 @@ public class AssemblyElementFactory
     {
       
       assemblyClass=new AssemblyClass
-        (null
+        (position.getContextURI()
         ,namespaceUri
         ,elementClassName
         ,null
@@ -76,14 +76,14 @@ public class AssemblyElementFactory
     
   }
   
-  public Element<?> createElement(Element<?> parentElement)
+  public Element createElement(Element parentElement)
     throws MarkupException
   {
     Assembly<?> parentAssembly=parentElement.getAssembly();
     try
     { 
       Assembly<?> assembly=assemblyClass.newInstance(parentAssembly);
-      Element<?> element=(Element<?>) assembly.getSubject().get();    
+      Element element=(Element) assembly.getSubject().get();    
       element.setAssembly(assembly);
       element.setParent(parentElement);
       return element;

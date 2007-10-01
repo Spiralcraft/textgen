@@ -77,11 +77,15 @@ public class TglCompiler<T extends DocletUnit>
     throws ParseException,IOException
   {
     Resource resource=Resolver.getInstance().resolve(sourceURI);
+    if (!resource.supportsRead())
+    { throw new IOException("Resource "+resource.getURI()+" is not readable");
+    }
+    
     CharSequence sequence = new ResourceCharSequence(sourceURI);
 
     T root=createDocletUnit(null,resource);
 
-    compile(root,sequence);
+    compile(root,sequence,sourceURI);
     return root;
   }
   
@@ -101,7 +105,7 @@ public class TglCompiler<T extends DocletUnit>
 
     T root=createDocletUnit(parent,resource);
     // Launch new compiler for subcompile
-    clone().compile(root,sequence);
+    clone().compile(root,sequence,sourceURI);
     return root;
     
   }
@@ -211,6 +215,9 @@ public class TglCompiler<T extends DocletUnit>
   {
     if (name.equals("include"))
     { return new IncludeUnit(getUnit(),this,attributes);
+    }
+    else if (name.equals("insert"))
+    { return new InsertUnit(getUnit(),this,attributes);
     }
     else if (name.equals("namespace"))
     { return new NamespaceUnit(getUnit(),this,attributes);

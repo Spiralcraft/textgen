@@ -1,5 +1,5 @@
 //
-// Copyright (c) 1998,2005 Michael Toth
+// Copyright (c) 1998,2007 Michael Toth
 // Spiralcraft Inc., All Rights Reserved
 //
 // This package is part of the Spiralcraft project and is licensed under
@@ -12,16 +12,26 @@
 // Unless otherwise agreed to in writing, this software is distributed on an
 // "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
 //
-package spiralcraft.textgen.elements;
+package spiralcraft.textgen;
 
-import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.Element;
-
-
-public class Else
-  extends Element
+public class MementoState
+    extends ElementState
 {
-  public void render(EventContext context)
-  {
+
+  
+  private Object value;
+  
+  public MementoState(int childCount)
+  { super(childCount);
   }
+  
+  
+  public Object getValue()
+  { return value;
+  }
+  
+  public void setValue(Object value)
+  { this.value=value;
+  }
+
 }
