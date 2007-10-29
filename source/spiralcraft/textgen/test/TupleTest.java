@@ -57,7 +57,7 @@ public class TupleTest
     throws Exception
   {
     URI dataURI
-      =GeneratorTest.class.getResource("model.data.xml").toURI();
+      =URI.create("java:/spiralcraft/textgen/test/model.data.xml");
   
     Tuple tuple
       =(Tuple) new DataReader().readFromURI(dataURI,null);
