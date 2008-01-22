@@ -20,7 +20,7 @@ import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.IterationDecorator;
-import spiralcraft.lang.IterationContext;
+import spiralcraft.lang.IterationCursor;
 
 import spiralcraft.lang.spi.ThreadLocalBinding;
 
@@ -51,7 +51,7 @@ public class Iterate
   private Expression<?> expression;
   private Focus<?> focus;
   private IterationDecorator decorator;
-  private ThreadLocalBinding iterationContextBinding;
+  private ThreadLocalBinding iterationCursorBinding;
 
   
   public void setX(Expression<?> expression)
@@ -94,11 +94,11 @@ public class Iterate
     // SimpleFocus simpleFocus=new SimpleFocus
     //  (decorator.createComponentBinding(iterationContextBinding));
     
-    iterationContextBinding
+    iterationCursorBinding
       =new ThreadLocalBinding(decorator.getComponentReflector());
     
     SimpleFocus simpleFocus=new SimpleFocus
-      (iterationContextBinding);
+      (iterationCursorBinding);
     
     simpleFocus.setParentFocus(parentFocus);
     focus=simpleFocus;
@@ -118,22 +118,22 @@ public class Iterate
       {
         // Run the default iteration for init purposes
         
-        IterationContext context = decorator.iterator();
+        IterationCursor cursor = decorator.iterator();
 
         // iterationContextBinding.push(context);
 
         int i=0;
-        while (context.hasNext())
+        while (cursor.hasNext())
         { 
-          context.next();
+          cursor.next();
           try
           {
-            iterationContextBinding.push(context.getValue());
-            genContext.setState(state.ensureChild(i++,context.getValue()));
+            iterationCursorBinding.push(cursor.getValue());
+            genContext.setState(state.ensureChild(i++,cursor.getValue()));
             super.message(genContext,message,path);
           }
           finally
-          { iterationContextBinding.pop();
+          { iterationCursorBinding.pop();
           }
         }
       }
@@ -147,12 +147,12 @@ public class Iterate
           { 
             try
             {
-              iterationContextBinding.push(childState.getValue());
+              iterationCursorBinding.push(childState.getValue());
               genContext.setState(childState);
               super.message(genContext,message,path);
             }
             finally
-            { iterationContextBinding.pop();
+            { iterationCursorBinding.pop();
             }
           }
           
@@ -165,12 +165,12 @@ public class Iterate
           {
             try
             {
-              iterationContextBinding.push(childState.getValue());
+              iterationCursorBinding.push(childState.getValue());
               genContext.setState(childState);
               super.message(genContext,message,path);
             }
             finally
-            { iterationContextBinding.pop();
+            { iterationCursorBinding.pop();
             }
           }
           
@@ -200,24 +200,24 @@ public class Iterate
     
     if (shouldRegenerate(genContext))
     {
-      IterationContext context = decorator.iterator();
+      IterationCursor cursor = decorator.iterator();
 
       // iterationContextBinding.push(context);
 
       int i=0;
-      while (context.hasNext())
+      while (cursor.hasNext())
       { 
-        context.next();
+        cursor.next();
         try
         {
-          iterationContextBinding.push(context.getValue());
+          iterationCursorBinding.push(cursor.getValue());
           if (genContext.isStateful())
-          { genContext.setState(state.ensureChild(i++,context.getValue()));
+          { genContext.setState(state.ensureChild(i++,cursor.getValue()));
           }
           renderChildren(genContext);
         }
         finally
-        { iterationContextBinding.pop();
+        { iterationCursorBinding.pop();
         }
       }
     }
@@ -228,12 +228,12 @@ public class Iterate
       { 
         try
         {
-          iterationContextBinding.push(childState.getValue());
+          iterationCursorBinding.push(childState.getValue());
           genContext.setState(childState);
           renderChildren(genContext);
         }
         finally
-        { iterationContextBinding.pop();
+        { iterationCursorBinding.pop();
         }
       }
     }
