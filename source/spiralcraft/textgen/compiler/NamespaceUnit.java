@@ -15,6 +15,9 @@
 package spiralcraft.textgen.compiler;
 
 
+import spiralcraft.lang.BindException;
+import spiralcraft.lang.NamespaceResolver;
+
 import spiralcraft.textgen.Element;
 
 import spiralcraft.text.xml.Attribute;
@@ -35,6 +38,7 @@ public class NamespaceUnit
   
   private HashMap<String,URI> map
     =new HashMap<String,URI>();
+  private final NamespaceUnit parentNamespaceUnit;
   
   public NamespaceUnit
     (TglUnit parent
@@ -44,6 +48,7 @@ public class NamespaceUnit
     throws MarkupException
   { 
     super(parent);
+    parentNamespaceUnit=parent.findUnit(NamespaceUnit.class);
     
     for (Attribute attrib: attribs)
     {
@@ -65,12 +70,50 @@ public class NamespaceUnit
   }
   
   public URI resolveNamespace(String namespaceId)
-  { return map.get(namespaceId);
+  { 
+    URI namespace=map.get(namespaceId);
+    if (namespace!=null)
+    { return namespace;
+    }
+    else if (parentNamespaceUnit!=null)
+    { return parentNamespaceUnit.resolveNamespace(namespaceId);
+    }
+    return null;
   }
   
+  
+  @Override
   public Element bind(Element parentElement)
     throws MarkupException
-  { return defaultBind(parentElement);
+  {
+    NamespaceElement element
+      =new NamespaceElement
+        (new NamespaceResolver()
+        {
+
+          @Override
+          public URI getDefaultNamespaceURI()
+          {
+            // TODO Auto-generated method stub
+            return NamespaceUnit.this.resolveNamespace("default");
+          }
+
+          @Override
+          public URI resolveNamespace(String prefix)
+          {
+            // TODO Auto-generated method stub
+            return NamespaceUnit.this.resolveNamespace(prefix);
+          }
+        }
+        );
+    element.setParent(parentElement);
+    try
+    { element.bind(children);
+    }
+    catch (BindException x)
+    { throw new MarkupException(x.toString(),getPosition());
+    }
+    
+    return element;
   }
-  
 }

@@ -39,6 +39,8 @@ import spiralcraft.text.markup.MarkupException;
 import spiralcraft.text.ParseException;
 import spiralcraft.text.ParsePosition;
 
+import spiralcraft.log.ClassLogger;
+
 /**
  * A Unit which represents an Element delimited by start and end tag(s) or
  *   signified by an empty tag
@@ -46,6 +48,8 @@ import spiralcraft.text.ParsePosition;
 public class ElementUnit
   extends TglUnit
 {
+  private static final ClassLogger log=new ClassLogger(ElementUnit.class);
+  
   private static final URI _DEFAULT_ELEMENT_PACKAGE
     =URI.create("java:/spiralcraft/textgen/elements/");
   
@@ -69,7 +73,7 @@ public class ElementUnit
   { 
     super(parent);
     this.compiler=compiler;
-    setPosition(position);
+    setPosition(position.clone());
     
     /*
     open=!(code.charAt(code.length()-1)=='/');
@@ -149,9 +153,12 @@ public class ElementUnit
 
   }
   
+  
   private URI resolveNamespace(String namespaceId)
     throws MarkupException
-  { 
+  {
+    // Called via the constructor
+    
     URI namespaceURI=null;
     NamespaceUnit unit=this.findUnit(NamespaceUnit.class);
     if (unit!=null)
@@ -226,6 +233,7 @@ public class ElementUnit
       }
       catch (BindException x)
       { 
+        log.fine(getFocus().toString());
         throw new MarkupException
           ("Error binding '"+expression+"': "+x.toString()
           ,getPosition()

@@ -14,6 +14,8 @@
 //
 package spiralcraft.textgen.compiler;
 
+import spiralcraft.data.xml.XmlQueryable;
+import spiralcraft.log.ClassLogger;
 import spiralcraft.text.Trimmer;
 
 import spiralcraft.text.xml.Attribute;
@@ -57,6 +59,8 @@ import java.io.IOException;
 public class TglCompiler<T extends DocletUnit>
   extends MarkupCompiler<TglUnit>
 {
+  @SuppressWarnings("unused")
+  private static final ClassLogger log=new ClassLogger(XmlQueryable.class);
   
   private final Trimmer _trimmer=new Trimmer("\r\n\t ");
   
@@ -176,8 +180,7 @@ public class TglCompiler<T extends DocletUnit>
     {
       ElementUnit tglElementUnit
         =new ElementUnit(getUnit(),this,code,position);
-      System.err.println
-        ("TglCompiler: "+tglElementUnit.getName()+" open="+tglElementUnit.isOpen());
+      // log.fine(tglElementUnit.getName()+" open="+tglElementUnit.isOpen());
       pushUnit(tglElementUnit);
     }
   }

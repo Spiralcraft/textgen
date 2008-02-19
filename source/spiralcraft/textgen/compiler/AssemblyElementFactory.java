@@ -83,7 +83,7 @@ public class AssemblyElementFactory
     try
     { 
       Assembly<?> assembly=assemblyClass.newInstance(parentAssembly);
-      Element element=(Element) assembly.getSubject().get();    
+      Element element=(Element) assembly.get();    
       element.setAssembly(assembly);
       element.setParent(parentElement);
       return element;
