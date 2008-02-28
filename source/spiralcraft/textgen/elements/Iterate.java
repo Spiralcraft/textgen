@@ -22,7 +22,7 @@ import spiralcraft.lang.Expression;
 import spiralcraft.lang.IterationDecorator;
 import spiralcraft.lang.IterationCursor;
 
-import spiralcraft.lang.spi.ThreadLocalBinding;
+import spiralcraft.lang.spi.ThreadLocalChannel;
 
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Element;
@@ -51,7 +51,7 @@ public class Iterate
   private Expression<?> expression;
   private Focus<?> focus;
   private IterationDecorator decorator;
-  private ThreadLocalBinding iterationCursorBinding;
+  private ThreadLocalChannel iterationCursorBinding;
 
   
   public void setX(Expression<?> expression)
@@ -86,7 +86,7 @@ public class Iterate
     }
     
     // iterationContextBinding
-    //  =new ThreadLocalBinding<IterationContext>
+    //  =new ThreadLocalChannel<IterationContext>
     //    (BeanReflector.<IterationContext>getInstance(IterationContext.class)
     //    );
     
@@ -95,7 +95,7 @@ public class Iterate
     //  (decorator.createComponentBinding(iterationContextBinding));
     
     iterationCursorBinding
-      =new ThreadLocalBinding(decorator.getComponentReflector());
+      =new ThreadLocalChannel(decorator.getComponentReflector());
     
     SimpleFocus simpleFocus=new SimpleFocus
       (iterationCursorBinding);

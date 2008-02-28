@@ -53,7 +53,12 @@ public class NamespaceUnit
     for (Attribute attrib: attribs)
     {
       try
-      { map.put(attrib.getName(),new URI(attrib.getValue()));
+      { 
+        URI uri=new URI(attrib.getValue());
+        if (!uri.isAbsolute())
+        { uri=compiler.getPosition().getContextURI().resolve(uri);
+        }
+        map.put(attrib.getName(),uri);
       }
       catch (URISyntaxException x)
       { 

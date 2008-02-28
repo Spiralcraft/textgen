@@ -245,7 +245,14 @@ public class ElementUnit
     public void render(EventContext context)
       throws IOException
     { 
-      Object value=_source.get();
+      Object value;
+      try
+      { value=_source.get();
+      }
+      catch (NullPointerException x)
+      { value=null;
+      }
+        
       if (value!=null)
       { context.getWriter().write(value.toString());
       }

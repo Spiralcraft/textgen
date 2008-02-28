@@ -10,7 +10,7 @@ import spiralcraft.textgen.EventContext;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.NamespaceResolver;
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.FocusWrapper;
+import spiralcraft.lang.spi.FocusWrapper;
 
 import spiralcraft.log.ClassLogger;
 

@@ -34,7 +34,7 @@ import spiralcraft.data.lang.DataReflector;
 
 import spiralcraft.lang.SimpleFocus;
 
-import spiralcraft.lang.spi.SimpleBinding;
+import spiralcraft.lang.spi.SimpleChannel;
 
 import java.io.OutputStreamWriter;
 
@@ -96,8 +96,8 @@ public class TupleTest
 
     URI uri=URI.create("java:/spiralcraft/textgen/test/cursorTest.tgl");
 
-    SimpleBinding binding
-      =new SimpleBinding(DataReflector.getInstance(list.getType()),list,false);
+    SimpleChannel binding
+      =new SimpleChannel(DataReflector.getInstance(list.getType()),list,false);
     
     SimpleFocus<Aggregate> focus
       =new SimpleFocus<Aggregate>(binding);
