@@ -80,9 +80,11 @@ public class IncludeUnit
         }
         catch (ParseException x)
         { 
+
           throw new MarkupException
             ("Error including URI '"+attrib.getValue()+"':"+x
             ,compiler.getPosition()
+            ,x
             );
         }
         catch (IOException x)
@@ -90,6 +92,7 @@ public class IncludeUnit
           throw new MarkupException
             ("Error including URI '"+attrib.getValue()+"':"+x
             ,compiler.getPosition()
+            ,x
             );
         }
       }

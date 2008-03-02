@@ -5,6 +5,7 @@ import spiralcraft.builder.AssemblyClass;
 import spiralcraft.builder.BuildException;
 import spiralcraft.builder.PropertySpecifier;
 
+import spiralcraft.lang.Focus;
 import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.text.ParsePosition;
@@ -79,10 +80,12 @@ public class AssemblyElementFactory
   public Element createElement(Element parentElement)
     throws MarkupException
   {
-    Assembly<?> parentAssembly=parentElement.getAssembly();
+    // Assembly<?> parentAssembly=parentElement.getAssembly();
+    Focus<?> parentFocus=parentElement.getFocus();
+    
     try
     { 
-      Assembly<?> assembly=assemblyClass.newInstance(parentAssembly);
+      Assembly<?> assembly=assemblyClass.newInstance(parentFocus);
       Element element=(Element) assembly.get();    
       element.setAssembly(assembly);
       element.setParent(parentElement);

@@ -130,13 +130,13 @@ public abstract class Element
   /**
    * @return The Assembly from which this Element was instantiated
    */
-  public Assembly<?> getAssembly()
+  protected Assembly<?> getAssembly()
   { return assembly;
   }
   
   /**
-   * Specify the Assembly from which this Element was instantiated. Used
-   *   internally only.
+   * Specify the Assembly from which this Element was instantiated. Can be
+   *   use to publish this Element itself into the Focus hierarchy.   
    */
   public void setAssembly(Assembly<?> assembly)
   { this.assembly=assembly;
