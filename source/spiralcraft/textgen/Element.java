@@ -165,9 +165,15 @@ public abstract class Element
   }
   
   /**
-   * Called when binding Units. This method should call
-   *   TglUnit.bind() on the child units at an appropriate time. The default
-   *   behavior is to bind all the childUnits.
+   * <p>Called when binding Units, to allow the Element to initialize by 
+   *   referencing its data source and parent Element, supplied before this
+   *   method is called. 
+   * </p>
+   *
+   *  <p>
+   *    This method should call TglUnit.bind() on its child units at an
+   *    appropriate time. The default behavior is to bind all the child units.
+   *  </p>
    */
   public void bind(List<TglUnit> childUnits)
     throws BindException,MarkupException

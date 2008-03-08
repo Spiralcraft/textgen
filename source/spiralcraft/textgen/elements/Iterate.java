@@ -73,8 +73,13 @@ public class Iterate
     { target=parentFocus.bind(expression);
     }
     else
-    { target=parentFocus.getSubject();
+    { 
+      target=parentFocus.getSubject();
+      if (target==null)
+      { throw new BindException("Focus "+parentFocus+" has no subject");
+      }
     }
+    
     
     decorator=
       target.<IterationDecorator>decorate(IterationDecorator.class);
