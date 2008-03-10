@@ -21,6 +21,7 @@ import spiralcraft.builder.Assembly;
 
 import java.io.IOException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.LinkedList;
 
@@ -66,6 +67,8 @@ public abstract class Element
   private Element parent;
   private Assembly<?> assembly;
   private String id;
+  private ArrayList<MessageHandler> handlers;
+  
   // private int[] path;
 
   /**
@@ -78,6 +81,14 @@ public abstract class Element
   
   public String getId()
   { return id;
+  }
+  
+  protected synchronized void addHandler(MessageHandler handler)
+  { 
+    if (handlers==null)
+    { handlers=new ArrayList<MessageHandler>();
+    }
+    handlers.add(handler);
   }
   
   /*
@@ -225,11 +236,35 @@ public abstract class Element
     ,LinkedList<Integer> path
     )
   {    
+    if (handlers!=null)
+    {
+      for (MessageHandler handler: handlers)
+      { handler.handleMessage(context,message,false);
+      }
+    }
+    
+    relayMessage(context,message,path);
+
+    if (handlers!=null)
+    {
+      for (MessageHandler handler: handlers)
+      { handler.handleMessage(context,message,true);
+      }
+    }
+
+  }
+
+  protected final void relayMessage
+    (EventContext context
+    ,Message message
+    ,LinkedList<Integer> path
+    )
+  { 
     if (path!=null && !path.isEmpty())
     { messageChild(path.removeFirst(),context,message,path);
     }
     else if (message.isMulticast())
-    {
+    { 
       if (children!=null)
       { 
         for (int i=0;i<children.length;i++)
@@ -238,7 +273,7 @@ public abstract class Element
       }
     }
   }
-
+  
   /**
    * Call this method to message a child element.
    * 
