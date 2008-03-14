@@ -48,7 +48,7 @@ import spiralcraft.log.ClassLogger;
 public class ElementUnit
   extends TglUnit
 {
-  private static final ClassLogger log=new ClassLogger(ElementUnit.class);
+  private static final ClassLogger log=ClassLogger.getInstance(ElementUnit.class);
   
   private static final URI _DEFAULT_ELEMENT_PACKAGE
     =URI.create("java:/spiralcraft/textgen/elements/");

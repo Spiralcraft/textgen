@@ -60,7 +60,7 @@ public class TglCompiler<T extends DocletUnit>
   extends MarkupCompiler<TglUnit>
 {
   @SuppressWarnings("unused")
-  private static final ClassLogger log=new ClassLogger(XmlQueryable.class);
+  private static final ClassLogger log=ClassLogger.getInstance(XmlQueryable.class);
   
   private final Trimmer _trimmer=new Trimmer("\r\n\t ");
   

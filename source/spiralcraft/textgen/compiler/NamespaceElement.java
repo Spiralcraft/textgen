@@ -18,7 +18,7 @@ public class NamespaceElement
   extends Element
 {
   @SuppressWarnings("unused")
-  private static final ClassLogger log=new ClassLogger(NamespaceElement.class);
+  private static final ClassLogger log=ClassLogger.getInstance(NamespaceElement.class);
   
   private NamespaceResolver resolver;
   private Focus<?> focus;
