@@ -39,6 +39,10 @@ public class ContentUnit
   { return new TextElement();
   }
   
+  public CharSequence getContent()
+  { return content;
+  }
+  
   class TextElement
     extends Element
   {

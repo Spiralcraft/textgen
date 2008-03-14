@@ -28,6 +28,7 @@ import java.net.URI;
 
 import java.io.IOException;
 
+import java.util.HashMap;
 import java.util.List;
 
 import spiralcraft.textgen.Element;
@@ -38,6 +39,7 @@ import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.text.ParseException;
 import spiralcraft.text.ParsePosition;
+import spiralcraft.util.ArrayUtil;
 
 import spiralcraft.log.ClassLogger;
 
@@ -60,6 +62,8 @@ public class ElementUnit
   private String elementName;
   private Attribute[] attributes;
   private boolean open;
+  private ElementUnit[] properties;
+  private boolean isProperty;
   
   private Expression<?> expression;
   
@@ -95,6 +99,11 @@ public class ElementUnit
     }
   }
   
+  /**
+   * An element with a tag in the form <code>&lt;%= <i>expression</i> %&gt;</code> 
+   * 
+   * @throws ParseException
+   */
   private void readExpressionElement()
     throws MarkupException
   { 
@@ -126,6 +135,11 @@ public class ElementUnit
     open=false;
   }
   
+  /**
+   * An element with a tag name in the form <code>&lt;%namespace:name ... %&gt;</code> 
+   * 
+   * @throws ParseException
+   */
   private void readStandardElement()
     throws ParseException
   { 
@@ -136,17 +150,26 @@ public class ElementUnit
 
 
     String name=tagReader.getTagName();
-    setName(name);
-    int nspos=name.indexOf(':');
-    if (nspos>-1)
-    { 
-      elementPackage=resolveNamespace(name.substring(0,nspos));
-      elementName=name.substring(nspos+1);
+    if (name.charAt(0)=='.')
+    {
+      setName(name.substring(1));
+      isProperty=true;
     }
     else
     { 
-      elementPackage=_DEFAULT_ELEMENT_PACKAGE;
-      elementName=name;
+      setName(name);
+    
+      int nspos=name.indexOf(':');
+      if (nspos>-1)
+      {  
+        elementPackage=resolveNamespace(name.substring(0,nspos));
+        elementName=name.substring(nspos+1);
+      }
+      else
+      { 
+        elementPackage=_DEFAULT_ELEMENT_PACKAGE;
+        elementName=name;
+      }
     }
     attributes=tagReader.getAttributes();
     open=!tagReader.isClosed();
@@ -172,21 +195,75 @@ public class ElementUnit
     }
   }
   
+  public Expression<?> getExpression()
+  { return expression;
+  }
+  
   public boolean isOpen()
   { return open;
   }
   
+  /**
+   * <p>Notify ElementUnit of a close tag.
+   * </p>
+   * 
+   * <p>Provides an opportunity for an ElementUnit to 
+   *   integrate its content.
+   * </p>
+   *   
+   */
   public void close()
     throws MarkupException
   {
     open=false;
     if (expression==null)
     {
-      elementFactory=compiler.createElementFactory
-        (elementPackage,elementName,attributes,getPosition());
+      // We're not creating a simple "expression" element
+      
+      if (isProperty)
+      {
+        if (getParent() instanceof ElementUnit)
+        {
+          ((ElementUnit) getParent())
+            .addProperty(this);
+        }
+        else
+        { 
+          throw new MarkupException
+            ("Cannot assign property '"+elementName+"' to containing"
+            +" element."
+            ,getPosition().clone()
+            );
+        }
+            
+        
+      }
+      else
+      {
+        
+        // We're creating a standard Element
+        elementFactory=compiler.createElementFactory
+          (elementPackage
+          ,elementName
+          ,attributes
+          ,properties
+          ,getPosition()
+          );
+      }
     }
   }
 
+  public void addProperty
+    (ElementUnit propertyUnit)
+    throws MarkupException
+  {
+    if (properties==null)
+    { properties=new ElementUnit[0];
+    }
+    properties=(ElementUnit[]) ArrayUtil
+      .append(properties,propertyUnit);
+  }
+  
   public Element bind(Element parentElement)
     throws MarkupException
   { 
@@ -204,18 +281,33 @@ public class ElementUnit
     }
     else
     {
-      
-      Element element=elementFactory.createElement(parentElement);
-      try
-      { element.bind(children);
+      if (!isProperty)
+      {
+        Element element=elementFactory.createElement(parentElement);
+        try
+        { element.bind(children);
+        }
+        catch (BindException x)
+        { throw new MarkupException(x.toString(),getPosition(),x);
+        }
+        return element;
       }
-      catch (BindException x)
-      { throw new MarkupException(x.toString(),getPosition(),x);
+      else
+      { return null;
       }
-      return element;
     }
   }
 
+  private Attribute findAttribute(String name)
+  {
+    for (Attribute attribute: attributes)
+    { 
+      if (attribute.getName().equals(name))
+      { return attribute;
+      }
+    }
+    return null;
+  }
   class ExpressionElement
     extends Element
   { 

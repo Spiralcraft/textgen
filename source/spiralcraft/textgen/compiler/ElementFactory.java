@@ -14,9 +14,12 @@
 //
 package spiralcraft.textgen.compiler;
 
+import java.util.List;
+
 import spiralcraft.textgen.Element;
 
 import spiralcraft.text.markup.MarkupException;
+import spiralcraft.text.xml.Attribute;
 
 /**
  * Provides a means for embedders of the textgen package to tailor how 
@@ -27,6 +30,14 @@ import spiralcraft.text.markup.MarkupException;
  */
 public interface ElementFactory
 {
-  public Element createElement(Element parentElement)
+  /**
+   * Create a new element
+   *
+   * @param parentElement
+   * @return
+   * @throws MarkupException
+   */
+  Element createElement(Element parentElement)
     throws MarkupException;
+  
 }

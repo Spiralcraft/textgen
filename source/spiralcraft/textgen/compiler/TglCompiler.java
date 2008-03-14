@@ -127,12 +127,13 @@ public class TglCompiler<T extends DocletUnit>
     (URI namespaceUri
     ,String elementName
     ,Attribute[] attributes
+    ,ElementUnit[] properties
     ,ParsePosition parsePosition
     )
     throws MarkupException
   {
     return new AssemblyElementFactory
-      (namespaceUri,elementName,attributes,parsePosition);
+      (namespaceUri,elementName,attributes,properties,parsePosition);
     
     
   }

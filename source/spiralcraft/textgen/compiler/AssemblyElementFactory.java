@@ -5,6 +5,7 @@ import spiralcraft.builder.AssemblyClass;
 import spiralcraft.builder.BuildException;
 import spiralcraft.builder.PropertySpecifier;
 
+import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.text.markup.MarkupException;
 
@@ -15,6 +16,7 @@ import spiralcraft.textgen.Element;
 import spiralcraft.text.xml.Attribute;
 
 import java.net.URI;
+import java.util.List;
 
 public class AssemblyElementFactory
   implements ElementFactory
@@ -22,43 +24,83 @@ public class AssemblyElementFactory
 
   private final AssemblyClass assemblyClass;
   private final ParsePosition position;
+  private URI namespaceUri;
+  private String elementClassName;
   
   public AssemblyElementFactory
     (URI namespaceUri
     ,String elementName
     ,Attribute[] attributes
+    ,ElementUnit[] properties
     ,ParsePosition position
     )
     throws MarkupException
   {
-    String elementClassName=elementName;
+    elementClassName=elementName;
     this.position=position.clone();
+    this.namespaceUri=namespaceUri;
     
-    try
-    {
-      
-      assemblyClass=new AssemblyClass
-        (position.getContextURI()
+    assemblyClass=new AssemblyClass
+      (position.getContextURI()
         ,namespaceUri
         ,elementClassName
         ,null
         ,null
-        );
+      );
 
-      if (attributes!=null)
+    if (attributes!=null)
+    { 
+      for (int i=0;i<attributes.length;i++)
       { 
-        for (int i=0;i<attributes.length;i++)
+        assemblyClass.addPropertySpecifier
+          (new PropertySpecifier
+            (assemblyClass
+                ,attributes[i].getName()
+                ,attributes[i].getValue()
+            )
+          );
+      }
+    }
+    
+    if (properties!=null)
+    {
+      for (ElementUnit unit: properties)
+      {
+        PropertySpecifier property
+          =new PropertySpecifier
+          (assemblyClass
+          ,unit.getName()
+          );
+        for (TglUnit child : unit.getChildren())
         { 
-          assemblyClass.addPropertySpecifier
-            (new PropertySpecifier
-              (assemblyClass
-              ,attributes[i].getName()
-              ,attributes[i].getValue()
-              )
-            );
+          if (child instanceof ElementUnit)
+          { 
+            Expression<?> expression=((ElementUnit) child).getExpression();
+            if (expression!=null)
+            { property.setExpression(expression.getText());
+            }
+            else
+            {
+              throw new MarkupException
+                ("Unsupported use of a child Element in a property Element"
+                ,child.getPosition()
+                );
+            }
+            // Translate the contents into a property def.
+          }
+          else if (child instanceof ContentUnit)
+          {
+            property.addCharacters
+              (((ContentUnit) child)
+              .getContent().toString().toCharArray());
+            
+          }
         }
       }
-      assemblyClass.resolve();
+    }
+    
+    try
+    { assemblyClass.resolve();
     }
     catch (BuildException x)
     { 
@@ -74,6 +116,16 @@ public class AssemblyElementFactory
       { throw new MarkupException(position,x);
       }
     }
+    
+  }
+  
+  public void addProperty
+    (String propertyName
+    ,Attribute[] attributes
+    ,List<TglUnit> children
+    )
+  {
+    
     
   }
   
