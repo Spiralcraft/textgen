@@ -2,11 +2,13 @@ package spiralcraft.textgen.compiler;
 
 import spiralcraft.builder.Assembly;
 import spiralcraft.builder.AssemblyClass;
+import spiralcraft.builder.AssemblyLoader;
 import spiralcraft.builder.BuildException;
 import spiralcraft.builder.PropertySpecifier;
 
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
+import spiralcraft.log.ClassLogger;
 import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.text.ParsePosition;
@@ -16,12 +18,14 @@ import spiralcraft.textgen.Element;
 import spiralcraft.text.xml.Attribute;
 
 import java.net.URI;
-import java.util.List;
 
 public class AssemblyElementFactory
   implements ElementFactory
 {
 
+  private static final ClassLogger log
+    =ClassLogger.getInstance(AssemblyElementFactory.class);
+  
   private final AssemblyClass assemblyClass;
   private final ParsePosition position;
   private URI namespaceUri;
@@ -69,8 +73,9 @@ public class AssemblyElementFactory
         PropertySpecifier property
           =new PropertySpecifier
           (assemblyClass
-          ,unit.getName()
+          ,unit.getPropertyName()
           );
+        StringBuilder buf=new StringBuilder();
         for (TglUnit child : unit.getChildren())
         { 
           if (child instanceof ElementUnit)
@@ -90,12 +95,16 @@ public class AssemblyElementFactory
           }
           else if (child instanceof ContentUnit)
           {
-            property.addCharacters
+            buf.append
               (((ContentUnit) child)
-              .getContent().toString().toCharArray());
+              .getContent().toString());
             
           }
         }
+        if (buf.length()>0)
+        { property.addCharacters(buf.toString().toCharArray());
+        }
+        assemblyClass.addPropertySpecifier(property);
       }
     }
     
@@ -119,15 +128,6 @@ public class AssemblyElementFactory
     
   }
   
-  public void addProperty
-    (String propertyName
-    ,Attribute[] attributes
-    ,List<TglUnit> children
-    )
-  {
-    
-    
-  }
   
   public Element createElement(Element parentElement)
     throws MarkupException

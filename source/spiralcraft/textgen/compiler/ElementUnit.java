@@ -63,7 +63,7 @@ public class ElementUnit
   private Attribute[] attributes;
   private boolean open;
   private ElementUnit[] properties;
-  private boolean isProperty;
+  private String propertyName;
   
   private Expression<?> expression;
   
@@ -152,8 +152,8 @@ public class ElementUnit
     String name=tagReader.getTagName();
     if (name.charAt(0)=='.')
     {
-      setName(name.substring(1));
-      isProperty=true;
+      setName(name);
+      propertyName=name.substring(1);
     }
     else
     { 
@@ -220,7 +220,7 @@ public class ElementUnit
     {
       // We're not creating a simple "expression" element
       
-      if (isProperty)
+      if (propertyName!=null)
       {
         if (getParent() instanceof ElementUnit)
         {
@@ -253,6 +253,10 @@ public class ElementUnit
     }
   }
 
+  public String getPropertyName()
+  { return propertyName;
+  }
+  
   public void addProperty
     (ElementUnit propertyUnit)
     throws MarkupException
@@ -262,6 +266,7 @@ public class ElementUnit
     }
     properties=(ElementUnit[]) ArrayUtil
       .append(properties,propertyUnit);
+    log.fine("Added property "+propertyUnit.getPropertyName());
   }
   
   public Element bind(Element parentElement)
@@ -281,7 +286,7 @@ public class ElementUnit
     }
     else
     {
-      if (!isProperty)
+      if (propertyName==null)
       {
         Element element=elementFactory.createElement(parentElement);
         try
@@ -293,7 +298,16 @@ public class ElementUnit
         return element;
       }
       else
-      { return null;
+      { 
+        Element element=new NullElement();
+        try
+        { element.bind(children);
+        }
+        catch (BindException x)
+        { throw new MarkupException(x.toString(),getPosition(),x);
+        }
+        return element;
+        
       }
     }
   }
@@ -343,7 +357,9 @@ public class ElementUnit
       { value=_source.get();
       }
       catch (NullPointerException x)
-      { value=null;
+      { 
+        x.printStackTrace();
+        value=null;
       }
         
       if (value!=null)
