@@ -35,6 +35,7 @@ public class If
 {
   private Expression<Boolean> expression;
   private Channel<Boolean> target;
+  private int elsePos=-1;
   
   public void setX(Expression<Boolean> expression)
   { this.expression=expression;
@@ -54,18 +55,46 @@ public class If
     { target=(Channel<Boolean>) parentFocus.getSubject();
     }
     
-    if (!Boolean.class.isAssignableFrom(target.getContentType()))
+    if (!Boolean.class.isAssignableFrom(target.getContentType())
+        && !boolean.class.isAssignableFrom(target.getContentType())
+        )
     { throw new BindException
         ("<%If%> requires a boolean expression, not a "+target.getContentType());
     }
+    
     bindChildren(childUnits);
+    int childCount=getChildCount();
+    for (int i=0;i<childCount;i++)
+    { 
+      if (getChild(i) instanceof Else)
+      { 
+        elsePos=i;
+        break;
+      }
+    }
   }
   
   public void render(EventContext context)
     throws IOException
   { 
-    if (target.get())
-    { renderChildren(context);
+    boolean passed=target.get();
+    int childCount=getChildCount();
+
+    int start;
+    int end;
+    if (passed)
+    { 
+      start=0;
+      end=elsePos>-1?elsePos:childCount;
     }
+    else
+    { 
+      start=elsePos>-1?elsePos+1:childCount;
+      end=childCount;
+    }
+    for (int i=start;i<end;i++)
+    { renderChild(context,i);
+    }
+      
   }
 }

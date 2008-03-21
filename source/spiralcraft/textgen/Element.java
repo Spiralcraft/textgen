@@ -68,6 +68,7 @@ public abstract class Element
   private Assembly<?> assembly;
   private String id;
   private ArrayList<MessageHandler> handlers;
+  protected boolean debug;
   
   // private int[] path;
 
@@ -81,6 +82,14 @@ public abstract class Element
   
   public String getId()
   { return id;
+  }
+  
+  public void setDebug(boolean debug)
+  { this.debug=debug;
+  }
+  
+  public boolean isDebug()
+  { return debug;
   }
   
   protected synchronized void addHandler(MessageHandler handler)
@@ -112,6 +121,14 @@ public abstract class Element
     }
   }
   */
+  
+  protected Element getChild(int i)
+  { 
+    if (children==null)
+    { return null;
+    }
+    return children[i];
+  }
   
   /**
    * @return The Focus associated with this Element. Defaults to the parent

@@ -312,7 +312,7 @@ public class ElementUnit
     }
   }
 
-  private Attribute findAttribute(String name)
+  public Attribute getAttribute(String name)
   {
     for (Attribute attribute: attributes)
     { 

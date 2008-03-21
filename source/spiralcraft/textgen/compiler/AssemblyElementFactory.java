@@ -5,7 +5,16 @@ import spiralcraft.builder.AssemblyClass;
 import spiralcraft.builder.AssemblyLoader;
 import spiralcraft.builder.BuildException;
 import spiralcraft.builder.PropertySpecifier;
+import spiralcraft.data.DataComposite;
+import spiralcraft.data.DataException;
+import spiralcraft.data.Type;
+import spiralcraft.data.reflect.ReflectionType;
+import spiralcraft.data.sax.DataReader;
+import spiralcraft.data.util.StaticInstanceResolver;
 
+import spiralcraft.lang.AccessException;
+import spiralcraft.lang.BindException;
+import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.log.ClassLogger;
@@ -17,7 +26,14 @@ import spiralcraft.textgen.Element;
 
 import spiralcraft.text.xml.Attribute;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
 import java.net.URI;
+
+import java.util.LinkedHashMap;
+
+import org.xml.sax.SAXException;
 
 public class AssemblyElementFactory
   implements ElementFactory
@@ -30,6 +46,7 @@ public class AssemblyElementFactory
   private final ParsePosition position;
   private URI namespaceUri;
   private String elementClassName;
+  private LinkedHashMap<String,ElementUnit> properties;
   
   public AssemblyElementFactory
     (URI namespaceUri
@@ -70,27 +87,31 @@ public class AssemblyElementFactory
     {
       for (ElementUnit unit: properties)
       {
+        
+        Attribute nature=unit.getAttribute("nature");
+        
+        StringBuilder buf=new StringBuilder();
         PropertySpecifier property
           =new PropertySpecifier
           (assemblyClass
           ,unit.getPropertyName()
           );
-        StringBuilder buf=new StringBuilder();
+        
         for (TglUnit child : unit.getChildren())
         { 
           if (child instanceof ElementUnit)
           { 
-            Expression<?> expression=((ElementUnit) child).getExpression();
-            if (expression!=null)
-            { property.setExpression(expression.getText());
-            }
-            else
-            {
+//            Expression<?> expression=((ElementUnit) child).getExpression();
+//            if (expression!=null)
+//            { property.setExpression(expression.getText());
+//            }
+//            else
+//            {
               throw new MarkupException
                 ("Unsupported use of a child Element in a property Element"
                 ,child.getPosition()
                 );
-            }
+//            }
             // Translate the contents into a property def.
           }
           else if (child instanceof ContentUnit)
@@ -101,10 +122,22 @@ public class AssemblyElementFactory
             
           }
         }
-        if (buf.length()>0)
-        { property.addCharacters(buf.toString().toCharArray());
+        
+        if (nature==null)
+        {
+          if (buf.length()>0)
+          { property.addCharacters(buf.toString().toCharArray());
+          }
+          assemblyClass.addPropertySpecifier(property);
         }
-        assemblyClass.addPropertySpecifier(property);
+        else if (nature.getValue().equals("bean"))
+        { 
+          if (this.properties==null)
+          { this.properties=new LinkedHashMap<String,ElementUnit>();
+          }
+          this.properties.put(unit.getPropertyName(),unit);
+          
+        }
       }
     }
     
@@ -117,8 +150,9 @@ public class AssemblyElementFactory
       { 
         throw new MarkupException
           (namespaceUri+elementClassName+" does not resolve to an" +
-           " Assembly or a Class"
+           " Assembly or a Class."
           ,position
+          ,x.getCause()
           );
       }
       else
@@ -129,6 +163,7 @@ public class AssemblyElementFactory
   }
   
   
+  @SuppressWarnings("unchecked")
   public Element createElement(Element parentElement)
     throws MarkupException
   {
@@ -141,6 +176,93 @@ public class AssemblyElementFactory
       Element element=(Element) assembly.get();    
       element.setAssembly(assembly);
       element.setParent(parentElement);
+      
+      if (properties!=null)
+      {
+        for (ElementUnit unit: properties.values())
+        {
+          Attribute nature=unit.getAttribute("nature");
+          if ("bean".equals(nature.getValue()))
+          { 
+            StringBuilder buf=new StringBuilder();
+            for (TglUnit child : unit.getChildren())
+            { 
+              if (child instanceof ElementUnit)
+              { 
+                throw new MarkupException
+                  ("Unsupported use of a child Element in a property Element"
+                  ,child.getPosition()
+                  );
+              }
+              else if (child instanceof ContentUnit)
+              {
+                buf.append
+                  (((ContentUnit) child)
+                  .getContent().toString());
+              }
+            
+            }
+            // Translate the contents into a property def.
+          
+            try
+            {
+              Channel target
+                =assembly.getFocus().bind
+                  (Expression.create(unit.getPropertyName()));
+            
+              Class<?> clazz=target.getContentType();
+              Type<?> type=Type.resolve(ReflectionType.canonicalURI(clazz));
+                
+              Object data
+                =new DataReader().readFromInputStream
+                  (new ByteArrayInputStream(buf.toString().getBytes())
+                  ,type
+                  ,position.getContextURI()
+                  );
+              if (data instanceof DataComposite)
+              { 
+                target.set
+                  (type.fromData
+                    ((DataComposite) data
+                    ,new StaticInstanceResolver(target.get())
+                    )
+                  );
+              }
+              
+            }
+            catch (AccessException x)
+            { 
+              throw new MarkupException
+                ("Error binding property element",position,x);
+            }
+            catch (BindException x)
+            { 
+              throw new MarkupException
+                ("Error binding property element",position,x);
+            }
+            catch (SAXException x)
+            { 
+              throw new MarkupException
+                ("Error binding property element",position,x);
+            }
+            catch (DataException x)
+            { 
+              throw new MarkupException
+                ("Error binding property element",position,x);
+            }
+            catch (IOException x)
+            { 
+              throw new MarkupException
+                ("Error binding property element",position,x);
+            }
+          
+
+          }
+ 
+          
+        }
+      }
+      
       return element;
     }
     catch (BuildException x)

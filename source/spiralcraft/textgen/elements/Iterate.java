@@ -23,6 +23,7 @@ import spiralcraft.lang.IterationDecorator;
 import spiralcraft.lang.IterationCursor;
 
 import spiralcraft.lang.spi.ThreadLocalChannel;
+import spiralcraft.log.ClassLogger;
 
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Element;
@@ -30,6 +31,7 @@ import spiralcraft.textgen.IterationState;
 import spiralcraft.textgen.MementoState;
 import spiralcraft.textgen.Message;
 import spiralcraft.textgen.InitializeMessage;
+import spiralcraft.textgen.PrepareMessage;
 
 import spiralcraft.textgen.compiler.TglUnit;
 
@@ -47,11 +49,13 @@ import java.util.LinkedList;
 public class Iterate
   extends Element
 {
+  private static final ClassLogger log=ClassLogger.getInstance(Iterate.class);
   
   private Expression<?> expression;
   private Focus<?> focus;
   private IterationDecorator decorator;
   private ThreadLocalChannel iterationCursorBinding;
+  private boolean initializeContent;
 
   
   public void setX(Expression<?> expression)
@@ -60,6 +64,21 @@ public class Iterate
   
   public Focus<?> getFocus()
   { return focus;
+  }
+  
+  /**
+   * <p>Indicate whether the Initialize message should run the iteration and
+   *   propogate the message to any content created as a result.
+   * </p>
+   * 
+   * <p>The default value is false, to avoid the unnecessary retrieval of
+   *   potentially expensive data.
+   * </p>
+   *   
+   * @param val
+   */
+  public void setInitializeContent(boolean val)
+  { initializeContent=val;
   }
   
   @Override
@@ -110,6 +129,27 @@ public class Iterate
     bindChildren(childUnits);
   }
   
+  
+  private void refreshState(IterationState state)
+  {
+    if (debug)
+    { log.fine(toString()+": iterating");
+    }
+    IterationCursor cursor = decorator.iterator();
+
+    int i=0;
+    while (cursor.hasNext())
+    { 
+      cursor.next();
+      state.ensureChild(i++,cursor.getValue());
+    }
+    state.setStale(false);
+    state.trim(i);
+    if (debug)
+    { log.fine(toString()+": iterated "+i+" elements");
+    }
+  }
+      
   public void message
     (final EventContext genContext
     ,Message message
@@ -121,32 +161,62 @@ public class Iterate
     {
       if (message.getType()==InitializeMessage.TYPE)
       {
-        // Run the default iteration for init purposes
-        
-        IterationCursor cursor = decorator.iterator();
-
-        // iterationContextBinding.push(context);
-
-        int i=0;
-        while (cursor.hasNext())
-        { 
-          cursor.next();
-          try
-          {
-            iterationCursorBinding.push(cursor.getValue());
-            genContext.setState(state.ensureChild(i++,cursor.getValue()));
-            super.message(genContext,message,path);
+        if (initializeContent)
+        {
+          // Run the default iteration for init purposes
+          if (debug)
+          { log.fine(toString()+": iterating on Initialize");
           }
-          finally
-          { iterationCursorBinding.pop();
+        
+          IterationCursor cursor = decorator.iterator();
+
+          // iterationContextBinding.push(context);
+
+          int i=0;
+          while (cursor.hasNext())
+          { 
+            cursor.next();
+            Object val=cursor.getValue();
+            try
+            {
+              iterationCursorBinding.push(val);
+              genContext.setState(state.ensureChild(i++,val));
+              super.message(genContext,message,path);
+            }
+            finally
+            { iterationCursorBinding.pop();
+            }
+          }
+          state.setStale(false);
+          state.trim(i);
+          if (debug)
+          { log.fine(toString()+": iterated "+i+" elements");
           }
         }
       }
       else
       {
+        if (state.isStale())
+        {
+          if (debug)
+          { log.fine(toString()+" refreshing on message because stale");
+          }
+          refreshState(state);
+        }
+        else if (message.getType()==PrepareMessage.TYPE)
+        { 
+          if (debug)
+          { log.fine(toString()+" refreshing on Prepare");
+          }
+          refreshState(state);
+        }
       
         if (path==null || path.isEmpty())
         {
+          if (debug)
+          { log.fine(toString()+": retraversing on message "+state.getChildCount());
+          }
+          
           // Follow pre-rendered iteration
           for (MementoState childState:state)
           { 
@@ -164,6 +234,9 @@ public class Iterate
         }
         else
         {
+          if (debug)
+          { log.fine(toString()+": following path "+state.getChildCount());
+          }
           // Follow path
           MementoState childState=state.getChild(path.removeFirst());
           if (childState!=null)
@@ -205,9 +278,10 @@ public class Iterate
     
     if (shouldRegenerate(genContext))
     {
+      if (debug)
+      { log.fine(toString()+": iterating on render");
+      }
       IterationCursor cursor = decorator.iterator();
-
-      // iterationContextBinding.push(context);
 
       int i=0;
       while (cursor.hasNext())
@@ -225,9 +299,21 @@ public class Iterate
         { iterationCursorBinding.pop();
         }
       }
+      if (state!=null)
+      {
+        state.setStale(false);
+        state.trim(i);
+      }
+      if (debug)
+      { log.fine(toString()+": iterated "+i+" elements");
+      }
+
     }
     else
     {
+      if (debug)
+      { log.fine(toString()+": retraversing on render "+state.getChildCount());
+      }
       // Rerun the previous iteration
       for (MementoState childState:state)
       { 
