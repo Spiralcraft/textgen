@@ -126,6 +126,9 @@ public class Iterate
     
     simpleFocus.setParentFocus(parentFocus);
     focus=simpleFocus;
+    if (debug)
+    { log.fine("Iterator exposes "+iterationCursorBinding);
+    }
     bindChildren(childUnits);
   }
   

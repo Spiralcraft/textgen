@@ -64,6 +64,7 @@ public class ElementUnit
   private boolean open;
   private ElementUnit[] properties;
   private String propertyName;
+  private boolean debug;
   
   private Expression<?> expression;
   
@@ -266,7 +267,9 @@ public class ElementUnit
     }
     properties=(ElementUnit[]) ArrayUtil
       .append(properties,propertyUnit);
-    log.fine("Added property "+propertyUnit.getPropertyName());
+    if (debug)
+    { log.fine("Added property "+propertyUnit.getPropertyName());
+    }
   }
   
   public Element bind(Element parentElement)
@@ -322,6 +325,7 @@ public class ElementUnit
     }
     return null;
   }
+  
   class ExpressionElement
     extends Element
   { 
@@ -340,7 +344,7 @@ public class ElementUnit
       }
       catch (BindException x)
       { 
-        log.fine(getFocus().toString());
+        log.warning("Caught "+x.toString()+"\r\n    focus="+getFocus().getFocusChain().toString());
         throw new MarkupException
           ("Error binding '"+expression+"': "+x.toString()
           ,getPosition()

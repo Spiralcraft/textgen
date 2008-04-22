@@ -120,6 +120,11 @@ public class MetaTranslator
     { return resource;
     }
     
+    public void renameTo(URI name)
+      throws IOException
+    { throw new IOException("Rename not supported "+toString());
+    }
+    
     private void bind()
       throws BindException,MarkupException
     { element=tglUnit.bind(focus);
