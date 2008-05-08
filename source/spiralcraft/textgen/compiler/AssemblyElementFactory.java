@@ -2,9 +2,9 @@ package spiralcraft.textgen.compiler;
 
 import spiralcraft.builder.Assembly;
 import spiralcraft.builder.AssemblyClass;
-import spiralcraft.builder.AssemblyLoader;
 import spiralcraft.builder.BuildException;
 import spiralcraft.builder.PropertySpecifier;
+
 import spiralcraft.data.DataComposite;
 import spiralcraft.data.DataException;
 import spiralcraft.data.Type;
@@ -17,7 +17,7 @@ import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
-import spiralcraft.log.ClassLogger;
+//import spiralcraft.log.ClassLogger;
 import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.text.ParsePosition;
@@ -39,12 +39,12 @@ public class AssemblyElementFactory
   implements ElementFactory
 {
 
-  private static final ClassLogger log
-    =ClassLogger.getInstance(AssemblyElementFactory.class);
+//  private static final ClassLogger log
+//    =ClassLogger.getInstance(AssemblyElementFactory.class);
   
   private final AssemblyClass assemblyClass;
   private final ParsePosition position;
-  private URI namespaceUri;
+//  private URI namespaceUri;
   private String elementClassName;
   private LinkedHashMap<String,ElementUnit> properties;
   
@@ -59,7 +59,7 @@ public class AssemblyElementFactory
   {
     elementClassName=elementName;
     this.position=position.clone();
-    this.namespaceUri=namespaceUri;
+//    this.namespaceUri=namespaceUri;
     
     assemblyClass=new AssemblyClass
       (position.getContextURI()

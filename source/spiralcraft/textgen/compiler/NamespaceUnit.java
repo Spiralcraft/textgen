@@ -17,6 +17,7 @@ package spiralcraft.textgen.compiler;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.NamespaceResolver;
+import spiralcraft.log.ClassLogger;
 
 import spiralcraft.textgen.Element;
 
@@ -35,6 +36,8 @@ import spiralcraft.text.markup.MarkupException;
 public class NamespaceUnit
   extends ProcessingUnit
 {
+  private static final ClassLogger log
+    =ClassLogger.getInstance(NamespaceUnit.class);
   
   private HashMap<String,URI> map
     =new HashMap<String,URI>();
@@ -81,8 +84,14 @@ public class NamespaceUnit
     { return namespace;
     }
     else if (parentNamespaceUnit!=null)
-    { return parentNamespaceUnit.resolveNamespace(namespaceId);
+    { 
+      namespace=parentNamespaceUnit.resolveNamespace(namespaceId);
+      if (namespace==null && namespaceId.equals("default"))
+      { namespace=ElementUnit.DEFAULT_ELEMENT_PACKAGE;
+      }
+      return namespace;
     }
+    
     return null;
   }
   
@@ -98,15 +107,15 @@ public class NamespaceUnit
 
           @Override
           public URI getDefaultNamespaceURI()
-          {
-            // TODO Auto-generated method stub
-            return NamespaceUnit.this.resolveNamespace("default");
+          { 
+            return ElementUnit.DEFAULT_ELEMENT_PACKAGE;
+            // return NamespaceUnit.this.resolveNamespace("default");
           }
 
           @Override
           public URI resolveNamespace(String prefix)
-          {
-            // TODO Auto-generated method stub
+          { 
+            log.fine("resolveNamespace "+prefix);
             return NamespaceUnit.this.resolveNamespace(prefix);
           }
         }

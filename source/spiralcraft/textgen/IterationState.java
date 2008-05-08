@@ -56,7 +56,7 @@ public class IterationState
     return child;
   }
   
-  public MementoState getChild(int index)
+  public ElementState getChild(int index)
   { return children.size()>index?children.get(index):null;
   }
   

@@ -14,12 +14,10 @@
 //
 package spiralcraft.textgen.compiler;
 
-import java.util.List;
 
 import spiralcraft.textgen.Element;
 
 import spiralcraft.text.markup.MarkupException;
-import spiralcraft.text.xml.Attribute;
 
 /**
  * Provides a means for embedders of the textgen package to tailor how 

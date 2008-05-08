@@ -23,6 +23,8 @@ import spiralcraft.text.markup.Unit;
 
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.NamespaceResolver;
+import spiralcraft.lang.spi.FocusWrapper;
 
 import java.io.IOException;
 
@@ -31,6 +33,7 @@ import java.net.URI;
 import spiralcraft.vfs.Resource;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A compilation unit (ie. a file or other container) of tgl markup.
@@ -42,6 +45,7 @@ public class DocletUnit
   protected final Resource resource;
   private final ArrayList<DocletUnit> subDocs
     =new ArrayList<DocletUnit>();
+  private NamespaceResolver resolver;
   
   public DocletUnit(TglUnit parent,Resource resource)
   { 
@@ -144,16 +148,64 @@ public class DocletUnit
     }
     
     public Focus<?> getFocus()
-    { 
-      if (_focus!=null)
-      { return _focus;
-      }
-      return super.getFocus();
+    { return _focus;
     }
     
     public void render(EventContext context)
       throws IOException
     { renderChildren(context);
     }
+    
+    @Override
+    @SuppressWarnings("unchecked") // Not using generic versions
+    public void bind(List<TglUnit> childUnits)
+      throws BindException,MarkupException
+    { 
+      Focus<?> wrappedFocus=_focus;
+      if (wrappedFocus==null && getParent()!=null)
+      { wrappedFocus=getParent().getFocus();
+      }
+      if (wrappedFocus!=null)
+      {
+        resolver=new Resolver(wrappedFocus.getNamespaceResolver());
+        _focus=new FocusWrapper(wrappedFocus)
+        {
+          public NamespaceResolver getNamespaceResolver()
+          { 
+            // log.fine("XXX "+resolver.toString());
+            return resolver;
+          }
+        };
+      }
+      super.bind(childUnits);
+    
+    }    
   }
+  
+  class Resolver
+    implements NamespaceResolver
+  {
+    private NamespaceResolver parent;
+    
+    public Resolver(NamespaceResolver parent)
+    { this.parent=parent;
+    }
+
+    @Override
+    public URI getDefaultNamespaceURI()
+    { return ElementUnit.DEFAULT_ELEMENT_PACKAGE;
+    }
+
+    @Override
+    public URI resolveNamespace(String prefix)
+    { 
+      if (parent!=null)
+      { return parent.resolveNamespace(prefix);
+      }
+      else
+      { return null;
+      }
+    }
+  }
+  
 }

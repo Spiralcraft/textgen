@@ -15,6 +15,7 @@
 package spiralcraft.textgen.elements;
 
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.Channel;
@@ -39,6 +40,7 @@ import spiralcraft.text.markup.MarkupException;
 
 import java.io.IOException;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.LinkedList;
 
@@ -55,6 +57,10 @@ public class Iterate
   private Focus<?> focus;
   private IterationDecorator decorator;
   private ThreadLocalChannel iterationCursorBinding;
+  
+  private ThreadLocal<Iteration> iterationLocal
+    =new ThreadLocal<Iteration>();
+  
   private boolean initializeContent;
 
   
@@ -62,6 +68,33 @@ public class Iterate
   { this.expression=expression;
   }
   
+  /**
+   * 
+   * @return The current index of the iteration being performed by the 
+   *   current Thread
+   */
+  public int getIndex()
+  { return iterationLocal.get().index;
+  }
+  
+  /**
+   * 
+   * @return Whether the iteration being performed by the 
+   *   current Thread is on the last element
+   */
+  public boolean isLast()
+  { return !iterationLocal.get().hasNext;
+  }
+  
+  /**
+   * 
+   * @return Whether the iteration being performed by the 
+   *   current Thread is on the last element
+   */
+  public boolean isFirst()
+  { return iterationLocal.get().index==0;
+  }
+
   public Focus<?> getFocus()
   { return focus;
   }
@@ -100,6 +133,7 @@ public class Iterate
     }
     
     
+    
     decorator=
       target.<IterationDecorator>decorate(IterationDecorator.class);
     
@@ -121,14 +155,16 @@ public class Iterate
     iterationCursorBinding
       =new ThreadLocalChannel(decorator.getComponentReflector());
     
-    SimpleFocus simpleFocus=new SimpleFocus
-      (iterationCursorBinding);
+    CompoundFocus compoundFocus
+      =new CompoundFocus(parentFocus,iterationCursorBinding);
     
-    simpleFocus.setParentFocus(parentFocus);
-    focus=simpleFocus;
+    compoundFocus.bindFocus
+      ("spiralcraft.servlet.webui",this.getAssembly().getFocus());
+    focus=compoundFocus;
     if (debug)
     { log.fine("Iterator exposes "+iterationCursorBinding);
     }
+    
     bindChildren(childUnits);
   }
   
@@ -153,48 +189,165 @@ public class Iterate
     }
   }
       
-  public void message
+  private void messageInitializeContent
+    (final EventContext genContext
+    ,Message message
+    ,LinkedList<Integer> path
+    ,IterationState state
+    )
+  {
+    // Run the default iteration for init purposes
+    if (debug)
+    { log.fine(toString()+": iterating on Initialize");
+    }
+
+    IterationCursor cursor = decorator.iterator();
+
+    Iteration oldIter=iterationLocal.get();
+    Iteration iter=new Iteration();
+    iterationLocal.set(iter);
+
+    try
+    {
+
+      int i=0;
+      while (cursor.hasNext())
+      { 
+        cursor.next();
+
+        iter.index=i;
+        iter.hasNext=cursor.hasNext();
+
+        Object val=cursor.getValue();
+        try
+        {
+          iterationCursorBinding.push(val);
+          genContext.setState(state.ensureChild(i++,val));
+          super.message(genContext,message,path);
+        }
+        finally
+        { iterationCursorBinding.pop();
+        }
+      }
+      state.setStale(false);
+      state.trim(i);
+      if (debug)
+      { log.fine(toString()+": iterated "+i+" elements");
+      }
+
+    }
+    finally
+    {
+      if (oldIter!=null)
+      { iterationLocal.set(oldIter);
+      }
+      else
+      { iterationLocal.remove();
+      }
+    }
+          
+    
+  }
+  
+  private void messageStatefulChildren
+    (final EventContext genContext
+    ,Message message
+    ,LinkedList<Integer> path
+    ,IterationState state
+    )
+  {
+    Iteration oldIter=iterationLocal.get();
+    Iteration iter=new Iteration();
+    iterationLocal.set(iter);
+
+    try
+    {
+      if (debug)
+      { log.fine(toString()+": retraversing on message "+state.getChildCount());
+      }
+
+      // Follow pre-rendered iteration
+      Iterator<MementoState> it=state.iterator();
+      while (it.hasNext())
+      {
+        MementoState childState=it.next();
+        iter.hasNext=it.hasNext();
+        
+        try
+        {
+          iterationCursorBinding.push(childState.getValue());
+          genContext.setState(childState);
+          super.message(genContext,message,path);
+        }
+        finally
+        { iterationCursorBinding.pop();
+        }
+        
+        iter.index++;
+      }
+          
+    }
+    finally
+    {
+      if (oldIter!=null)
+      { iterationLocal.set(oldIter);
+      }
+      else
+      { iterationLocal.remove();
+      }
+    }
+    
+  }
+  
+  private void messageStatefulChild
+    (final EventContext genContext
+    ,Message message
+    ,LinkedList<Integer> path
+    ,MementoState childState
+    ,int index
+    )
+  {
+    Iteration oldIter=iterationLocal.get();
+    Iteration iter=new Iteration();
+    iterationLocal.set(iter);
+
+    iter.index=index;
+    iter.hasNext
+      =index<((IterationState) genContext.getState()).getChildCount()-1;
+
+    try
+    {
+      iterationCursorBinding.push(childState.getValue());
+      genContext.setState(childState);
+      super.message(genContext,message,path);
+    }
+    finally
+    { 
+      iterationCursorBinding.pop();
+      if (oldIter!=null)
+      { iterationLocal.set(oldIter);
+      }
+      else
+      { iterationLocal.remove();
+      }
+    }
+    
+  }
+  
+  private void messageStateful
     (final EventContext genContext
     ,Message message
     ,LinkedList<Integer> path
     )
   {
     IterationState state=(IterationState) genContext.getState();
-    if (genContext.isStateful())
+    try
     {
+    
       if (message.getType()==InitializeMessage.TYPE)
       {
         if (initializeContent)
-        {
-          // Run the default iteration for init purposes
-          if (debug)
-          { log.fine(toString()+": iterating on Initialize");
-          }
-        
-          IterationCursor cursor = decorator.iterator();
-
-          // iterationContextBinding.push(context);
-
-          int i=0;
-          while (cursor.hasNext())
-          { 
-            cursor.next();
-            Object val=cursor.getValue();
-            try
-            {
-              iterationCursorBinding.push(val);
-              genContext.setState(state.ensureChild(i++,val));
-              super.message(genContext,message,path);
-            }
-            finally
-            { iterationCursorBinding.pop();
-            }
-          }
-          state.setStale(false);
-          state.trim(i);
-          if (debug)
-          { log.fine(toString()+": iterated "+i+" elements");
-          }
+        { messageInitializeContent(genContext,message,path,state);
         }
       }
       else
@@ -215,52 +368,37 @@ public class Iterate
         }
       
         if (path==null || path.isEmpty())
-        {
-          if (debug)
-          { log.fine(toString()+": retraversing on message "+state.getChildCount());
-          }
-          
-          // Follow pre-rendered iteration
-          for (MementoState childState:state)
-          { 
-            try
-            {
-              iterationCursorBinding.push(childState.getValue());
-              genContext.setState(childState);
-              super.message(genContext,message,path);
-            }
-            finally
-            { iterationCursorBinding.pop();
-            }
-          }
-          
+        { messageStatefulChildren(genContext,message,path,state);
         }
         else
-        {
+        { 
           if (debug)
           { log.fine(toString()+": following path "+state.getChildCount());
           }
           // Follow path
-          MementoState childState=state.getChild(path.removeFirst());
+          int index=path.removeFirst();
+          MementoState childState=(MementoState) state.getChild(index);
           if (childState!=null)
-          {
-            try
-            {
-              iterationCursorBinding.push(childState.getValue());
-              genContext.setState(childState);
-              super.message(genContext,message,path);
-            }
-            finally
-            { iterationCursorBinding.pop();
-            }
+          { messageStatefulChild(genContext,message,path,childState,index);
           }
           
         }
       }
-      genContext.setState(state);
-      
     }
-    
+    finally
+    { genContext.setState(state);
+    }
+  }
+  
+  public void message
+    (final EventContext genContext
+    ,Message message
+    ,LinkedList<Integer> path
+    )
+  {
+    if (genContext.isStateful())
+    { messageStateful(genContext,message,path);
+    }    
   }
   
   /**
@@ -274,13 +412,21 @@ public class Iterate
   { return true;
   }
   
-  public void render(final EventContext genContext)
+  
+  private void renderRegenerate
+    (final EventContext genContext
+    ,IterationState state
+    )
     throws IOException
-  { 
-    IterationState state=(IterationState) genContext.getState();
-    
-    if (shouldRegenerate(genContext))
+  {
+    Iteration oldIter=iterationLocal.get();
+    Iteration iter=new Iteration();
+    iterationLocal.set(iter);
+
+    try
     {
+      // Efficient case- run the iteration while we render
+
       if (debug)
       { log.fine(toString()+": iterating on render");
       }
@@ -290,17 +436,22 @@ public class Iterate
       while (cursor.hasNext())
       { 
         cursor.next();
+
+        iter.index=i;
+        iter.hasNext=cursor.hasNext();
+
         try
         {
           iterationCursorBinding.push(cursor.getValue());
           if (genContext.isStateful())
-          { genContext.setState(state.ensureChild(i++,cursor.getValue()));
+          { genContext.setState(state.ensureChild(i,cursor.getValue()));
           }
           renderChildren(genContext);
         }
         finally
         { iterationCursorBinding.pop();
         }
+        i++;
       }
       if (state!=null)
       {
@@ -310,16 +461,41 @@ public class Iterate
       if (debug)
       { log.fine(toString()+": iterated "+i+" elements");
       }
-
+        
     }
-    else
+    finally
+    {
+      if (oldIter!=null)
+      { iterationLocal.set(oldIter);
+      }
+      else
+      { iterationLocal.remove();
+      }
+    }        
+  }
+
+  private void renderRetraverse
+    (final EventContext genContext
+    ,IterationState state
+    )
+    throws IOException
+  {
+    Iteration oldIter=iterationLocal.get();
+    Iteration iter=new Iteration();
+    iterationLocal.set(iter);
+
+    try
     {
       if (debug)
       { log.fine(toString()+": retraversing on render "+state.getChildCount());
       }
-      // Rerun the previous iteration
-      for (MementoState childState:state)
-      { 
+      
+      // Follow pre-rendered iteration
+      Iterator<MementoState> it=state.iterator();
+      while (it.hasNext())
+      {
+        MementoState childState=it.next();
+        iter.hasNext=it.hasNext();
         try
         {
           iterationCursorBinding.push(childState.getValue());
@@ -329,9 +505,38 @@ public class Iterate
         finally
         { iterationCursorBinding.pop();
         }
+        iter.index++;
       }
     }
-    genContext.setState(state);
+    finally
+    {
+      if (oldIter!=null)
+      { iterationLocal.set(oldIter);
+      }
+      else
+      { iterationLocal.remove();
+      }
+    }
+    
+  }
+  
+  public void render(final EventContext genContext)
+    throws IOException
+  { 
+    IterationState state=(IterationState) genContext.getState();
+    try
+    {
+    
+      if (shouldRegenerate(genContext))
+      { renderRegenerate(genContext,state);
+      }
+      else
+      { renderRetraverse(genContext,state);
+      }
+    }
+    finally
+    { genContext.setState(state);
+    }
   }
   
   /**
@@ -369,5 +574,13 @@ public class Iterate
   public IterationState createState()
   { return new IterationState(getChildCount());
   }
+  
+  class Iteration
+  {
+    public int index;
+    public boolean hasNext;
+    
+  }
+  
 }
 

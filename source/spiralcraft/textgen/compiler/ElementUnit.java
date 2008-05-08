@@ -28,7 +28,6 @@ import java.net.URI;
 
 import java.io.IOException;
 
-import java.util.HashMap;
 import java.util.List;
 
 import spiralcraft.textgen.Element;
@@ -52,8 +51,8 @@ public class ElementUnit
 {
   private static final ClassLogger log=ClassLogger.getInstance(ElementUnit.class);
   
-  private static final URI _DEFAULT_ELEMENT_PACKAGE
-    =URI.create("java:/spiralcraft/textgen/elements/");
+  public static final URI DEFAULT_ELEMENT_PACKAGE
+    =URI.create("class:/spiralcraft/textgen/elements/");
   
   private final TglCompiler<?> compiler;
   private final CharSequence code;
@@ -168,7 +167,7 @@ public class ElementUnit
       }
       else
       { 
-        elementPackage=_DEFAULT_ELEMENT_PACKAGE;
+        elementPackage=DEFAULT_ELEMENT_PACKAGE;
         elementName=name;
       }
     }
