@@ -14,13 +14,9 @@
 //
 package spiralcraft.textgen.compiler;
 
-import java.io.IOException;
-
 import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.EventContext;
-
 
 import spiralcraft.text.xml.Attribute;
 
@@ -64,10 +60,3 @@ public class CommentUnit
   
 }
 
-class NullElement
-  extends Element
-{
-  public void render(EventContext context)
-    throws IOException
-  { }
-}

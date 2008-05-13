@@ -15,7 +15,10 @@
 package spiralcraft.textgen.compiler;
 
 import java.io.IOException;
+import java.util.List;
 
+import spiralcraft.lang.BindException;
+import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
 
@@ -36,7 +39,17 @@ public class ContentUnit
   }
   
   public Element bind(Element parentElement)
-  { return new TextElement();
+    throws MarkupException
+  { 
+    TextElement ret=new TextElement();
+    ret.setParent(parentElement);
+    try
+    { ret.bind(children);
+    }
+    catch (BindException x)
+    { throw new MarkupException(x.toString(),getPosition(),x);
+    }
+    return ret;
   }
   
   public CharSequence getContent()
@@ -46,9 +59,27 @@ public class ContentUnit
   class TextElement
     extends Element
   {
+    private CharSequence content;
+    
+    public void bind(List<TglUnit> children)
+      throws BindException,MarkupException
+    { 
+      content=ContentUnit.this.content;
+      
+      
+      if (content!=null && ContentUnit.this.getParent().getTrim())
+      { content=content.toString().trim();
+      }
+      
+      super.bind(children);
+    }
+    
     public void render(EventContext context)
       throws IOException
-    { context.getWriter().write(content.toString());
+    { 
+      if (content!=null)
+      { context.getWriter().write(content.toString());
+      }
     }
   }
 }

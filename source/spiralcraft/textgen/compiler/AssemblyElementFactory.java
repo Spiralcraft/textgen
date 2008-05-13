@@ -46,13 +46,13 @@ public class AssemblyElementFactory
   private final ParsePosition position;
 //  private URI namespaceUri;
   private String elementClassName;
-  private LinkedHashMap<String,ElementUnit> properties;
+  private LinkedHashMap<String,PropertyUnit> properties;
   
   public AssemblyElementFactory
     (URI namespaceUri
     ,String elementName
     ,Attribute[] attributes
-    ,ElementUnit[] properties
+    ,PropertyUnit[] properties
     ,ParsePosition position
     )
     throws MarkupException
@@ -85,7 +85,7 @@ public class AssemblyElementFactory
     
     if (properties!=null)
     {
-      for (ElementUnit unit: properties)
+      for (PropertyUnit unit: properties)
       {
         
         Attribute nature=unit.getAttribute("nature");
@@ -133,7 +133,7 @@ public class AssemblyElementFactory
         else if (nature.getValue().equals("bean"))
         { 
           if (this.properties==null)
-          { this.properties=new LinkedHashMap<String,ElementUnit>();
+          { this.properties=new LinkedHashMap<String,PropertyUnit>();
           }
           this.properties.put(unit.getPropertyName(),unit);
           
@@ -179,7 +179,7 @@ public class AssemblyElementFactory
       
       if (properties!=null)
       {
-        for (ElementUnit unit: properties.values())
+        for (PropertyUnit unit: properties.values())
         {
           Attribute nature=unit.getAttribute("nature");
           if ("bean".equals(nature.getValue()))

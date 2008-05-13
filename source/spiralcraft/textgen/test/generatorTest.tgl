@@ -4,7 +4,7 @@ Title: [<%=title/%>]
 
 Aliases:
 <%Iterate x="aliases" %>
--- <%=[Iterate] index/%>: Alias: <%=./%> <%If x="![Iterate] last"%>,<%/If%>
+-- <%=[Iterate] index/%>: Alias: <%=./%><%If x="![Iterate] last"%>,<%/If%>
 <%/Iterate%>
 
 Aliases again:
@@ -12,3 +12,8 @@ Aliases again:
 -- Alias: <%=./%>
 <%/Iterate%>
 
+Aliases tight:
+<%Iterate x="aliases" textgen:trim="true"%>
+  <%=./%>
+  <%If x="![Iterate] last"%>,<%/If%>
+<%/Iterate%>

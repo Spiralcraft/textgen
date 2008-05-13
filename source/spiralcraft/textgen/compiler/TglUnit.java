@@ -21,6 +21,7 @@ import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
 
 
+import spiralcraft.text.ParseException;
 import spiralcraft.text.markup.Unit;
 import spiralcraft.text.markup.MarkupException;
 
@@ -35,6 +36,7 @@ public abstract class TglUnit
 {
   
   protected boolean allowsChildren=true;
+  protected boolean trim;
   
   public TglUnit(TglUnit parent)
   { super(parent);
@@ -74,6 +76,33 @@ public abstract class TglUnit
     return element;
   }
   
+  protected void addUnitAttribute(String name,String value)
+    throws ParseException
+  { 
+    name=name.intern();
+    if (name=="trim")
+    { trim=Boolean.parseBoolean(value);
+    }
+    else
+    { 
+      throw new ParseException
+        ("Unrecognized textgen attribute '"+name
+        +"' - not one of {trim}"
+        ,getPosition()
+        );
+    }
+    
+  }
+  
+  /**
+   * Whether whitespace should be trimmed from any content blocks directly
+   *   contained in this Unit.
+   * 
+   * @return
+   */
+  public boolean getTrim()
+  { return trim;
+  }
   
 }
 

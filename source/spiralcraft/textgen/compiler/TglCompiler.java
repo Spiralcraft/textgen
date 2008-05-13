@@ -127,7 +127,7 @@ public class TglCompiler<T extends DocletUnit>
     (URI namespaceUri
     ,String elementName
     ,Attribute[] attributes
-    ,ElementUnit[] properties
+    ,PropertyUnit[] properties
     ,ParsePosition parsePosition
     )
     throws MarkupException
@@ -176,6 +176,18 @@ public class TglCompiler<T extends DocletUnit>
     }
     else if (code.charAt(0)=='@')
     { pushUnit(parseProcessingUnit(code));
+    }
+    else if (code.charAt(0)=='.')
+    { 
+      PropertyUnit propertyUnit
+        =new PropertyUnit(getUnit(),code,position);
+      pushUnit(propertyUnit);
+    }
+    else if (code.charAt(0)=='=')
+    { 
+      ExpressionUnit expressionUnit
+        =new ExpressionUnit(getUnit(),code,position);
+      pushUnit(expressionUnit);
     }
     else
     {
