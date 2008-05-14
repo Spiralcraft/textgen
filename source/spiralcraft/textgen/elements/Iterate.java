@@ -17,7 +17,7 @@ package spiralcraft.textgen.elements;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.SimpleFocus;
+
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.IterationDecorator;
