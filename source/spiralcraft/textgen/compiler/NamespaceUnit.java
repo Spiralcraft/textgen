@@ -115,7 +115,9 @@ public class NamespaceUnit
           @Override
           public URI resolveNamespace(String prefix)
           { 
-            log.fine("resolveNamespace "+prefix);
+            if (debug)
+            { log.fine("resolveNamespace "+prefix);
+            }
             return NamespaceUnit.this.resolveNamespace(prefix);
           }
         }

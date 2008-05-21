@@ -37,6 +37,7 @@ public abstract class TglUnit
   
   protected boolean allowsChildren=true;
   protected boolean trim;
+  protected boolean debug;
   
   public TglUnit(TglUnit parent)
   { super(parent);
@@ -82,6 +83,9 @@ public abstract class TglUnit
     name=name.intern();
     if (name=="trim")
     { trim=Boolean.parseBoolean(value);
+    }
+    else if (name=="debug")
+    { debug=Boolean.parseBoolean(value);
     }
     else
     { 
