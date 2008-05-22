@@ -36,7 +36,7 @@ public class CompilerTest
   public static void main(String[] args)
     throws Exception
   {
-    URI uri=URI.create("java:/spiralcraft/textgen/test/generatorTest.tgl");
+    URI uri=URI.create("class:/spiralcraft/textgen/test/generatorTest.tgl");
     TglCompiler compiler
       =new TglCompiler();
     DocletUnit root=compiler.compile(uri);

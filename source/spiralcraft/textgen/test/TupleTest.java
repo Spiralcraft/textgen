@@ -57,12 +57,12 @@ public class TupleTest
     throws Exception
   {
     URI dataURI
-      =URI.create("java:/spiralcraft/textgen/test/model.data.xml");
+      =URI.create("class:/spiralcraft/textgen/test/model.data.xml");
   
     Tuple tuple
       =(Tuple) new DataReader().readFromURI(dataURI,null);
 
-    URI uri=URI.create("java:/spiralcraft/textgen/test/tupleTest.tgl");
+    URI uri=URI.create("class:/spiralcraft/textgen/test/tupleTest.tgl");
 
 
 
@@ -84,17 +84,17 @@ public class TupleTest
     throws Exception
   {
     URI dataURI=URI.create
-      ("java:/spiralcraft/data/test/example/Customer.data.xml");
+      ("class:/spiralcraft/data/test/example/Customer.data.xml");
     
     URI typeURI=URI.create
-      ("java:/spiralcraft/data/test/example/Customer.list");
+      ("class:/spiralcraft/data/test/example/Customer.list");
     
     Type type=TypeResolver.getTypeResolver().resolve(typeURI);
 
     Aggregate<Tuple> list
       =(Aggregate<Tuple>) new DataReader().readFromURI(dataURI,type);
 
-    URI uri=URI.create("java:/spiralcraft/textgen/test/cursorTest.tgl");
+    URI uri=URI.create("class:/spiralcraft/textgen/test/cursorTest.tgl");
 
     SimpleChannel binding
       =new SimpleChannel(DataReflector.getInstance(list.getType()),list,false);

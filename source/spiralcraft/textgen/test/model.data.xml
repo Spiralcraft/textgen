@@ -1,5 +1,5 @@
 <example:Customer
-  xmlns:example="java:/spiralcraft/data/test/example"
+  xmlns:example="class:/spiralcraft/data/test/example"
   >
   <id>1
   </id>

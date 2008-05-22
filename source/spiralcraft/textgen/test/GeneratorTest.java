@@ -42,7 +42,7 @@ public class GeneratorTest
     throws Exception
   {
 
-    URI uri=URI.create("java:/spiralcraft/textgen/test/generatorTest.tgl");
+    URI uri=URI.create("class:/spiralcraft/textgen/test/generatorTest.tgl");
     DocletUnit root
       =new TglCompiler().compile(uri);
     
@@ -51,7 +51,7 @@ public class GeneratorTest
       =root.bind
         (new BeanFocus
           (new XmlAssembly
-              (URI.create("java:/spiralcraft/builder/test/MyWidget.assy"),null)
+              (URI.create("class:/spiralcraft/builder/test/MyWidget.assy"),null)
           .get()
           )
         );
