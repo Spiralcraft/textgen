@@ -17,7 +17,14 @@ package spiralcraft.textgen.elements;
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Element;
 
-
+/**
+ * <P>A placeholder for use inside the If element to conveniently separate
+ *   positive and negative conditions
+ * </P>
+ * 
+ * @author mike
+ *
+ */
 public class Else
   extends Element
 {
