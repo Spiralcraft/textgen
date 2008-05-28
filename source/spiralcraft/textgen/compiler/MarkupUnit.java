@@ -45,7 +45,13 @@ public abstract class MarkupUnit
   {
     ParserContext context=new ParserContext(markup.toString());
     TagReader tagReader=new TagReader();
-    tagReader.readTag(context);
+    
+    try
+    { tagReader.readTag(context);
+    }
+    catch (ParseException x)
+    { throw new ParseException("Error reading tag",getPosition(),x);
+    }
 
 
     String name=tagReader.getTagName();
