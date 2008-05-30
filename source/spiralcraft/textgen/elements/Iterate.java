@@ -21,7 +21,6 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.IterationDecorator;
-import spiralcraft.lang.IterationCursor;
 
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.log.ClassLogger;
@@ -56,7 +55,7 @@ public class Iterate
   private Expression<?> expression;
   private Focus<?> focus;
   private IterationDecorator decorator;
-  private ThreadLocalChannel iterationCursorBinding;
+  private ThreadLocalChannel valueChannel;
   
   private ThreadLocal<Iteration> iterationLocal
     =new ThreadLocal<Iteration>();
@@ -152,17 +151,17 @@ public class Iterate
     // SimpleFocus simpleFocus=new SimpleFocus
     //  (decorator.createComponentBinding(iterationContextBinding));
     
-    iterationCursorBinding
+    valueChannel
       =new ThreadLocalChannel(decorator.getComponentReflector());
     
     CompoundFocus compoundFocus
-      =new CompoundFocus(parentFocus,iterationCursorBinding);
+      =new CompoundFocus(parentFocus,valueChannel);
     
     compoundFocus.bindFocus
       ("spiralcraft.servlet.webui",this.getAssembly().getFocus());
     focus=compoundFocus;
     if (debug)
-    { log.fine("Iterator exposes "+iterationCursorBinding);
+    { log.fine("Iterator exposes "+valueChannel);
     }
     
     bindChildren(childUnits);
@@ -174,13 +173,11 @@ public class Iterate
     if (debug)
     { log.fine(toString()+": iterating");
     }
-    IterationCursor cursor = decorator.iterator();
+    Iterator<?> cursor = decorator.iterator();
 
     int i=0;
     while (cursor.hasNext())
-    { 
-      cursor.next();
-      state.ensureChild(i++,cursor.getValue());
+    { state.ensureChild(i++,cursor.next());
     }
     state.setStale(false);
     state.trim(i);
@@ -201,7 +198,7 @@ public class Iterate
     { log.fine(toString()+": iterating on Initialize");
     }
 
-    IterationCursor cursor = decorator.iterator();
+    Iterator<?> cursor = decorator.iterator();
 
     Iteration oldIter=iterationLocal.get();
     Iteration iter=new Iteration();
@@ -213,20 +210,19 @@ public class Iterate
       int i=0;
       while (cursor.hasNext())
       { 
-        cursor.next();
+        Object val=cursor.next();
 
         iter.index=i;
         iter.hasNext=cursor.hasNext();
 
-        Object val=cursor.getValue();
         try
         {
-          iterationCursorBinding.push(val);
+          valueChannel.push(val);
           genContext.setState(state.ensureChild(i++,val));
           super.message(genContext,message,path);
         }
         finally
-        { iterationCursorBinding.pop();
+        { valueChannel.pop();
         }
       }
       state.setStale(false);
@@ -275,12 +271,12 @@ public class Iterate
         
         try
         {
-          iterationCursorBinding.push(childState.getValue());
+          valueChannel.push(childState.getValue());
           genContext.setState(childState);
           super.message(genContext,message,path);
         }
         finally
-        { iterationCursorBinding.pop();
+        { valueChannel.pop();
         }
         
         iter.index++;
@@ -317,13 +313,13 @@ public class Iterate
 
     try
     {
-      iterationCursorBinding.push(childState.getValue());
+      valueChannel.push(childState.getValue());
       genContext.setState(childState);
       super.message(genContext,message,path);
     }
     finally
     { 
-      iterationCursorBinding.pop();
+      valueChannel.pop();
       if (oldIter!=null)
       { iterationLocal.set(oldIter);
       }
@@ -430,26 +426,26 @@ public class Iterate
       if (debug)
       { log.fine(toString()+": iterating on render");
       }
-      IterationCursor cursor = decorator.iterator();
+      Iterator cursor = decorator.iterator();
 
       int i=0;
       while (cursor.hasNext())
       { 
-        cursor.next();
+        Object val=cursor.next();
 
         iter.index=i;
         iter.hasNext=cursor.hasNext();
 
         try
         {
-          iterationCursorBinding.push(cursor.getValue());
+          valueChannel.push(val);
           if (genContext.isStateful())
-          { genContext.setState(state.ensureChild(i,cursor.getValue()));
+          { genContext.setState(state.ensureChild(i,val));
           }
           renderChildren(genContext);
         }
         finally
-        { iterationCursorBinding.pop();
+        { valueChannel.pop();
         }
         i++;
       }
@@ -498,12 +494,12 @@ public class Iterate
         iter.hasNext=it.hasNext();
         try
         {
-          iterationCursorBinding.push(childState.getValue());
+          valueChannel.push(childState.getValue());
           genContext.setState(childState);
           renderChildren(genContext);
         }
         finally
-        { iterationCursorBinding.pop();
+        { valueChannel.pop();
         }
         iter.index++;
       }
