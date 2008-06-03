@@ -36,6 +36,7 @@ import spiralcraft.textgen.PrepareMessage;
 import spiralcraft.textgen.compiler.TglUnit;
 
 import spiralcraft.text.markup.MarkupException;
+import spiralcraft.util.LookaroundIterator;
 
 import java.io.IOException;
 
@@ -53,9 +54,14 @@ public class Iterate
   private static final ClassLogger log=ClassLogger.getInstance(Iterate.class);
   
   private Expression<?> expression;
-  private Focus<?> focus;
+  private Focus<?> currentFocus;
+  private Focus<?> lookaheadFocus;
+  private Focus<?> lookbehindFocus;
+
   private IterationDecorator decorator;
   private ThreadLocalChannel valueChannel;
+  private ThreadLocalChannel lookaheadChannel;
+  private ThreadLocalChannel lookbehindChannel;
   
   private ThreadLocal<Iteration> iterationLocal
     =new ThreadLocal<Iteration>();
@@ -95,9 +101,17 @@ public class Iterate
   }
 
   public Focus<?> getFocus()
-  { return focus;
+  { return currentFocus;
   }
   
+  public Focus<?> getLookaheadFocus()
+  { return lookaheadFocus;
+  }
+  
+  public Focus<?> getLookbehindFocus()
+  { return lookbehindFocus;
+  }
+
   /**
    * <p>Indicate whether the Initialize message should run the iteration and
    *   propogate the message to any content created as a result.
@@ -151,15 +165,45 @@ public class Iterate
     // SimpleFocus simpleFocus=new SimpleFocus
     //  (decorator.createComponentBinding(iterationContextBinding));
     
-    valueChannel
-      =new ThreadLocalChannel(decorator.getComponentReflector());
+    {
+      valueChannel
+        =new ThreadLocalChannel(decorator.getComponentReflector());
     
-    CompoundFocus compoundFocus
-      =new CompoundFocus(parentFocus,valueChannel);
+
+      CompoundFocus compoundFocus
+        =new CompoundFocus(parentFocus,valueChannel);
     
-    compoundFocus.bindFocus
-      ("spiralcraft.servlet.webui",this.getAssembly().getFocus());
-    focus=compoundFocus;
+      compoundFocus.bindFocus
+        ("spiralcraft.servlet.webui",this.getAssembly().getFocus());
+      currentFocus=compoundFocus;
+    }
+    
+    {
+      lookaheadChannel
+        =new ThreadLocalChannel(decorator.getComponentReflector());
+
+      CompoundFocus compoundFocus
+        =new CompoundFocus(parentFocus,lookaheadChannel);
+    
+      compoundFocus.bindFocus
+        ("spiralcraft.servlet.webui",this.getAssembly().getFocus());
+      lookaheadFocus=compoundFocus;
+      
+    }
+    
+    {
+      lookbehindChannel
+        =new ThreadLocalChannel(decorator.getComponentReflector());
+
+      CompoundFocus compoundFocus
+        =new CompoundFocus(parentFocus,lookbehindChannel);
+    
+      compoundFocus.bindFocus
+        ("spiralcraft.servlet.webui",this.getAssembly().getFocus());
+      lookbehindFocus=compoundFocus;
+      
+    }
+    
     if (debug)
     { log.fine("Iterator exposes "+valueChannel);
     }
@@ -186,6 +230,8 @@ public class Iterate
     }
   }
       
+  
+  
   private void messageInitializeContent
     (final EventContext genContext
     ,Message message
@@ -198,7 +244,7 @@ public class Iterate
     { log.fine(toString()+": iterating on Initialize");
     }
 
-    Iterator<?> cursor = decorator.iterator();
+    LookaroundIterator<?> cursor = new LookaroundIterator(decorator.iterator());
 
     Iteration oldIter=iterationLocal.get();
     Iteration iter=new Iteration();
@@ -210,6 +256,7 @@ public class Iterate
       int i=0;
       while (cursor.hasNext())
       { 
+        Object lastVal=cursor.getPrevious();
         Object val=cursor.next();
 
         iter.index=i;
@@ -217,14 +264,21 @@ public class Iterate
 
         try
         {
+          lookbehindChannel.push(lastVal);
           valueChannel.push(val);
+          lookaheadChannel.push(cursor.getCurrent());
           genContext.setState(state.ensureChild(i++,val));
           super.message(genContext,message,path);
         }
         finally
-        { valueChannel.pop();
+        { 
+          lookaheadChannel.pop();
+          valueChannel.pop();
+          lookbehindChannel.pop();
         }
       }
+      
+      
       state.setStale(false);
       state.trim(i);
       if (debug)
@@ -263,20 +317,29 @@ public class Iterate
       }
 
       // Follow pre-rendered iteration
-      Iterator<MementoState> it=state.iterator();
+      LookaroundIterator<MementoState> it
+        =new LookaroundIterator<MementoState>(state.iterator());
+      
       while (it.hasNext())
       {
+        Object lastVal=it.getPrevious()!=null?it.getPrevious().getValue():null;
         MementoState childState=it.next();
         iter.hasNext=it.hasNext();
         
         try
         {
+          lookbehindChannel.push(lastVal);
           valueChannel.push(childState.getValue());
+          lookaheadChannel.push
+            (it.getCurrent()!=null?it.getCurrent().getValue():null);
           genContext.setState(childState);
           super.message(genContext,message,path);
         }
         finally
-        { valueChannel.pop();
+        { 
+          lookaheadChannel.pop();
+          valueChannel.pop();
+          lookbehindChannel.pop();
         }
         
         iter.index++;
@@ -313,13 +376,17 @@ public class Iterate
 
     try
     {
+      lookbehindChannel.push(null);
       valueChannel.push(childState.getValue());
+      lookaheadChannel.push(null);
       genContext.setState(childState);
       super.message(genContext,message,path);
     }
     finally
     { 
+      lookaheadChannel.pop();
       valueChannel.pop();
+      lookbehindChannel.pop();
       if (oldIter!=null)
       { iterationLocal.set(oldIter);
       }
@@ -426,11 +493,12 @@ public class Iterate
       if (debug)
       { log.fine(toString()+": iterating on render");
       }
-      Iterator cursor = decorator.iterator();
+      LookaroundIterator cursor = new LookaroundIterator(decorator.iterator());
 
       int i=0;
       while (cursor.hasNext())
       { 
+        Object lastVal=cursor.getPrevious();
         Object val=cursor.next();
 
         iter.index=i;
@@ -438,14 +506,19 @@ public class Iterate
 
         try
         {
+          lookbehindChannel.push(lastVal);
           valueChannel.push(val);
+          lookaheadChannel.push(cursor.getCurrent());
           if (genContext.isStateful())
           { genContext.setState(state.ensureChild(i,val));
           }
           renderChildren(genContext);
         }
         finally
-        { valueChannel.pop();
+        { 
+          lookaheadChannel.pop();
+          valueChannel.pop();
+          lookbehindChannel.pop();
         }
         i++;
       }
@@ -487,19 +560,27 @@ public class Iterate
       }
       
       // Follow pre-rendered iteration
-      Iterator<MementoState> it=state.iterator();
+      LookaroundIterator<MementoState> it
+        =new LookaroundIterator<MementoState>(state.iterator());
       while (it.hasNext())
       {
+        Object lastVal=it.getPrevious()!=null?it.getPrevious().getValue():null;
         MementoState childState=it.next();
         iter.hasNext=it.hasNext();
         try
         {
+          lookbehindChannel.push(lastVal);
           valueChannel.push(childState.getValue());
+          lookaheadChannel.push
+            (it.getCurrent()!=null?it.getCurrent().getValue():null);
           genContext.setState(childState);
           renderChildren(genContext);
         }
         finally
-        { valueChannel.pop();
+        { 
+          lookaheadChannel.pop();
+          valueChannel.pop();
+          lookbehindChannel.pop();
         }
         iter.index++;
       }

@@ -418,6 +418,33 @@ public abstract class Element
     { return null;
     }
   }
+  
+  /**
+   * Find an Element among this Element's ancestors/containers, but stop
+   *   looking when we reach the stop class.
+   * 
+   * @param <X>
+   * @param clazz
+   * @return The Element with the specific class or interface, or null if
+   *   none was found
+   */
+  @SuppressWarnings("unchecked") // Downcast from runtime check
+  public <X> X findElement(Class<X> clazz,Class<?> stop)
+  {
+    if (stop.isAssignableFrom(getClass()))
+    { return null;
+    }
+    else if (clazz.isAssignableFrom(getClass()))
+    { return (X) this;
+    }
+    else if (parent!=null)
+    { return parent.<X>findElement(clazz,stop);
+    }
+    else
+    { return null;
+    }
+    
+  }
 
   /**
    * <p>Find the distance from the calling element's state in the state

@@ -1,0 +1,6 @@
+<elements:If
+  xmlns:elements="class:/spiralcraft/textgen/elements"
+  >
+  <x>[Group] ending
+  </x>
+</elements:If>

@@ -1,3 +1,7 @@
+
+
+
+## BEGIN simple iteration
 <%Iterate%>
 
 id=[<%=id/%>]
@@ -5,3 +9,29 @@ displayName=[<%=displayName/%>]
 address.city=[<%=address.city/%>]
 
 <%/Iterate%>
+## END simple iteration
+
+## BEGIN grouped iteration
+<%Iterate%>
+
+  <%Group x="address.city"%>
+
+    <%GroupHeader%>
+      -- Starting <%=address.city/%>
+    <%/GroupHeader%>
+
+    id=[<%=id/%>]
+    displayName=[<%=displayName/%>]
+    address.city=[<%=address.city/%>]
+    
+    <%GroupFooter%>
+      -- Ending <%=address.city/%>
+    <%/GroupFooter%>
+
+  <%/Group%>
+  
+<%/Iterate%>
+## END grouped iteration
+
+
+
