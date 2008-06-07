@@ -6,12 +6,23 @@ import spiralcraft.textgen.Element;
 import spiralcraft.textgen.ElementState;
 import spiralcraft.textgen.EventContext;
 
+/**
+ * <p>The bound Element of the IncludeUnit which includes another resource.
+ * </p>
+ * 
+ * <p>The first child is always the included resource. Children after the 
+ *   first represent content to be inserted into the included resource.
+ * </p>
+ * 
+ * @author mike
+ *
+ */
 public class IncludeElement
   extends Element
 {
 
   protected ThreadLocal<ElementState> threadLocalState
-  =new ThreadLocal<ElementState>();
+    =new ThreadLocal<ElementState>();
 
   @Override
   public void render(EventContext context)
@@ -30,7 +41,7 @@ public class IncludeElement
 
   /**
    * Render the content (children)  of the IncludeElement from within a 
-   *   rendering of the included Element.
+   *   rendering of the included Element (via the InsertElement)
    * @throws IOException
    */
   public void renderClosure(EventContext context)

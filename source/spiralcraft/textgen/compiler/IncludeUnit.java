@@ -76,7 +76,10 @@ public class IncludeUnit
           
         }
         try
-        { docletUnit=compiler.subCompile(this,resourceURI);
+        { 
+          // This will add the Unit defined by the specified resource
+          //   as the first child of this unit.
+          docletUnit=compiler.subCompile(this,resourceURI);
         }
         catch (ParseException x)
         { 
