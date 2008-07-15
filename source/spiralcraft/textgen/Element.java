@@ -294,6 +294,11 @@ public abstract class Element
   /**
    * Call this method to message a child element.
    * 
+   * <P>This method ensures that the child Element's state is available in the
+   *   eventContext, and ensures that this Element's state is restored to
+   *   the eventContext upon return
+   * </P>
+   * 
    * @param context
    * @param index
    */
@@ -343,13 +348,19 @@ public abstract class Element
     throws IOException;
   
   /**
-   * Call this method to render a child element.
+   * <P>Call this method to render a child element.
+   * </P>
+   * 
+   * <P>This method ensures that the child Element's state is available in the
+   *   eventContext, and ensures that this Element's state is restored to
+   *   the eventContext upon return
+   * </P>
    * 
    * @param context
    * @param index
    * @throws IOException
    */
-  protected void renderChild(EventContext context,int index)
+  protected final void renderChild(EventContext context,int index)
     throws IOException
   { 
     if (context.isStateful())
