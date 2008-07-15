@@ -16,13 +16,17 @@ package spiralcraft.textgen.compiler;
 
 import java.io.IOException;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import spiralcraft.lang.BindException;
+import spiralcraft.log.ClassLogger;
+import spiralcraft.text.ParseException;
 import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
+import spiralcraft.textgen.Message;
 
 
 import spiralcraft.text.xml.Attribute;
@@ -33,23 +37,40 @@ import spiralcraft.text.xml.Attribute;
 public class InsertUnit
   extends ProcessingUnit
 {
+  private static final ClassLogger log
+    =ClassLogger.getInstance(InsertUnit.class);
   
+  private String referencedName;
+  private boolean require=false;
   
   public InsertUnit
     (TglUnit parent
     ,TglCompiler<?> compiler
     ,Attribute[] attribs
     )
-    throws MarkupException
+    throws MarkupException,ParseException
   { 
     super(parent);
-    
-    if (attribs!=null && attribs.length>0)
+    allowsChildren=true;
+
+    for (Attribute attrib: attribs)
     {
-      throw new MarkupException
-        ("@insert does not accept attributes"
-        ,compiler.getPosition()
-        );
+      if (attrib.getName().equals("name"))
+      { this.referencedName=attrib.getValue();
+      }
+      else if (attrib.getName().equals("require"))
+      { require=Boolean.parseBoolean(attrib.getValue());
+      }
+      else if (attrib.getName().startsWith("textgen:"))
+      { super.addUnitAttribute(attrib.getName().substring(8),attrib.getValue());
+      } 
+      else
+      { 
+        throw new MarkupException
+          ("Attribute '"+attrib.getName()+"' not in {name,require}"
+          ,compiler.getPosition()
+          );
+      }
     }
     
   }
@@ -63,22 +84,69 @@ public class InsertUnit
   public Element bind(Element parentElement)
     throws MarkupException
   {
-    InsertElement element=new InsertElement();
-    element.setParent(parentElement);
-    try
-    { element.bind(children);
+    if (referencedName!=null)
+    {
+      DefineUnit defineUnit=findDefinition(referencedName);
+      if (defineUnit!=null)
+      { 
+        if (debug)
+        { log.fine("Binding define unit '"+referencedName+"'");
+        }
+        return defineUnit.bindContent(parentElement);
+      }
+      else if (!require)
+      { 
+        if (debug)
+        { log.fine("Binding default for '"+referencedName+"'");
+        }
+        // Render default
+        InsertElement element=new InsertElement();
+        element.setParent(parentElement);
+        try
+        { element.bind(children);
+        }
+        catch (BindException x)
+        { throw new MarkupException(x.toString(),getPosition());
+        }
+        return element;
+        
+      }
+      else
+      { 
+        throw new MarkupException
+          ("Name '"+referencedName+"' not found."
+          ,getPosition()
+          );
+      }
     }
-    catch (BindException x)
-    { throw new MarkupException(x.toString(),getPosition());
-    }
+    else
+    {
     
-    return element;
+      InsertIncludeElement element=new InsertIncludeElement();
+      element.setParent(parentElement);
+      try
+      { element.bind(children);
+      }
+      catch (BindException x)
+      { throw new MarkupException(x.toString(),getPosition());
+      }
+      return element;
+    }
   }
   
   
 }
 
 class InsertElement
+  extends Element
+{
+  public void render(EventContext context)
+    throws IOException
+  { renderChildren(context);
+  }
+}
+
+class InsertIncludeElement
   extends Element
 {
   private IncludeElement ancestorInclude;
@@ -89,6 +157,23 @@ class InsertElement
   { 
     ancestorInclude=findElement(IncludeElement.class);
     super.bind(children);
+  }
+  
+  @Override
+  public void message
+    (EventContext context
+    ,Message message
+    ,LinkedList<Integer> path
+    )
+  {    
+    if (ancestorInclude!=null)
+    { ancestorInclude.messageClosure(context,message,path);
+    }
+    else 
+    { super.message(context, message, path);
+    }
+
+
   }
   
   @Override

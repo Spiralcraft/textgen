@@ -14,15 +14,10 @@
 //
 package spiralcraft.textgen.compiler;
 
-import java.io.IOException;
-
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import spiralcraft.lang.BindException;
 
 import spiralcraft.text.markup.MarkupException;
-import spiralcraft.text.ParseException;
 
 import spiralcraft.textgen.Element;
 
@@ -35,7 +30,6 @@ public class IncludeUnit
   extends ProcessingUnit
 {
   
-  private DocletUnit docletUnit;
   
   public String getName()
   { return "@include";
@@ -50,54 +44,13 @@ public class IncludeUnit
   { 
     super(parent);
     allowsChildren=true;
-    
+
+    DocletUnit docletUnit=null;
+
     for (Attribute attrib: attribs)
     {
       if (attrib.getName().equals("resource"))
-      {
-        URI resourceURI=null;
-        try
-        { resourceURI=new URI(attrib.getValue());
-        }
-        catch (URISyntaxException x)
-        { 
-          throw new MarkupException
-            ("Error creating URI '"+attrib.getValue()+"':"+x
-            ,compiler.getPosition()
-            );
-        }
-        
-        
-        if (!resourceURI.isAbsolute())
-        {
-          DocletUnit parentDoc=findUnit(DocletUnit.class);
-          URI baseURI=parentDoc.getSourceURI();
-          resourceURI=baseURI.resolve(resourceURI);
-          
-        }
-        try
-        { 
-          // This will add the Unit defined by the specified resource
-          //   as the first child of this unit.
-          docletUnit=compiler.subCompile(this,resourceURI);
-        }
-        catch (ParseException x)
-        { 
-
-          throw new MarkupException
-            ("Error including URI '"+attrib.getValue()+"':"+x
-            ,compiler.getPosition()
-            ,x
-            );
-        }
-        catch (IOException x)
-        {
-          throw new MarkupException
-            ("Error including URI '"+attrib.getValue()+"':"+x
-            ,compiler.getPosition()
-            ,x
-            );
-        }
+      { docletUnit=includeResource(attrib.getValue(),compiler);
       }
       else
       { 

@@ -229,20 +229,29 @@ public class TglCompiler<T extends DocletUnit>
   protected TglUnit resolveProcessingUnit(String name,Attribute[] attributes)
     throws MarkupException
   {
-    if (name.equals("include"))
-    { return new IncludeUnit(getUnit(),this,attributes);
+    try
+    {
+      if (name.equals("include"))
+      { return new IncludeUnit(getUnit(),this,attributes);
+      }
+      else if (name.equals("insert"))
+      { return new InsertUnit(getUnit(),this,attributes);
+      }
+      else if (name.equals("define"))
+      { return new DefineUnit(getUnit(),this,attributes);
+      }
+      else if (name.equals("namespace"))
+      { return new NamespaceUnit(getUnit(),this,attributes);
+      }
+      else if (name.equals("comment"))
+      { return new CommentUnit(getUnit(),this,attributes);
+      }
+      else
+      { return null;
+      }
     }
-    else if (name.equals("insert"))
-    { return new InsertUnit(getUnit(),this,attributes);
-    }
-    else if (name.equals("namespace"))
-    { return new NamespaceUnit(getUnit(),this,attributes);
-    }
-    else if (name.equals("comment"))
-    { return new CommentUnit(getUnit(),this,attributes);
-    }
-    else
-    { return null;
+    catch (ParseException x)
+    { throw new MarkupException("Error parsing processing unit",getPosition(),x);
     }
   }
 

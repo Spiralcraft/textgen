@@ -14,6 +14,13 @@
 //
 package spiralcraft.textgen.compiler;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import spiralcraft.text.ParseException;
+import spiralcraft.text.markup.MarkupException;
+
 public abstract class ProcessingUnit
   extends TglUnit
 {
@@ -30,6 +37,54 @@ public abstract class ProcessingUnit
   
   public void close()
   { open=false;
+  }
+  
+  protected DocletUnit includeResource(String resourceRef,TglCompiler<?> compiler)
+    throws MarkupException
+  {
+    URI resourceURI=null;
+    try
+    { resourceURI=new URI(resourceRef);
+    }
+    catch (URISyntaxException x)
+    { 
+      throw new MarkupException
+      ("Error creating URI '"+resourceRef+"':"+x
+          ,compiler.getPosition()
+      );
+    }
+
+
+    if (!resourceURI.isAbsolute())
+    {
+      DocletUnit parentDoc=findUnit(DocletUnit.class);
+      URI baseURI=parentDoc.getSourceURI();
+      resourceURI=baseURI.resolve(resourceURI);
+
+    }
+    try
+    { 
+      // This will add the Unit defined by the specified resource
+      //   as the first child of this unit.
+      return compiler.subCompile(this,resourceURI);
+    }
+    catch (ParseException x)
+    { 
+
+      throw new MarkupException
+      ("Error including URI '"+resourceRef+"':"+x
+          ,compiler.getPosition()
+          ,x
+      );
+    }
+    catch (IOException x)
+    {
+      throw new MarkupException
+      ("Error including URI '"+resourceRef+"':"+x
+          ,compiler.getPosition()
+          ,x
+      );
+    }
   }
   
 }

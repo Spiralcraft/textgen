@@ -26,6 +26,7 @@ import spiralcraft.text.markup.Unit;
 import spiralcraft.text.markup.MarkupException;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * A Unit of text generation which represents a
@@ -38,9 +39,29 @@ public abstract class TglUnit
   protected boolean allowsChildren=true;
   protected boolean trim;
   protected boolean debug;
+
+  private HashMap<String,DefineUnit> defines;
   
   public TglUnit(TglUnit parent)
   { super(parent);
+  }
+  
+  public void define(String name,DefineUnit unit)
+  {
+    if (defines==null)
+    { defines=new HashMap<String,DefineUnit>();
+    }
+    
+    defines.put(name, unit);
+  }
+  
+  public DefineUnit findDefinition(String name)
+  {
+    DefineUnit ret=defines!=null?defines.get(name):null;
+    if (ret==null && parent!=null)
+    { return parent.findDefinition(name);
+    }
+    return ret;
   }
   
   public boolean allowsChildren()
