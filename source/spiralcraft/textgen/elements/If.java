@@ -83,10 +83,17 @@ public class If
     }
   }
   
+  /**
+   * <P>Renders the tag. A positive result is displayed only if the bound
+   *   expression returns true. A null value is interpreted as false.
+   * </P>
+   */
   public void render(EventContext context)
     throws IOException
   { 
-    boolean passed=target.get();
+    Boolean val=target.get();
+    boolean passed=val!=null && val;
+    
     int childCount=getChildCount();
 
     int start;
