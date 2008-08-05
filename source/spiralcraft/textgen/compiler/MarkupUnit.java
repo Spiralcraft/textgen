@@ -90,6 +90,7 @@ public abstract class MarkupUnit
     return null;
   }
   
+  @Override
   public boolean isOpen()
   { return open;
   }

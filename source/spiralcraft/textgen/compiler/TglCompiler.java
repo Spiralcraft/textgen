@@ -73,7 +73,7 @@ public class TglCompiler<T extends DocletUnit>
    * Compile a resource
    * 
    * @param sourceURI
-   * @return
+   * @return The DocletUnit subtype that represents the compiled resource
    * @throws ParseException
    * @throws IOException
    */
@@ -97,7 +97,7 @@ public class TglCompiler<T extends DocletUnit>
    * Compile a nested resource
    * 
    * @param sourceURI
-   * @return
+   * @return The DocletUnit subtype that represents a compiled resource
    * @throws ParseException
    * @throws IOException
    */
@@ -114,6 +114,7 @@ public class TglCompiler<T extends DocletUnit>
     
   }
   
+  @Override
   protected TglCompiler<T> clone()
   { return new TglCompiler<T>();
   }
@@ -138,6 +139,7 @@ public class TglCompiler<T extends DocletUnit>
     
   }
   
+  @Override
   public void handleContent(CharSequence content)
   { 
     ContentUnit unit=new ContentUnit(getUnit(),content);
@@ -145,6 +147,7 @@ public class TglCompiler<T extends DocletUnit>
     pushUnit(unit);
   }
   
+  @Override
   public void handleMarkup(CharSequence code)
     throws MarkupException,ParseException
   { 

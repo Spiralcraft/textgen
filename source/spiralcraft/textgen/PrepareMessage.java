@@ -28,6 +28,7 @@ public class PrepareMessage
   { multicast=true;
   }
   
+  @Override
   public MessageType getType()
   { return TYPE;
   }

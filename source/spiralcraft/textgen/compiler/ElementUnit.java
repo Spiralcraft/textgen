@@ -117,6 +117,7 @@ public class ElementUnit
    * </p>
    *   
    */
+  @Override
   public void close()
     throws MarkupException
   {
@@ -146,6 +147,7 @@ public class ElementUnit
     }
   }
   
+  @Override
   public Element bind(Element parentElement)
     throws MarkupException
   { 

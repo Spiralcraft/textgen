@@ -73,6 +73,7 @@ public class NamespaceUnit
     }
   }
   
+  @Override
   public String getName()
   { return "@namespace";
   }

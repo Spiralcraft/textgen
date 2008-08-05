@@ -51,6 +51,7 @@ public class PropertyUnit
     
   }
   
+  @Override
   public Attribute getAttribute(String name)
   {
     for (Attribute attribute: attributes)
@@ -87,6 +88,7 @@ public class PropertyUnit
    * </p>
    *   
    */
+  @Override
   public void close()
     throws MarkupException
   {
@@ -108,6 +110,7 @@ public class PropertyUnit
         
   }
   
+  @Override
   public Element bind(Element parentElement)
     throws MarkupException
   { 

@@ -62,6 +62,7 @@ public class DocletUnit
     
   }
   
+  @Override
   public String getName()
   { return "doclet";
   }
@@ -119,6 +120,7 @@ public class DocletUnit
     
   }
   
+  @Override
   public Element bind(Element parentElement)
     throws MarkupException
   { 
@@ -143,14 +145,17 @@ public class DocletUnit
     { _focus=focus;
     }
     
+    @Override
     public URI getContextURI()
     { return resource.getURI();
     }
     
+    @Override
     public Focus<?> getFocus()
     { return _focus;
     }
     
+    @Override
     public void render(EventContext context)
       throws IOException
     { renderChildren(context);
@@ -170,6 +175,7 @@ public class DocletUnit
         resolver=new Resolver(wrappedFocus.getNamespaceResolver());
         _focus=new FocusWrapper(wrappedFocus)
         {
+          @Override
           public NamespaceResolver getNamespaceResolver()
           { 
             // log.fine("XXX "+resolver.toString());

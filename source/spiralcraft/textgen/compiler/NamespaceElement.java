@@ -48,6 +48,7 @@ public class NamespaceElement
     Focus<?> parentFocus=getParent().getFocus();
     focus=new FocusWrapper(parentFocus)
       {
+        @Override
         public NamespaceResolver getNamespaceResolver()
         { 
           // log.fine("XXX "+resolver.toString());

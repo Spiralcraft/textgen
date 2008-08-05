@@ -100,6 +100,7 @@ public class Iterate
   { return iterationLocal.get().index==0;
   }
 
+  @Override
   public Focus<?> getFocus()
   { return currentFocus;
   }
@@ -128,7 +129,6 @@ public class Iterate
   }
   
   @Override
-  @SuppressWarnings("unchecked") // Not using generic versions
   public void bind(List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
@@ -453,6 +453,7 @@ public class Iterate
     }
   }
   
+  @Override
   public void message
     (final EventContext genContext
     ,Message message
@@ -469,7 +470,7 @@ public class Iterate
    *   rendering. Returns true by default.
    * 
    * @param context
-   * @return
+   * @return Whether the iteration should be regenerated when rendering.
    */
   protected boolean shouldRegenerate(EventContext context)
   { return true;
@@ -597,6 +598,7 @@ public class Iterate
     
   }
   
+  @Override
   public void render(final EventContext genContext)
     throws IOException
   { 
@@ -627,7 +629,7 @@ public class Iterate
    * </p>
    * 
    * @param clazz
-   * @return
+   * @return The state distance for an iteration
    */
   @Override
   public int getStateDistance(Class<?> clazz)

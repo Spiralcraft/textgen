@@ -31,10 +31,12 @@ public abstract class ProcessingUnit
   { super(parent);
   }
 
+  @Override
   public boolean isOpen()
   { return open;
   }
   
+  @Override
   public void close()
   { open=false;
   }

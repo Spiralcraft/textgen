@@ -120,10 +120,15 @@ public abstract class TglUnit
   }
   
   /**
-   * Whether whitespace should be trimmed from any content blocks directly
+   * <p>Whether whitespace should be trimmed from any content blocks directly
    *   contained in this Unit.
+   * </p>
    * 
-   * @return
+   * <p>The default value is false, but this directive will be handled
+   *   according to the specific subtype of TglUnit in use.
+   * </p>
+   * 
+   * @return Whether to trim whitespace or not
    */
   public boolean getTrim()
   { return trim;
@@ -134,6 +139,7 @@ public abstract class TglUnit
 class DefaultElement
   extends Element
 {
+  @Override
   public void render(EventContext context)
     throws IOException
   { renderChildren(context);

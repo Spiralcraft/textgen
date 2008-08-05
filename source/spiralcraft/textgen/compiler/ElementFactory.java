@@ -32,7 +32,7 @@ public interface ElementFactory
    * Create a new element
    *
    * @param parentElement
-   * @return
+   * @return The new Element
    * @throws MarkupException
    */
   Element createElement(Element parentElement)

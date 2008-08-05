@@ -28,6 +28,7 @@ public class InitializeMessage
   { multicast=true;
   }
   
+  @Override
   public MessageType getType()
   { return TYPE;
   }

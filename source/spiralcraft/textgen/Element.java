@@ -398,11 +398,10 @@ public abstract class Element
   }
 
   /**
-   * Create a new ElementState object for this Element. 
+   * <p>Create a new ElementState object for this Element. 
+   * </p>
    * 
-   * @param parentState
-   * @return An ElementState object for this Element which references the
-   *   parent's state.
+   * @return An ElementState object for this Element 
    */
   public ElementState createState()
   { return new ElementState(children!=null?children.length:0);
@@ -458,16 +457,18 @@ public abstract class Element
   }
 
   /**
-   * <p>Find the distance from the calling element's state in the state
-   *   tree to the state of the element of the specified class.
+   * <p>Find the distance from the calling element's  state in the state
+   *   tree to the state of the ancestral element of the specified class.
    * </p>
    * 
    * <p>This method is intended to provide an extremely efficient means
    *   for states to resolve ancestors
    * </p>
    * 
-   * @param clazz
-   * @return
+   * @param clazz The class of the Element being searched for.
+   * 
+   * @return The state distance, where 1 indicates an immediate parent and 0
+   *   indicates that this Element matches the requested Class.
    */
   public int getStateDistance(Class<?> clazz)
   {

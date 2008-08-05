@@ -74,6 +74,7 @@ public class DefineUnit
   { return publishedName;
   }  
   
+  @Override
   public String getName()
   { return "@define";
   }

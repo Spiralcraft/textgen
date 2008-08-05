@@ -162,6 +162,7 @@ public class MetaTranslator
     }
     
    
+    @Override
     public long getLastModified()
       throws IOException
     { 
@@ -170,6 +171,7 @@ public class MetaTranslator
         (resource.getLastModified(),templateLastModified);
     }
     
+    @Override
     public InputStream getInputStream()
       throws IOException
     {

@@ -69,6 +69,7 @@ public class ExpressionUnit
     }
   }
 
+  @Override
   public boolean isOpen()
   { return open;
   }
@@ -123,12 +124,14 @@ public class ExpressionUnit
    * </p>
    *   
    */
+  @Override
   public void close()
     throws MarkupException
   { open=false;
   }
 
   
+  @Override
   public Element bind(Element parentElement)
     throws MarkupException
   { 
@@ -151,7 +154,6 @@ public class ExpressionUnit
     private Channel<?> _source;
     
     @Override
-    @SuppressWarnings("unchecked") // Heterogeneous use of lang package
     public void bind(List<TglUnit> children)
       throws BindException,MarkupException
     { 
@@ -171,6 +173,7 @@ public class ExpressionUnit
       }
     }
     
+    @Override
     public void render(EventContext context)
       throws IOException
     { 

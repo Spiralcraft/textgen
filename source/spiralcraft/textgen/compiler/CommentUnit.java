@@ -48,10 +48,12 @@ public class CommentUnit
   }
   
   
+  @Override
   public String getName()
   { return "@comment";
   }
   
+  @Override
   public Element bind(Element parentElement)
     throws MarkupException
   { return new NullElement();

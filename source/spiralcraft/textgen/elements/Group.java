@@ -100,6 +100,7 @@ public class Group
     bindChildren(childUnits);
   }
   
+  @Override
   public Focus<?> getFocus()
   { return focus;
   }
@@ -139,11 +140,13 @@ public class Group
       || iterate.isLast();
   }
   
+  @Override
   public void render(EventContext context)
     throws IOException
   { renderChildren(context);
   }
   
+  @Override
   public State createState()
   { return new State();
   }

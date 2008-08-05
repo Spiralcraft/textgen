@@ -189,8 +189,10 @@ public class ElementState
    *   number of parents away.
    * </p>
    * 
-   * @param distance
-   * @return
+   * @param distance The number of states to traverse, where 0 indicates
+   *   that this state should be returned and 1 indicates that this state's
+   *   parent should be returned.
+   * @return The ancestor state.
    */
   public ElementState getAncestor(int distance)
   { 

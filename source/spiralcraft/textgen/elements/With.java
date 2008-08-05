@@ -58,10 +58,12 @@ public class With<T>
     super.bind(childUnits);
   }
   
+  @Override
   public Focus<T> getFocus()
   { return focus;
   }
 
+  @Override
   public void message
     (EventContext context
     ,Message message
@@ -78,6 +80,7 @@ public class With<T>
     }
   }
 
+  @Override
   public void render(EventContext context)
     throws IOException
   { 
