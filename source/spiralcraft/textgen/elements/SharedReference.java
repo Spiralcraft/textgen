@@ -57,6 +57,12 @@ public class SharedReference<Treferent>
     throws BindException,MarkupException
   { 
     Focus<?> parentFocus=getParent().getFocus();
+
+    if (type==null)
+    { 
+      throw new BindException
+        ("TypeURI must be specified");
+    }
     
     reference
       =AbstractXmlObject.<Treferent>create(type.getURI(),instanceURI,null);

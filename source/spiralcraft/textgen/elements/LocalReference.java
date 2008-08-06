@@ -91,6 +91,12 @@ public class LocalReference<Treferent>
   { 
     Focus<?> parentFocus=getParent().getFocus();
     
+    if (type==null)
+    { 
+      throw new BindException
+        ("TypeURI must be specified");
+    }
+    
     AbstractXmlObject ref
       =AbstractXmlObject.create(type.getURI(),instanceURI,null);
     
