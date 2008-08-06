@@ -120,6 +120,11 @@ public class MetaTranslator
     { return resource;
     }
     
+    public void delete()
+      throws IOException
+    { throw new IOException("Rename not supported "+toString());
+    }
+    
     public void renameTo(URI name)
       throws IOException
     { throw new IOException("Rename not supported "+toString());
