@@ -102,17 +102,17 @@ public abstract class TglUnit
     throws ParseException
   { 
     name=name.intern();
-    if (name=="trim")
+    if (name.equals("trim"))
     { trim=Boolean.parseBoolean(value);
     }
-    else if (name=="debug")
+    else if (name.equals("debug"))
     { debug=Boolean.parseBoolean(value);
     }
     else
     { 
       throw new ParseException
         ("Unrecognized textgen attribute '"+name
-        +"' - not one of {trim}"
+        +"' - not one of {trim,debug}"
         ,getPosition()
         );
     }
