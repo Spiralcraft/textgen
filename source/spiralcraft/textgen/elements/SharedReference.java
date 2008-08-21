@@ -22,9 +22,8 @@ import spiralcraft.data.DataException;
 import spiralcraft.data.Type;
 import spiralcraft.data.persist.AbstractXmlObject;
 import spiralcraft.lang.BindException;
-import spiralcraft.lang.Channel;
-import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.Focus;
+import spiralcraft.lang.SimpleFocus;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
@@ -37,6 +36,11 @@ import spiralcraft.textgen.compiler.TglUnit;
  *   all individual state trees and renderings.
  * </p>
  * 
+ * <p>If the referent implements spiralcraft.lang.FocusChainObject,
+ *   the referent will be bound into the Focus Chain so it can publish
+ *   any necessary interfaces.
+ * </p>
+ * 
  * @author mike
  *
  * @param <Treferent>
@@ -44,8 +48,7 @@ import spiralcraft.textgen.compiler.TglUnit;
 public class SharedReference<Treferent>
     extends Element
 {
-  private Channel<Treferent> channel;
-  private CompoundFocus<Treferent> focus;
+  private SimpleFocus<SharedReference<Treferent>> focus;
   private Type<?> type;
   private URI instanceURI;
   private AbstractXmlObject<Treferent,?> reference;
@@ -66,11 +69,11 @@ public class SharedReference<Treferent>
     
     reference
       =AbstractXmlObject.<Treferent>create(type.getURI(),instanceURI,null);
-    
-    channel=reference.bind(parentFocus);
-    
-    focus=new CompoundFocus(parentFocus,channel);
-    focus.bindFocus(getId(),getAssembly().getFocus());
+
+    reference.bind(parentFocus);
+
+    focus=new SimpleFocus
+      (reference.getFocus(),getAssembly().getFocus().getSubject());
     
     super.bind(childUnits);
   }
@@ -103,7 +106,7 @@ public class SharedReference<Treferent>
   }
 
   @Override
-  public Focus<Treferent> getFocus()
+  public Focus<SharedReference<Treferent>> getFocus()
   { return focus;
   }
 

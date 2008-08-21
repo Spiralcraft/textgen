@@ -23,7 +23,6 @@ import spiralcraft.data.DataException;
 import spiralcraft.data.Type;
 import spiralcraft.data.persist.AbstractXmlObject;
 import spiralcraft.lang.BindException;
-import spiralcraft.lang.Channel;
 import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.spi.ThreadLocalChannel;
@@ -41,6 +40,11 @@ import spiralcraft.textgen.compiler.TglUnit;
  *   is set or a stateless rendering is used, in which case the object
  *   will be re-created for every pass through render() or message().
  *    
+ * </p>
+ * 
+ * <p>Note that if the referent implements spiralcraft.lang.FocusChainObject,
+ *   it will have access to the Focus Chain, but it cannot publish its own
+ *   interfaces into the chain due to its narrower lifecycle.
  * </p>
  * 
  * @author mike
@@ -100,10 +104,10 @@ public class LocalReference<Treferent>
     AbstractXmlObject ref
       =AbstractXmlObject.create(type.getURI(),instanceURI,null);
     
-    Channel sample=ref.bind(parentFocus);
+    ref.bind(parentFocus);
     
     channel=new ThreadLocalChannel
-      (sample.getReflector());
+      (ref.getFocus().getSubject().getReflector());
     
     focus=new CompoundFocus(parentFocus,channel);
     focus.bindFocus(getId(),getAssembly().getFocus());
