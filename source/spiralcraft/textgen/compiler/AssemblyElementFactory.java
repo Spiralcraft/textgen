@@ -97,29 +97,32 @@ public class AssemblyElementFactory
           ,unit.getPropertyName()
           );
         
-        for (TglUnit child : unit.getChildren())
-        { 
-          if (child instanceof ElementUnit)
+        if (unit.getChildren()!=null)
+        {
+          for (TglUnit child : unit.getChildren())
           { 
-//            Expression<?> expression=((ElementUnit) child).getExpression();
-//            if (expression!=null)
-//            { property.setExpression(expression.getText());
-//            }
-//            else
-//            {
-              throw new MarkupException
-                ("Unsupported use of a child Element in a property Element"
-                ,child.getPosition()
-                );
-//            }
-            // Translate the contents into a property def.
-          }
-          else if (child instanceof ContentUnit)
-          {
-            buf.append
-              (((ContentUnit) child)
-              .getContent().toString());
+            if (child instanceof ElementUnit)
+            { 
+//              Expression<?> expression=((ElementUnit) child).getExpression();
+//              if (expression!=null)
+//              { property.setExpression(expression.getText());
+//              }
+//              else
+//              {
+                throw new MarkupException
+                  ("Unsupported use of a child Element in a property Element"
+                  ,child.getPosition()
+                  );
+//              }
+              // Translate the contents into a property def.
+            }
+            else if (child instanceof ContentUnit)
+            {
+              buf.append
+                (((ContentUnit) child)
+                .getContent().toString());
             
+            }
           }
         }
         
