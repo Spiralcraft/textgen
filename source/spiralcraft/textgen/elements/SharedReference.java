@@ -41,6 +41,16 @@ import spiralcraft.textgen.compiler.TglUnit;
  *   any necessary interfaces.
  * </p>
  * 
+ * <p>If the same Element tree is used by multiple threads, the referent
+ *   should synchronize its own state.
+ * </p>
+ * 
+ * <p>XXX Note that internal use of a ThreadLocal by the referent for publishing
+ *   an object into the Focus chain may result in the object never being
+ *   removed from memory. The FocusChainObject needs a set of methods to
+ *   allow for push-pop.
+ * </p>
+ * 
  * @author mike
  *
  * @param <Treferent>
