@@ -44,15 +44,16 @@ import spiralcraft.time.Clock;
 public class ResourceUnit<T extends DocletUnit>
 {
   private final TglCompiler<T> compiler;
-  private final Resource resource;
-  private T unit;
+  protected final Resource resource;
+  protected T unit;
+  protected Exception exception;
+  
   private long lastRead;
   private long lastChecked;
   private long lastRecompile;
   private int checkFrequencyMs=-1;
   private int maxRecompileRateMs=500;
 
-  private Exception exception;
 
   public ResourceUnit(URI uri)
     throws IOException
@@ -102,8 +103,9 @@ public class ResourceUnit<T extends DocletUnit>
   }
   
   /**
-   * Specify the interval in milliseconds to check whether the resource
-   *   has been modified. 
+   * <p>Specify the interval in milliseconds to check whether the resource
+   *   has been modified. Turned off by default (-1).
+   * </p>
    *   
    * @param frequencyMs The interval in milliseconds, or -1 to turn off
    *   automatic recompilation. 
@@ -193,7 +195,7 @@ public class ResourceUnit<T extends DocletUnit>
     }
   }
   
-  private void recompile()
+  protected void recompile()
   {
     try
     { 
