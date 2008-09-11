@@ -78,7 +78,8 @@ public class SharedReference<Treferent>
     }
     
     reference
-      =AbstractXmlObject.<Treferent>create(type.getURI(),instanceURI,null);
+      =AbstractXmlObject.<Treferent>create
+        (type.getURI(),instanceURI,null,parentFocus);
 
     reference.bind(parentFocus);
 

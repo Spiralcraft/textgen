@@ -25,6 +25,7 @@ import spiralcraft.data.persist.AbstractXmlObject;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.Focus;
+import spiralcraft.lang.spi.BeanReflector;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
@@ -101,13 +102,13 @@ public class LocalReference<Treferent>
         ("TypeURI must be specified");
     }
     
+    // This instance just used to infer a type
     AbstractXmlObject ref
-      =AbstractXmlObject.create(type.getURI(),instanceURI,null);
-    
-    ref.bind(parentFocus);
-    
+      =AbstractXmlObject.create
+        (type.getURI(),instanceURI,null,getParent().getFocus());
+        
     channel=new ThreadLocalChannel
-      (ref.getFocus().getSubject().getReflector());
+      (BeanReflector.getInstance(ref.get().getClass()));
     
     focus=new CompoundFocus(parentFocus,channel);
     focus.bindFocus(getId(),getAssembly().getFocus());
@@ -141,7 +142,12 @@ public class LocalReference<Treferent>
       else
       { 
         reference
-          =AbstractXmlObject.<Treferent>create(type.getURI(),instanceURI,null);
+          =AbstractXmlObject.<Treferent>create
+            (type.getURI()
+            ,instanceURI
+            ,null
+            ,getParent().getFocus()
+            );
       }
       
       channel.push(reference.get());
@@ -176,7 +182,8 @@ public class LocalReference<Treferent>
       else
       { 
         reference
-          =AbstractXmlObject.<Treferent>create(type.getURI(),instanceURI,null);
+          =AbstractXmlObject.<Treferent>create
+            (type.getURI(),instanceURI,null,getParent().getFocus());
       }
       
       channel.push(reference.get());
@@ -214,7 +221,9 @@ class ReferenceState<T>
     throws BindException
   { 
     if (reference==null)
-    { reference=AbstractXmlObject.<T>create(typeURI,instanceURI,null);
+    { 
+      reference
+        =AbstractXmlObject.<T>create(typeURI,instanceURI,null,null);
     }
 
     return reference;
