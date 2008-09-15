@@ -17,6 +17,7 @@ package spiralcraft.textgen;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.URI;
 import java.util.logging.Logger;
 
 
@@ -35,8 +36,8 @@ import spiralcraft.vfs.Resource;
  *
  * @param <T>
  */
-class Generator<T extends DocletUnit>
-  extends ResourceUnit<T>
+public class Generator
+  extends ResourceUnit<DocletUnit>
 {
   private static final Logger log
     =ClassLogger.getInstance(Generator.class);
@@ -44,12 +45,35 @@ class Generator<T extends DocletUnit>
   private final Focus<?> focus;
   private Element element;
   
+  /**
+   * <p>Create a generator using the markup at the specifed resource bound
+   *   to the specified Focus chain.
+   * </p>
+   * 
+   * @param resource
+   * @param focus
+   */
   public Generator(Resource resource,Focus<?> focus)
   { 
     super(resource);
     this.focus=focus;
   }
   
+  /**
+   * <p>Create a generator using the markup at the specifed URI bound
+   *   to the specified Focus chain.
+   * </p>
+   * 
+   * @param resource
+   * @param focus
+   */
+  public Generator(URI uri,Focus<?> focus)
+    throws IOException
+  { 
+    super(uri);
+    this.focus=focus;
+  }
+
   public Resource getResource()
   { return resource;
   }
@@ -87,11 +111,28 @@ class Generator<T extends DocletUnit>
     checkState();
     if (exception==null)
     {
-      EventContext context=new EventContext(writer,false);
-      element.render(context);
+      if (element!=null)
+      {
+        EventContext context=new EventContext(writer,false);
+        element.render(context);
+      }
+      else
+      {
+        if (!resource.exists())
+        { 
+          log.warning("Resource does not exist "+resource.getURI());
+        }
+        else
+        { 
+          log.warning
+            ("Unable to retrieve element from resource "+resource.getURI());
+        }
+      }
     }
     else
-    { log.warning("Caught exception rendering "+resource.getURI());
+    { 
+      log.warning("Caught exception rendering "+resource.getURI());
+      exception.printStackTrace();
     }
     
   }
@@ -105,20 +146,10 @@ class Generator<T extends DocletUnit>
    */
   public String render()
     throws IOException
-  {
-    checkState();
-    if (exception==null)
-    {
-      StringWriter writer=new StringWriter();
-      EventContext context=new EventContext(writer,false);
-      element.render(context);
-      return writer.toString();
-    }
-    else
-    { 
-      log.warning("Caught exception rendering "+resource.getURI());
-      return null;
-    }
+  { 
+    StringWriter writer=new StringWriter();
+    render(writer);
+    return writer.toString();
   }
 
   
