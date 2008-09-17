@@ -1,3 +1,3 @@
 uri=<%=URI/%>
-lastModified=<%=lastModified/%>
+lastModified=<%DateFormat x="lastModified" format="yyyy-MM-dd HH:mm:ss.SSSS Z"/%>
 
