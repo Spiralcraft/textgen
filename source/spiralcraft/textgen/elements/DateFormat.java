@@ -81,12 +81,20 @@ public class DateFormat
     if (val!=null)
     {
       SimpleDateFormat format=formatChannel.get();
+      if (format==null)
+      { 
+        format=new SimpleDateFormat(formatString);
+        formatChannel.push(format);
+      }
       if (timeZone!=null)
       { 
         TimeZone zone=timeZone.get();
+        // XXX Always re-apply default time zone if null- potential state leak
         if (zone!=null)
         { format.setTimeZone(zone);
         }
+        
+        
       }
       context.getWriter().write(formatChannel.get().format(val));
     }
