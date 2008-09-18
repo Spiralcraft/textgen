@@ -31,10 +31,11 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * <P>Logical element displays contents if the condition (X) is true. If the
+ * <p>Logical element renders contents if the condition (X) is true. If the
  *   condition is false, and an "Else" element is a direct child, the contents
- *   following the Else is displayed.
- * </P>
+ *   following the Else is rendered.
+ * </p>
+ * 
  * 
  * @author mike
  *
