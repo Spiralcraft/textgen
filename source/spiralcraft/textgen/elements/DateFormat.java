@@ -9,7 +9,6 @@ import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
@@ -33,7 +32,10 @@ public class DateFormat
   
   private Channel<?> target;
   private Channel<TimeZone> timeZone;
-  private ThreadLocalChannel<SimpleDateFormat> formatChannel;
+  
+  private final ThreadLocal<SimpleDateFormat> formatLocal
+    =new ThreadLocal<SimpleDateFormat>();
+  
   private String formatString;
   
   public void setX(Expression<?> expression)
@@ -49,7 +51,6 @@ public class DateFormat
   }
   
   @Override
-  @SuppressWarnings("unchecked") // Not using generic versions
   public void bind(List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
@@ -62,8 +63,7 @@ public class DateFormat
     { target=parentFocus.getSubject();
     }
     
-    formatChannel=new ThreadLocalChannel(target.getReflector());
-    formatChannel.push(new SimpleDateFormat(formatString));
+    formatLocal.set(new SimpleDateFormat(formatString));
     
     if (timeZoneExpression!=null)
     { timeZone=parentFocus.bind(timeZoneExpression);
@@ -80,11 +80,11 @@ public class DateFormat
     Object val=target.get();
     if (val!=null)
     {
-      SimpleDateFormat format=formatChannel.get();
+      SimpleDateFormat format=formatLocal.get();
       if (format==null)
       { 
         format=new SimpleDateFormat(formatString);
-        formatChannel.push(format);
+        formatLocal.set(format);
       }
       if (timeZone!=null)
       { 
@@ -96,7 +96,7 @@ public class DateFormat
         
         
       }
-      context.getWriter().write(formatChannel.get().format(val));
+      context.getWriter().write(format.format(val));
     }
   }
 }
