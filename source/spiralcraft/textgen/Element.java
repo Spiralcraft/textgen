@@ -271,6 +271,16 @@ public abstract class Element
 
   }
 
+  /**
+   * <p>Relay a message to appropriate child elements as indicated by the
+   *   path. 
+   * </p>
+   * 
+   * @param context The EventContext associated with this rendering sequence
+   * @param message The message to relay
+   * @param path The narrowcast path to the element that will receive the 
+   *   message
+   */
   protected final void relayMessage
     (EventContext context
     ,Message message
