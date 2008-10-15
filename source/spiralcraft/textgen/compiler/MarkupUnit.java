@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import spiralcraft.text.ParseException;
 import spiralcraft.text.ParsePosition;
 import spiralcraft.text.xml.Attribute;
-import spiralcraft.text.xml.ParserContext;
+import spiralcraft.text.LookaheadParserContext;
 import spiralcraft.text.xml.TagReader;
 
 /**
@@ -43,7 +43,7 @@ public abstract class MarkupUnit
   protected void readTag()
     throws ParseException
   {
-    ParserContext context=new ParserContext(markup.toString());
+    LookaheadParserContext context=new LookaheadParserContext(markup.toString());
     TagReader tagReader=new TagReader();
     
     try

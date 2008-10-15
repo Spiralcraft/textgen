@@ -19,7 +19,7 @@ import spiralcraft.log.ClassLogger;
 import spiralcraft.text.Trimmer;
 
 import spiralcraft.text.xml.Attribute;
-import spiralcraft.text.xml.ParserContext;
+import spiralcraft.text.LookaheadParserContext;
 import spiralcraft.text.xml.TagReader;
 
 import spiralcraft.text.io.ResourceCharSequence;
@@ -204,7 +204,8 @@ public class TglCompiler<T extends DocletUnit>
   protected TglUnit parseProcessingUnit(CharSequence code)
     throws ParseException,MarkupException
   {
-    ParserContext context=new ParserContext(code.toString().substring(1));
+    LookaheadParserContext context
+      =new LookaheadParserContext(code.toString().substring(1));
     TagReader tagReader=new TagReader();
     tagReader.readTag(context);
     
