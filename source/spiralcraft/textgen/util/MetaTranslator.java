@@ -20,7 +20,7 @@ import spiralcraft.textgen.EventContext;
 import spiralcraft.text.ParseException;
 import spiralcraft.text.markup.MarkupException;
 
-import spiralcraft.lang.BeanFocus;
+import spiralcraft.lang.reflect.BeanFocus;
 import spiralcraft.lang.BindException;
 
 import java.net.URI;

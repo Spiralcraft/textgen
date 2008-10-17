@@ -21,7 +21,7 @@ import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.compiler.TglCompiler;
 import spiralcraft.textgen.compiler.DocletUnit;
 
-import spiralcraft.lang.BeanFocus;
+import spiralcraft.lang.reflect.BeanFocus;
 
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;

@@ -25,7 +25,7 @@ import spiralcraft.data.persist.AbstractXmlObject;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.spi.BeanReflector;
+import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
