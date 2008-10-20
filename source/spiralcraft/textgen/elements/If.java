@@ -21,6 +21,8 @@ import spiralcraft.lang.Channel;
 
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Element;
+import spiralcraft.textgen.InitializeMessage;
+import spiralcraft.textgen.Message;
 
 import spiralcraft.textgen.compiler.TglUnit;
 
@@ -28,6 +30,7 @@ import spiralcraft.text.markup.MarkupException;
 
 import java.io.IOException;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -46,9 +49,32 @@ public class If
   private Expression<Boolean> expression;
   private Channel<Boolean> target;
   private int elsePos=-1;
+  private boolean filterMessages=true;
   
+  /**
+   * <p>A boolean filter expression
+   * </p>
+   * 
+   * @param expression
+   */
   public void setX(Expression<Boolean> expression)
   { this.expression=expression;
+  }
+  
+  /**
+   * <p>Specifies whether multicast messages should be passed through the
+   *   filter expression (ie. blocked when the filter expression is "false").
+   *   The default value for this property is "true".
+   * </p>
+   * 
+   * <p>Messages targeted at a specific component and the Initialize
+   *   message will not be intercepted by this setting.
+   * </p>
+   * 
+   * @param filteMessages
+   */
+  public void setFilterMessages(boolean filterMessages)
+  { this.filterMessages=filterMessages;
   }
   
   @Override
@@ -82,6 +108,52 @@ public class If
         break;
       }
     }
+  }
+  
+  @Override
+  public void message
+    (EventContext context
+    ,Message message
+    ,LinkedList<Integer> path
+    )
+  {
+    if (message.getType()!=InitializeMessage.TYPE
+       && (path==null || path.isEmpty())
+       && filterMessages
+       )
+    {
+      
+      Boolean val=target.get();
+      boolean passed=val!=null && val;
+    
+      int childCount=getChildCount();
+
+      int start;
+      int end;
+      if (passed)
+      { 
+        start=0;
+        end=elsePos>-1?elsePos:childCount;
+      }
+      else
+      { 
+        start=elsePos>-1?elsePos+1:childCount;
+        end=childCount;
+      }
+      
+
+      for (int i=start;i<end;i++)
+      { messageChild(i,context,message,path);
+      }
+    }
+    else
+    { 
+      // Initialize event broadcast and targeted events
+      //   always get through
+      super.message(context,message,path);
+    }
+    
+  
   }
   
   /**
