@@ -23,7 +23,7 @@ import spiralcraft.textgen.ElementState;
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.InitializeMessage;
-import spiralcraft.textgen.IterationState;
+
 import spiralcraft.textgen.Message;
 
 import spiralcraft.textgen.compiler.TglUnit;
