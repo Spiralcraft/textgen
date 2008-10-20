@@ -19,9 +19,11 @@ import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Channel;
 
+import spiralcraft.textgen.ElementState;
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.InitializeMessage;
+import spiralcraft.textgen.IterationState;
 import spiralcraft.textgen.Message;
 
 import spiralcraft.textgen.compiler.TglUnit;
@@ -39,6 +41,9 @@ import java.util.List;
  *   following the Else is rendered.
  * </p>
  * 
+ * XXX: We need to evaluate the filter on prepare, and cache it for render and
+ *   later events if this component is stateful. This may require some sort
+ *   of "invalidate" notification to signal a re-evaluation requirement
  * 
  * @author mike
  *
@@ -165,6 +170,9 @@ public class If
   public void render(EventContext context)
     throws IOException
   { 
+    
+    
+    
     Boolean val=target.get();
     boolean passed=val!=null && val;
     
@@ -187,4 +195,29 @@ public class If
     }
       
   }
+  
+  @Override
+  public IfState createState()
+  { return new IfState(getChildCount());
+  }  
 }
+
+class IfState
+  extends ElementState
+{
+  private Boolean result;
+  
+  public IfState(int childCount)
+  { super(childCount);
+  }
+  
+  public Boolean getResult()
+  { return result;
+  }
+  
+  public void setResult(Boolean result)
+  { this.result=result;
+  }
+}
+
+
