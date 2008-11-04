@@ -16,6 +16,7 @@ package spiralcraft.textgen.elements;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.LinkedList;
 import java.util.List;
 
 import spiralcraft.data.DataException;
@@ -27,7 +28,10 @@ import spiralcraft.lang.SimpleFocus;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
+import spiralcraft.textgen.Message;
 import spiralcraft.textgen.compiler.TglUnit;
+import spiralcraft.util.thread.Delegate;
+import spiralcraft.util.thread.DelegateException;
 
 /**
  * <p>Exposes an object reference via the Focus chain, via the
@@ -122,9 +126,68 @@ public class SharedReference<Treferent>
   }
 
   @Override
-  public void render(EventContext context)
+  public void message
+    (final EventContext context
+    ,final Message message
+    ,final LinkedList<Integer> path
+    )
+  { 
+    try
+    { 
+      reference.runInContext
+        (new Delegate<Void>()
+        {
+          @Override
+          public Void run()
+            throws DelegateException
+          { 
+            SharedReference.super.message(context,message,path);
+            return null;
+          }
+        }
+        );
+    }
+    catch (DelegateException x)
+    { throw new RuntimeException(x);
+    }
+    
+    
+  }
+  
+  @Override
+  public void render(final EventContext context)
     throws IOException
-  { renderChildren(context);
+  { 
+    try
+    { 
+      reference.runInContext
+        (new Delegate<Void>()
+        {
+          @Override
+          public Void run()
+            throws DelegateException
+          { 
+            try
+            { 
+              renderChildren(context);
+              return null;
+            }
+            catch (IOException x)
+            { throw new DelegateException(x);
+            }
+          }
+        }
+        );
+    }
+    catch (DelegateException x)
+    { 
+      if (x.getCause() instanceof IOException)
+      { throw (IOException) x.getCause();
+      }
+      else
+      { throw new RuntimeException(x);
+      }
+    }
   }
   
 }

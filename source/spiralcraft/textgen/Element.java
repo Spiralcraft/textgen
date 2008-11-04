@@ -357,6 +357,7 @@ public abstract class Element
   public abstract void render(EventContext context)
     throws IOException;
   
+  
   /**
    * <P>Call this method to render a child element.
    * </P>
