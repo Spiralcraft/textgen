@@ -27,6 +27,7 @@ import java.util.LinkedList;
 
 import spiralcraft.textgen.compiler.TglUnit;
 
+import spiralcraft.text.ParsePosition;
 import spiralcraft.text.markup.MarkupException;
 
 import java.net.URI;
@@ -69,6 +70,15 @@ public abstract class Element
   private String id;
   private ArrayList<MessageHandler> handlers;
   protected boolean debug;
+  private ParsePosition position;
+  
+  public void setCodePosition(ParsePosition position)
+  { this.position=position.clone();
+  }
+  
+  protected String getErrorContext()
+  { return " "+position.toString()+(id!=null?" id=["+id+"]: ":" ");
+  }
   
   // private int[] path;
 

@@ -177,6 +177,7 @@ public class AssemblyElementFactory
     { 
       Assembly<?> assembly=assemblyClass.newInstance(parentFocus);
       Element element=(Element) assembly.get();    
+      element.setCodePosition(position);
       element.setAssembly(assembly);
       element.setParent(parentElement);
       
