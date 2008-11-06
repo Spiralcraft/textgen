@@ -23,6 +23,7 @@ import spiralcraft.data.DataException;
 import spiralcraft.data.Type;
 import spiralcraft.data.persist.AbstractXmlObject;
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.SimpleFocus;
 import spiralcraft.text.markup.MarkupException;
@@ -64,6 +65,7 @@ public class SharedReference<Treferent>
 {
   private SimpleFocus<SharedReference<Treferent>> focus;
   private Type<?> type;
+  private Expression<Type<?>> typeX;
   private URI instanceURI;
   private AbstractXmlObject<Treferent,?> reference;
   
@@ -74,16 +76,13 @@ public class SharedReference<Treferent>
     throws BindException,MarkupException
   { 
     Focus<?> parentFocus=getParent().getFocus();
-
-    if (type==null)
-    { 
-      throw new BindException
-        ("TypeURI must be specified");
+    if (type==null && typeX!=null)
+    { type=parentFocus.bind(typeX).get();
     }
     
     reference
       =AbstractXmlObject.<Treferent>create
-        (type.getURI(),instanceURI,null,parentFocus);
+        (type!=null?type.getURI():null,instanceURI,null,parentFocus);
 
     reference.bind(parentFocus);
 
@@ -93,6 +92,19 @@ public class SharedReference<Treferent>
     super.bind(childUnits);
   }
 
+  /**
+   * <p>An expression which resolves to a spiralcraft.data.Type that
+   *   corresponds to the object under consideration
+   * 
+   * </p>
+   * 
+   * @param typeURI
+   * @throws DataException
+   */
+  public void setTypeX(Expression<Type<?>> x)
+  { this.typeX=x;
+  }
+  
   /**
    * <p>The URI of the spiralcraft.data.Type that corresponds to the object
    *   must be specified. 
