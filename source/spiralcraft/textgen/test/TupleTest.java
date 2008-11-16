@@ -31,6 +31,8 @@ import spiralcraft.data.TypeResolver;
 
 import spiralcraft.data.lang.TupleFocus;
 import spiralcraft.data.lang.DataReflector;
+import spiralcraft.exec.Executable;
+import spiralcraft.exec.ExecutionException;
 
 import spiralcraft.lang.SimpleFocus;
 
@@ -44,13 +46,19 @@ import java.net.URI;
 
 
 public class TupleTest
+  implements Executable
 {
-  public static void main(String[] args)
-    throws Exception
-  {
-    singleTuple();
-    listCursor();
-    
+  public void execute(String ... args)
+    throws ExecutionException
+  {    
+    try
+    {
+      singleTuple();
+      listCursor();
+    }
+    catch (Exception x)
+    { throw new ExecutionException("Error",x);
+    }    
   }
   
   public static void singleTuple()

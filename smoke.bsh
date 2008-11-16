@@ -1,3 +1,3 @@
-spiralcraft.textgen.test.GeneratorTest.main(new String[0]);
-spiralcraft.textgen.test.TupleTest.main(new String[0]);
+new spiralcraft.textgen.test.GeneratorTest().execute(new String[0]);
+new spiralcraft.textgen.test.TupleTest().execute(new String[0]);
 source("source/spiralcraft/textgen/util/smoke.bsh");

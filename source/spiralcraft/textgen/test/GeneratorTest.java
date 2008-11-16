@@ -31,16 +31,25 @@ import java.net.URI;
 import spiralcraft.time.Clock;
 
 import spiralcraft.data.persist.XmlAssembly;
+import spiralcraft.exec.Executable;
+import spiralcraft.exec.ExecutionContext;
+import spiralcraft.exec.ExecutionException;
 
 /**
  * Parser for text generation markup language.
  */
 public class GeneratorTest
+  implements Executable
 {
   @SuppressWarnings("unchecked") // Heterogeneous use of lang package
-  public static void main(String ... args)
-    throws Exception
+  public void execute(String ... args)
+    throws ExecutionException
   {
+    ExecutionContext exContext=
+      ExecutionContext.getInstance();
+    
+    try
+    {
 
     URI uri=URI.create("class:/spiralcraft/textgen/test/generatorTest.tgl");
     DocletUnit root
@@ -56,7 +65,7 @@ public class GeneratorTest
           )
         );
 
-    Writer writer=new OutputStreamWriter(System.out);
+    Writer writer=new OutputStreamWriter(exContext.out());
     EventContext context=new EventContext(writer,false);
     element.render(context);
     writer.flush();
@@ -80,11 +89,14 @@ public class GeneratorTest
         }
       }
 
-      System.out.println
+      exContext.out().println
         ("rate="+(iterations) / ((System.currentTimeMillis()-time)/(float) 1000));
     }
-
-    
+    }
+    catch (Exception x)
+    { throw new ExecutionException("Error",x);
+    }
+  
   }
   
 }
