@@ -35,15 +35,12 @@ import spiralcraft.text.markup.MarkupException;
 import spiralcraft.text.ParseException;
 import spiralcraft.text.ParsePosition;
 
-import spiralcraft.log.ClassLogger;
-
 /**
  * A Unit which contains an expression for output
  */
 public class ExpressionUnit
   extends TglUnit
 {
-  private static final ClassLogger log=ClassLogger.getInstance(ElementUnit.class);
   
   public static final URI DEFAULT_ELEMENT_PACKAGE
     =URI.create("class:/spiralcraft/textgen/elements/");
