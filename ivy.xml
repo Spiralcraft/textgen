@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0">
+  <info organisation="spiralcraft" module="spiralcraft-textgen">
+  </info>
+  <dependencies>
+    <dependency org="spiralcraft" name="spiralcraft-main" rev="0.2.1-b20"/>
+    <dependency org="spiralcraft" name="spiralcraft-core" rev="0.3.1-b3"/>
+  </dependencies>
+</ivy-module>

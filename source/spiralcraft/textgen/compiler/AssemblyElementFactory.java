@@ -20,11 +20,13 @@ import spiralcraft.lang.Focus;
 //import spiralcraft.log.ClassLogger;
 import spiralcraft.text.markup.MarkupException;
 
+import spiralcraft.text.ParseException;
 import spiralcraft.text.ParsePosition;
 
 import spiralcraft.textgen.Element;
 
 import spiralcraft.text.xml.Attribute;
+import spiralcraft.util.ContextDictionary;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -217,9 +219,16 @@ public class AssemblyElementFactory
               Class<?> clazz=target.getContentType();
               Type<?> type=Type.resolve(ReflectionType.canonicalURI(clazz));
                 
+              String xml=buf.toString();
+              try
+              { xml=ContextDictionary.substitute(xml);
+              }
+              catch (ParseException x)
+              { throw new MarkupException(unit.getPosition(),x);
+              }
               Object data
                 =new DataReader().readFromInputStream
-                  (new ByteArrayInputStream(buf.toString().getBytes())
+                  (new ByteArrayInputStream(xml.getBytes())
                   ,type
                   ,position.getContextURI()
                   );
