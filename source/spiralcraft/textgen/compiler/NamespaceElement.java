@@ -12,13 +12,13 @@ import spiralcraft.lang.NamespaceResolver;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.spi.FocusWrapper;
 
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 
 public class NamespaceElement
   extends Element
 {
   @SuppressWarnings("unused")
-  private static final ClassLogger log=ClassLogger.getInstance(NamespaceElement.class);
+  private static final ClassLog log=ClassLog.getInstance(NamespaceElement.class);
   
   private NamespaceResolver resolver;
   private Focus<?> focus;

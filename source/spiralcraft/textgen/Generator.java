@@ -18,11 +18,10 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
-import java.util.logging.Logger;
 
 
 import spiralcraft.lang.Focus;
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 import spiralcraft.text.ParseException;
 import spiralcraft.textgen.compiler.DocletUnit;
 import spiralcraft.vfs.Resource;
@@ -39,8 +38,8 @@ import spiralcraft.vfs.Resource;
 public class Generator
   extends ResourceUnit<DocletUnit>
 {
-  private static final Logger log
-    =ClassLogger.getInstance(Generator.class);
+  private static final ClassLog log
+    =ClassLog.getInstance(Generator.class);
   
   private final Focus<?> focus;
   private Element element;

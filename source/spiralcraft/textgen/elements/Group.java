@@ -19,7 +19,7 @@ import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Channel;
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 
 import spiralcraft.textgen.ElementState;
 import spiralcraft.textgen.EventContext;
@@ -45,7 +45,7 @@ import java.util.List;
 public class Group
   extends Element
 {
-  private static final ClassLogger log=ClassLogger.getInstance(Group.class);
+  private static final ClassLog log=ClassLog.getInstance(Group.class);
 
   private Expression<?> expression;
   private Channel<?> current;

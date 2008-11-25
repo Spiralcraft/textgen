@@ -28,7 +28,7 @@ import spiralcraft.text.ParsePosition;
 
 import spiralcraft.util.ArrayUtil;
 
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 
 /**
  * A Unit which represents an output Element delimited by start and end tag(s)
@@ -37,7 +37,7 @@ import spiralcraft.log.ClassLogger;
 public class ElementUnit
   extends MarkupUnit
 {
-  private static final ClassLogger log=ClassLogger.getInstance(ElementUnit.class);
+  private static final ClassLog log=ClassLog.getInstance(ElementUnit.class);
   
   public static final URI DEFAULT_ELEMENT_PACKAGE
     =URI.create("class:/spiralcraft/textgen/elements/");

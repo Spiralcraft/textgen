@@ -17,7 +17,7 @@ package spiralcraft.textgen.compiler;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.NamespaceResolver;
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 
 import spiralcraft.textgen.Element;
 
@@ -36,8 +36,8 @@ import spiralcraft.text.markup.MarkupException;
 public class NamespaceUnit
   extends ProcessingUnit
 {
-  private static final ClassLogger log
-    =ClassLogger.getInstance(NamespaceUnit.class);
+  private static final ClassLog log
+    =ClassLog.getInstance(NamespaceUnit.class);
   
   private HashMap<String,URI> map
     =new HashMap<String,URI>();

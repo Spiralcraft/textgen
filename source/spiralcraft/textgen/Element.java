@@ -16,7 +16,7 @@ package spiralcraft.textgen;
 
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 
 import spiralcraft.builder.Assembly;
 
@@ -72,7 +72,7 @@ public abstract class Element
   private ArrayList<MessageHandler> handlers;
   protected boolean debug;
   private ParsePosition position;
-  protected final ClassLogger log=ClassLogger.getInstance(getClass());
+  protected final ClassLog log=ClassLog.getInstance(getClass());
   
   public void setCodePosition(ParsePosition position)
   { this.position=position.clone();

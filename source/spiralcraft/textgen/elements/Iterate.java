@@ -23,7 +23,7 @@ import spiralcraft.lang.Expression;
 import spiralcraft.lang.IterationDecorator;
 
 import spiralcraft.lang.spi.ThreadLocalChannel;
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Element;
@@ -51,7 +51,7 @@ import java.util.LinkedList;
 public class Iterate
   extends Element
 {
-  private static final ClassLogger log=ClassLogger.getInstance(Iterate.class);
+  private static final ClassLog log=ClassLog.getInstance(Iterate.class);
   
   private Expression<?> expression;
   private Focus<?> currentFocus;

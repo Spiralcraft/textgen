@@ -15,7 +15,7 @@
 package spiralcraft.textgen.compiler;
 
 import spiralcraft.data.xml.XmlQueryable;
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 import spiralcraft.text.Trimmer;
 
 import spiralcraft.text.xml.Attribute;
@@ -60,7 +60,7 @@ public class TglCompiler<T extends DocletUnit>
   extends MarkupCompiler<TglUnit>
 {
   @SuppressWarnings("unused")
-  private static final ClassLogger log=ClassLogger.getInstance(XmlQueryable.class);
+  private static final ClassLog log=ClassLog.getInstance(XmlQueryable.class);
   
   private final Trimmer _trimmer=new Trimmer("\r\n\t ");
   

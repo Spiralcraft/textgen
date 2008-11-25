@@ -20,7 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import spiralcraft.lang.BindException;
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 import spiralcraft.text.ParseException;
 import spiralcraft.text.markup.MarkupException;
 
@@ -37,8 +37,8 @@ import spiralcraft.text.xml.Attribute;
 public class InsertUnit
   extends ProcessingUnit
 {
-  private static final ClassLogger log
-    =ClassLogger.getInstance(InsertUnit.class);
+  private static final ClassLog log
+    =ClassLog.getInstance(InsertUnit.class);
   
   private String referencedName;
   private boolean require=false;
