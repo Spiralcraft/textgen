@@ -17,6 +17,7 @@ package spiralcraft.textgen;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
 import spiralcraft.log.ClassLog;
+import spiralcraft.log.Level;
 
 import spiralcraft.builder.Assembly;
 
@@ -76,6 +77,27 @@ public abstract class Element
   
   public void setCodePosition(ParsePosition position)
   { this.position=position.clone();
+  }
+  
+  /**
+   * <p>Called to log an otherwise handled exception consumed during processing
+   * </p>
+   * 
+   * @param x
+   */
+  protected void logHandledException(EventContext context,Throwable x)
+  { log.log(Level.INFO,getLogPrefix(context)+"Caught handled exception ",x);
+  }
+      
+  /**
+   * <p>Override to incorporate contextual information from the EventContext
+   *   into log messages
+   * </p>
+   * @return Any contextual information derived from the EventContext, or ""
+   *   (default)
+   */
+  protected String getLogPrefix(EventContext context)
+  { return "";
   }
   
   protected String getErrorContext()
