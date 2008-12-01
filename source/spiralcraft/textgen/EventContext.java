@@ -28,6 +28,7 @@ public class EventContext
   private Writer writer;
   private ElementState elementState;
   private final boolean stateful;
+  private String logPrefix;
   
   /**
    * Create a GenerationContext that does not refer to any ancestors, and sends
@@ -96,6 +97,14 @@ public class EventContext
    */
   public boolean isStateful()
   { return stateful;
+  }
+  
+  public String getLogPrefix()
+  { return logPrefix;
+  }
+  
+  protected void setLogPrefix(String logPrefix)
+  { this.logPrefix=logPrefix;
   }
   
 }

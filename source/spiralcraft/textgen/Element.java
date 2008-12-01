@@ -86,7 +86,7 @@ public abstract class Element
    * @param x
    */
   protected void logHandledException(EventContext context,Throwable x)
-  { log.log(Level.INFO,getLogPrefix(context)+"Caught handled exception ",x);
+  { log.log(Level.INFO,getLogPrefix(context)+": Caught handled exception ",x);
   }
       
   /**
@@ -97,7 +97,9 @@ public abstract class Element
    *   (default)
    */
   protected String getLogPrefix(EventContext context)
-  { return "";
+  { 
+    String logPrefix=context.getLogPrefix();
+    return logPrefix!=null?logPrefix:"";
   }
   
   protected String getErrorContext()
