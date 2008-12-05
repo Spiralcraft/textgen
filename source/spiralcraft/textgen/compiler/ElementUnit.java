@@ -17,6 +17,7 @@ package spiralcraft.textgen.compiler;
 
 import java.net.URI;
 
+import spiralcraft.builder.AssemblyClass;
 import spiralcraft.lang.BindException;
 
 import spiralcraft.textgen.Element;
@@ -123,7 +124,8 @@ public class ElementUnit
   {
     open=false;
     // We're creating a standard Element
-    elementFactory=compiler.createElementFactory
+    elementFactory
+      =compiler.createElementFactory
       (elementPackage
       ,elementName
       ,attributes
@@ -160,6 +162,10 @@ public class ElementUnit
     { throw new MarkupException(x.toString(),getPosition(),x);
     }
     return element;
+  }
+  
+  public AssemblyClass getAssemblyClass()
+  { return elementFactory.getAssemblyClass();
   }
 
 }

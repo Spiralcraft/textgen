@@ -1,4 +1,6 @@
-
+<%@namespace
+  util="class:/java/util/"
+  %>
 
 
 ## BEGIN simple iteration
@@ -33,5 +35,5 @@ address.city=[<%=address.city/%>]
 <%/Iterate%>
 ## END grouped iteration
 
-
+<%/@namespace%>
 

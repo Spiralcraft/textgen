@@ -15,7 +15,6 @@
 package spiralcraft.textgen.compiler;
 
 
-import spiralcraft.lang.BindException;
 import spiralcraft.text.ParseException;
 import spiralcraft.text.ParsePosition;
 
@@ -115,13 +114,10 @@ public class PropertyUnit
     throws MarkupException
   { 
     // Properties don't have Elements that output anything directly
-    Element element=new NullElement();
-    try
-    { element.bind(children);
-    }
-    catch (BindException x)
-    { throw new MarkupException(x.toString(),getPosition(),x);
-    }
+    PropertyElement element=new PropertyElement();
+    element.setParent(parentElement);
+    
+    element.bind(children);
     return element;
   }
   

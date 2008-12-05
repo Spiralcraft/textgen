@@ -90,11 +90,21 @@ public class If
     Focus<?> parentFocus=getParent().getFocus();
     
     if (expression!=null)
-    { target=parentFocus.<Boolean>bind(expression);
+    { 
+      if (debug)
+      { log.fine("Using "+expression);
+      }
+      target=parentFocus.<Boolean>bind(expression);
     }
     else
-    { target=(Channel<Boolean>) parentFocus.getSubject();
+    { 
+      if (debug)
+      { log.fine("Using parent Focus");
+      }
+      target=(Channel<Boolean>) parentFocus.getSubject();
     }
+    
+    
     
     if (!Boolean.class.isAssignableFrom(target.getContentType())
         && !boolean.class.isAssignableFrom(target.getContentType())
@@ -137,11 +147,17 @@ public class If
       int end;
       if (passed)
       { 
+        if (debug)
+        { log.fine("Condition is true");
+        }
         start=0;
         end=elsePos>-1?elsePos:childCount;
       }
       else
       { 
+        if (debug)
+        { log.fine("Condition is false");
+        }
         start=elsePos>-1?elsePos+1:childCount;
         end=childCount;
       }
@@ -182,11 +198,17 @@ public class If
     int end;
     if (passed)
     { 
+      if (debug)
+      { log.fine("Condition is true");
+      }
       start=0;
       end=elsePos>-1?elsePos:childCount;
     }
     else
     { 
+      if (debug)
+      { log.fine("Condition is false");
+      }
       start=elsePos>-1?elsePos+1:childCount;
       end=childCount;
     }

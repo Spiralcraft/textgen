@@ -1,4 +1,9 @@
+<%@namespace
+  util="class:/java/util/"
+  %>
 id=[<%=id/%>]
 displayName=[<%=displayName/%>]
 address.city=[<%=address.city/%>]
 
+  
+<%/@namespace%>

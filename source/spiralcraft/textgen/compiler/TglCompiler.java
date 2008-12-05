@@ -133,7 +133,7 @@ public class TglCompiler<T extends DocletUnit>
     )
     throws MarkupException
   {
-    return new AssemblyElementFactory
+    return new ElementFactory
       (namespaceUri,elementName,attributes,properties,parsePosition);
     
     
@@ -204,10 +204,35 @@ public class TglCompiler<T extends DocletUnit>
   protected TglUnit parseProcessingUnit(CharSequence code)
     throws ParseException,MarkupException
   {
+    
     LookaheadParserContext context
       =new LookaheadParserContext(code.toString().substring(1));
     TagReader tagReader=new TagReader();
     tagReader.readTag(context);
+    if (!context.isEof())
+    {
+      String remainder
+        =code.toString().substring(1)
+          .substring(context.getPosition().getIndex()-1);
+      if (remainder.trim().length()>0)
+      { 
+        if (tagReader.getTagName().equals(""))
+        { 
+          throw new MarkupException
+            ("Unexpected text after tag close ["+remainder.trim()+"]. Perhaps "
+            +"you meant <%/@"+remainder+"%> ?"
+            ,getPosition()
+            );
+        }
+        else
+        {
+          throw new MarkupException
+            ("Unexpected text after tag close ["+remainder.trim()+"]"
+            ,getPosition()
+            );
+        }
+      }
+    }
     
     String name=tagReader.getTagName();
     Attribute[] attributes=tagReader.getAttributes();
