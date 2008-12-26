@@ -214,9 +214,9 @@ public abstract class Element
    * <p>Specify the Element that contains this Element. This is always called 
    *   by the framework before bind() is called.
    * </p>
+   * 
    */
   public void setParent(Element parent)
-    throws MarkupException
   { 
     if (this.parent!=null)
     { throw new IllegalStateException("Parent already specified");
@@ -238,6 +238,8 @@ public abstract class Element
    *    This method should call TglUnit.bind() on its child units at an
    *    appropriate time. The default behavior is to bind all the child units.
    *  </p>
+   * @throws BindException 
+   * @throws MarkupException
    */
   public void bind(List<TglUnit> childUnits)
     throws BindException,MarkupException

@@ -191,10 +191,10 @@ public class DocletUnit
   class Resolver
     implements NamespaceResolver
   {
-    private NamespaceResolver parent;
+    private NamespaceResolver parentResolver;
     
     public Resolver(NamespaceResolver parent)
-    { this.parent=parent;
+    { this.parentResolver=parent;
     }
 
     @Override
@@ -205,8 +205,8 @@ public class DocletUnit
     @Override
     public URI resolveNamespace(String prefix)
     { 
-      if (parent!=null)
-      { return parent.resolveNamespace(prefix);
+      if (parentResolver!=null)
+      { return parentResolver.resolveNamespace(prefix);
       }
       else
       { return null;

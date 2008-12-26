@@ -60,7 +60,7 @@ public class GeneratorTest
       =root.bind
         (new BeanFocus
           (new XmlAssembly
-              (URI.create("class:/spiralcraft/builder/test/MyWidget.assy"),null)
+              (URI.create("class:/spiralcraft/textgen/test/MyWidget.assy"),null)
           .get()
           )
         );

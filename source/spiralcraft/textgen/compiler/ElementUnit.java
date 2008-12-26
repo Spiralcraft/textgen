@@ -48,7 +48,6 @@ public class ElementUnit
   private URI elementPackage;
   private String elementName;
   private PropertyUnit[] properties;
-  private boolean debug;
   
   public ElementUnit
     (TglUnit parent
@@ -137,7 +136,6 @@ public class ElementUnit
   
   public void addProperty
     (PropertyUnit propertyUnit)
-    throws MarkupException
   {
     if (properties==null)
     { properties=new PropertyUnit[0];

@@ -1,11 +1,11 @@
 t=new spiralcraft.textgen.util.MetaTranslator();
 t.setTemplateURI
 	(URI.create
-		("source/spiralcraft/textgen/test/resource.tgl")
+		("test-source/spiralcraft/textgen/test/resource.tgl")
  	);
 r=t.translate
 	(spiralcraft.vfs.Resolver.getInstance().resolve(URI.create("smoke.bsh"))
 	,URI.create
-	  ("source/spiralcraft/textgen/test/resource.tgl.info")
+	  ("test-source/spiralcraft/textgen/test/resource.tgl.info")
 	);
 spiralcraft.vfs.StreamUtil.copyRaw(r.getInputStream(),System.out,8192);

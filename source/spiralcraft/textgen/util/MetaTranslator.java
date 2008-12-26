@@ -102,8 +102,15 @@ public class MetaTranslator
     private Resource resource;
     private long templateLastModified;
     
+    /**
+     * 
+     * @param resource
+     * @param translatedURI
+     * @throws BindException
+     * @throws ParseException
+     */
     public MetaResource(Resource resource,URI translatedURI)
-      throws IOException,BindException,ParseException
+      throws BindException,ParseException
     { 
       super(translatedURI);
       System.err.println("MetaResource: "+translatedURI);
@@ -131,7 +138,7 @@ public class MetaTranslator
     }
     
     private void bind()
-      throws BindException,MarkupException
+      throws MarkupException
     { element=tglUnit.bind(focus);
     }
     
@@ -147,14 +154,7 @@ public class MetaTranslator
         }
         templateLastModified=time;
       }
-      catch (BindException x)
-      { 
-        throw new IOException
-          ("Error in translation template "+templateResource.toString()
-          +": "+x
-          ,x
-          );
-      }
+
       catch (ParseException x)
       { 
         throw new IOException

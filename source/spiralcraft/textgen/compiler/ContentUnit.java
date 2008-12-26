@@ -60,17 +60,17 @@ public class ContentUnit
   class TextElement
     extends Element
   {
-    private CharSequence content;
+    private CharSequence elementContent;
     
     @Override
     public void bind(List<TglUnit> children)
       throws BindException,MarkupException
     { 
-      content=ContentUnit.this.content;
+      elementContent=ContentUnit.this.content;
       
       
-      if (content!=null && ContentUnit.this.getParent().getTrim())
-      { content=content.toString().trim();
+      if (elementContent!=null && ContentUnit.this.getParent().getTrim())
+      { elementContent=elementContent.toString().trim();
       }
       
       super.bind(children);
@@ -80,8 +80,8 @@ public class ContentUnit
     public void render(EventContext context)
       throws IOException
     { 
-      if (content!=null)
-      { context.getWriter().write(content.toString());
+      if (elementContent!=null)
+      { context.getWriter().write(elementContent.toString());
       }
     }
   }

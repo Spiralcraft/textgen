@@ -119,7 +119,6 @@ public class ElementFactory
   }
 
   private void handlePropertyUnit(PropertyUnit unit)
-    throws MarkupException
   {
         
     Attribute nature=unit.getAttribute("nature");
