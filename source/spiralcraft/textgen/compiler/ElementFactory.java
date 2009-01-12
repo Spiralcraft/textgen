@@ -22,6 +22,7 @@ import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.text.ParseException;
 import spiralcraft.text.ParsePosition;
+import spiralcraft.text.Renderer;
 
 import spiralcraft.textgen.Element;
 
@@ -200,6 +201,9 @@ public class ElementFactory
       Object object=assembly.get();
       if (object instanceof Element)
       { element=(Element) object;
+      }
+      else if (object instanceof Renderer)
+      { element=new RendererElement((Renderer) object);
       }
       else
       { 

@@ -22,7 +22,10 @@ import java.net.URI;
 
 import spiralcraft.lang.Focus;
 import spiralcraft.log.ClassLog;
+
 import spiralcraft.text.ParseException;
+import spiralcraft.text.Renderer;
+
 import spiralcraft.textgen.compiler.DocletUnit;
 import spiralcraft.vfs.Resource;
 
@@ -37,6 +40,7 @@ import spiralcraft.vfs.Resource;
  */
 public class Generator
   extends ResourceUnit<DocletUnit>
+  implements Renderer
 {
   private static final ClassLog log
     =ClassLog.getInstance(Generator.class);
@@ -104,6 +108,7 @@ public class Generator
    * @param writer
    * @throws IOException
    */
+  @Override
   public void render(Writer writer)
     throws IOException
   {
@@ -143,6 +148,7 @@ public class Generator
    * @return The rendered markup
    * @throws IOException
    */
+  @Override
   public String render()
     throws IOException
   { 
@@ -150,6 +156,7 @@ public class Generator
     render(writer);
     return writer.toString();
   }
+
 
   
 }
