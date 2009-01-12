@@ -13,7 +13,11 @@ import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
 
 /**
- * <p>Holds a reference to Renderer for externally defined output
+ * <p>Holds a reference to Renderer for externally defined output. 
+ * </p>
+ * 
+ * <p>The Renderer was created via spiralcraft.builder by the ElementFactory
+ *   and is wrapped in the RenderElement before being bound.
  * </p>
  * 
  * @author mike
@@ -38,8 +42,7 @@ public class RendererElement
     if (renderer instanceof FocusChainObject)
     { 
       FocusChainObject fco=(FocusChainObject) renderer;
-      fco.bind(focus);
-      focus=fco.getFocus();
+      focus=fco.bind(focus);
       
     }
     focus=focus.chain(new SimpleChannel<RendererElement>(this,true));
