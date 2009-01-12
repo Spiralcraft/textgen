@@ -16,9 +16,11 @@ package spiralcraft.textgen;
 
 import java.io.Writer;
 
+
 /**
- * Provides a mechanism for Elements to share state within a single generation
- *   run.
+ * <p>Provides Elements with access to the rendering context as well as
+ *   a mechanism for Elements to share state between events.
+ * </p>
  * 
  * @author mike
  */
@@ -60,6 +62,7 @@ public class EventContext
   public Writer getWriter()
   { return writer;
   }
+  
   
   /** 
    * Provide the Writer to which output will be rendered
