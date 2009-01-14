@@ -1,6 +1,10 @@
 package spiralcraft.textgen.compiler;
 
+import java.net.URI;
+
 import java.util.ArrayList;
+
+import spiralcraft.common.NamespaceResolver;
 
 import spiralcraft.text.ParseException;
 import spiralcraft.text.ParsePosition;
@@ -22,6 +26,7 @@ public abstract class MarkupUnit
   protected CharSequence markup;
   protected Attribute[] attributes;
   protected boolean open;
+  private TglPrefixResolver prefixResolver;
 
   public MarkupUnit
     (TglUnit parent
@@ -63,10 +68,15 @@ public abstract class MarkupUnit
       =new ArrayList<Attribute>();
     for (Attribute attrib:tagAttributes)
     { 
-      if (attrib.getName().startsWith("textgen:"))
+      if (checkUnitAttribute(attrib))
       { 
-        addUnitAttribute
-          (attrib.getName().substring(8),attrib.getValue());
+      }
+      else if (attrib.getName().startsWith("xmlns:"))
+      { 
+        mapNamespace
+          (attrib.getName().substring(6)
+          ,URI.create(attrib.getValue())
+          );
       }
       else
       { elementAttributes.add(attrib);
@@ -78,6 +88,20 @@ public abstract class MarkupUnit
     
   }
   
+  private void mapNamespace(String prefix,URI namespace)
+  { 
+    if (prefixResolver==null)
+    { 
+      if (parent==null)
+      { prefixResolver=new TglPrefixResolver();
+      }
+      else
+      { prefixResolver=new TglPrefixResolver(parent.getNamespaceResolver());
+      }
+      
+    }
+    prefixResolver.mapPrefix(prefix, namespace);
+  }
   
   public Attribute getAttribute(String name)
   {
@@ -90,9 +114,24 @@ public abstract class MarkupUnit
     return null;
   }
   
+  public Attribute[] getAttributes()
+  { return attributes;
+  }
+  
   @Override
   public boolean isOpen()
   { return open;
+  }
+ 
+  @Override
+  public NamespaceResolver getNamespaceResolver()
+  { 
+    if (prefixResolver!=null)
+    { return prefixResolver;
+    }
+    else 
+    { return super.getNamespaceResolver();
+    }
   }
 
 }

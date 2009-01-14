@@ -17,6 +17,7 @@ package spiralcraft.textgen.compiler;
 
 import spiralcraft.lang.BindException;
 
+import spiralcraft.text.ParseException;
 import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.Element;
@@ -50,16 +51,26 @@ public class IncludeUnit
 
     for (Attribute attrib: attribs)
     {
-      if (attrib.getName().equals("resource"))
-      { docletUnit=includeResource(attrib.getValue(),compiler);
+      
+      try
+      {
+        if (attrib.getName().equals("resource"))
+        { docletUnit=includeResource(attrib.getValue(),compiler);
+        }
+        else if (!checkUnitAttribute(attrib))
+        { 
+          throw new MarkupException
+            ("Attribute '"+attrib.getName()+"' not in {resource}"
+            ,compiler.getPosition()
+            );
+        }
       }
-      else
+      catch (ParseException x)
       { 
         throw new MarkupException
-          ("Attribute '"+attrib.getName()+"' not in {resource}"
-          ,compiler.getPosition()
-          );
+          ("Error reading attribute",compiler.getPosition(),x);
       }
+      
     }
     
     if (docletUnit==null)

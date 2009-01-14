@@ -16,6 +16,7 @@ package spiralcraft.textgen.compiler;
 
 import java.io.PrintWriter;
 
+import spiralcraft.common.NamespaceResolver;
 import spiralcraft.lang.BindException;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
@@ -24,6 +25,7 @@ import spiralcraft.textgen.EventContext;
 import spiralcraft.text.ParseException;
 import spiralcraft.text.markup.Unit;
 import spiralcraft.text.markup.MarkupException;
+import spiralcraft.text.xml.Attribute;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -98,6 +100,20 @@ public abstract class TglUnit
     return element;
   }
   
+  protected boolean checkUnitAttribute(Attribute attrib)
+    throws ParseException
+  {
+    if (attrib.getName().startsWith("textgen:"))
+    { 
+      
+      addUnitAttribute
+        (attrib.getName().substring(8),attrib.getValue());
+      return true;
+
+    }
+    return false;
+  }
+  
   protected void addUnitAttribute(String name,String value)
     throws ParseException
   { 
@@ -133,6 +149,19 @@ public abstract class TglUnit
   public boolean getTrim()
   { return trim;
   }
+  
+  /**
+   * 
+   * @return The NamespaceResolver which provides namespace mappings
+   *   currently in effect.
+   */
+  public NamespaceResolver getNamespaceResolver()
+  { 
+    if (parent!=null)
+    { return parent.getNamespaceResolver();
+    }
+    return null;
+  }  
   
 }
 

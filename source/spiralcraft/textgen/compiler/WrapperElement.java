@@ -1,7 +1,7 @@
 package spiralcraft.textgen.compiler;
 
 import java.io.IOException;
-
+import java.io.Writer;
 import java.util.List;
 
 import spiralcraft.lang.BindException;
@@ -9,6 +9,7 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.FocusChainObject;
 
 import spiralcraft.text.Renderer;
+import spiralcraft.text.Wrapper;
 import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.Element;
@@ -25,15 +26,15 @@ import spiralcraft.textgen.EventContext;
  * @author mike
  *
  */
-public class RendererElement
+public class WrapperElement
   extends Element
 {
 
-  private final Renderer renderer;
+  private final Wrapper wrapper;
   private Focus<?> focus;
   
-  public RendererElement(Renderer renderer)
-  { this.renderer=renderer;
+  public WrapperElement(Wrapper wrapper)
+  { this.wrapper=wrapper;
   }
   
   @Override
@@ -42,9 +43,9 @@ public class RendererElement
   { 
     focus=getParent().getFocus();
     
-    if (renderer instanceof FocusChainObject)
+    if (wrapper instanceof FocusChainObject)
     { 
-      FocusChainObject fco=(FocusChainObject) renderer;
+      FocusChainObject fco=(FocusChainObject) wrapper;
       focus=fco.bind(focus);
       
     }
@@ -58,11 +59,19 @@ public class RendererElement
   }
   
   @Override
-  public void render(EventContext context)
+  public void render(final EventContext context)
     throws IOException
   { 
-    renderer.render(context.getWriter());
-    renderChildren(context);
+    wrapper.render
+      (context.getWriter()
+      ,new Renderer()
+      {
+        public void render(Writer writer)
+          throws IOException
+        { renderChildren(context);
+        }
+      }
+      );
   }
   
 }

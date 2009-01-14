@@ -78,7 +78,9 @@ public class ElementUnit
     int nspos=name.indexOf(':');
     if (nspos>-1)
     {  
-      elementPackage=resolveNamespace(name.substring(0,nspos));
+      elementPackage
+        =getNamespaceResolver().resolvePrefix(name.substring(0,nspos));
+      
       elementName=name.substring(nspos+1);
     }
     else
@@ -88,25 +90,9 @@ public class ElementUnit
     }
   }
   
-  
-  private URI resolveNamespace(String namespaceId)
-    throws MarkupException
-  {
-    // Called via the constructor
-    
-    URI namespaceURI=null;
-    NamespaceUnit unit=this.findUnit(NamespaceUnit.class);
-    if (unit!=null)
-    { namespaceURI=unit.resolveNamespace(namespaceId);
-    }
-    if (namespaceURI==null)
-    { throw new MarkupException("Unknown namespace "+namespaceId,getPosition());
-    }
-    else
-    { return namespaceURI;
-    }
-  }
 
+
+  
   
   /**
    * <p>Notify ElementUnit of a close tag.

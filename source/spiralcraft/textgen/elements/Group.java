@@ -21,7 +21,6 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.Channel;
 import spiralcraft.log.ClassLog;
 
-import spiralcraft.textgen.ElementState;
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Element;
 
@@ -146,16 +145,4 @@ public class Group
   { renderChildren(context);
   }
   
-  @Override
-  public State createState()
-  { return new State();
-  }
-  
-  public class State
-    extends ElementState
-  {
-    public State()
-    { super(Group.this.getChildCount());
-    }
-  }
 }

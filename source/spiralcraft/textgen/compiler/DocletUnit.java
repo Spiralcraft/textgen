@@ -23,8 +23,8 @@ import spiralcraft.text.markup.Unit;
 
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
-import spiralcraft.lang.NamespaceResolver;
-import spiralcraft.lang.spi.FocusWrapper;
+
+import spiralcraft.common.NamespaceResolver;
 
 import java.io.IOException;
 
@@ -162,7 +162,6 @@ public class DocletUnit
     }
     
     @Override
-    @SuppressWarnings("unchecked") // Not using generic versions
     public void bind(List<TglUnit> childUnits)
       throws BindException,MarkupException
     { 
@@ -172,46 +171,12 @@ public class DocletUnit
       }
       if (wrappedFocus!=null)
       {
-        resolver=new Resolver(wrappedFocus.getNamespaceResolver());
-        _focus=new FocusWrapper(wrappedFocus)
-        {
-          @Override
-          public NamespaceResolver getNamespaceResolver()
-          { 
-            // log.fine("XXX "+resolver.toString());
-            return resolver;
-          }
-        };
+        resolver=new TglPrefixResolver(wrappedFocus.getNamespaceResolver());
+        _focus=wrappedFocus.chain(resolver);
       }
       super.bind(childUnits);
     
     }    
-  }
-  
-  class Resolver
-    implements NamespaceResolver
-  {
-    private NamespaceResolver parentResolver;
-    
-    public Resolver(NamespaceResolver parent)
-    { this.parentResolver=parent;
-    }
-
-    @Override
-    public URI getDefaultNamespaceURI()
-    { return ElementUnit.DEFAULT_ELEMENT_PACKAGE;
-    }
-
-    @Override
-    public URI resolveNamespace(String prefix)
-    { 
-      if (parentResolver!=null)
-      { return parentResolver.resolveNamespace(prefix);
-      }
-      else
-      { return null;
-      }
-    }
   }
   
 }

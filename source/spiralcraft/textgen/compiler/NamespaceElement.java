@@ -7,10 +7,10 @@ import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
 
+import spiralcraft.common.NamespaceResolver;
+
 import spiralcraft.lang.BindException;
-import spiralcraft.lang.NamespaceResolver;
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.spi.FocusWrapper;
 
 import spiralcraft.log.ClassLog;
 
@@ -41,20 +41,11 @@ public class NamespaceElement
   }
   
   @Override
-  @SuppressWarnings("unchecked") // Not using generic versions
   public void bind(List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
     Focus<?> parentFocus=getParent().getFocus();
-    focus=new FocusWrapper(parentFocus)
-      {
-        @Override
-        public NamespaceResolver getNamespaceResolver()
-        { 
-          // log.fine("XXX "+resolver.toString());
-          return resolver;
-        }
-      };
+    focus=parentFocus.chain(resolver);
     super.bind(childUnits);
     
   }

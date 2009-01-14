@@ -23,9 +23,9 @@ package spiralcraft.textgen;
  * <h3>Elements and State</h3>
  * 
  * <p>The tree of Elements that make up a textgen document comprises the
- *   document structure. A tree of ElementStates, in conjunction with
+ *   abstract document structure. A tree of ElementStates, in conjunction with
  *   the data bindings associated with the Elements, provide the content
- *   of the document. 
+ *   of the document- the concrete document structure.
  * </p>
  *   
  * <p>In the simple case, an Element may be rendered in a stateless fashion. 

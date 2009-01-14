@@ -16,17 +16,18 @@ package spiralcraft.textgen.compiler;
 
 
 import spiralcraft.lang.BindException;
-import spiralcraft.lang.NamespaceResolver;
-import spiralcraft.log.ClassLog;
+
+
+import spiralcraft.common.NamespaceResolver;
 
 import spiralcraft.textgen.Element;
 
+import spiralcraft.text.ParseException;
 import spiralcraft.text.xml.Attribute;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import java.util.HashMap;
 
 import spiralcraft.text.markup.MarkupException;
 
@@ -36,12 +37,8 @@ import spiralcraft.text.markup.MarkupException;
 public class NamespaceUnit
   extends ProcessingUnit
 {
-  private static final ClassLog log
-    =ClassLog.getInstance(NamespaceUnit.class);
-  
-  private HashMap<String,URI> map
-    =new HashMap<String,URI>();
-  private final NamespaceUnit parentNamespaceUnit;
+  private TglPrefixResolver prefixResolver;
+
   
   public NamespaceUnit
     (TglUnit parent
@@ -51,23 +48,38 @@ public class NamespaceUnit
     throws MarkupException
   { 
     super(parent);
-    parentNamespaceUnit=parent.findUnit(NamespaceUnit.class);
-    
+    prefixResolver=new TglPrefixResolver(parent.getNamespaceResolver());
+      
     for (Attribute attrib: attribs)
     {
+      
+      
       try
       { 
+        if (checkUnitAttribute(attrib))
+        { continue;
+        }
+        
         URI uri=new URI(attrib.getValue());
         if (!uri.isAbsolute())
         { uri=compiler.getPosition().getContextURI().resolve(uri);
         }
-        map.put(attrib.getName(),uri);
+        prefixResolver.mapPrefix(attrib.getName(),uri);
       }
       catch (URISyntaxException x)
       { 
         throw new MarkupException
-          ("Error creating URI '"+attrib.getValue()+"':"+x
+          ("Error creating URI '"+attrib.getValue()+"'"
           ,compiler.getPosition()
+          ,x
+          );
+      }
+      catch (ParseException x)
+      { 
+        throw new MarkupException
+          ("Error parsing attribute '"+attrib.getName()+"'"
+          ,compiler.getPosition()
+          ,x
           );
       }
     }
@@ -77,52 +89,26 @@ public class NamespaceUnit
   public String getName()
   { return "@namespace";
   }
-  
-  public URI resolveNamespace(String namespaceId)
+   
+  @Override
+  public NamespaceResolver getNamespaceResolver()
   { 
-    URI namespace=map.get(namespaceId);
-    if (namespace!=null)
-    { return namespace;
+    if (prefixResolver!=null)
+    { return prefixResolver;
     }
-    else if (parentNamespaceUnit!=null)
-    { 
-      namespace=parentNamespaceUnit.resolveNamespace(namespaceId);
-      if (namespace==null && namespaceId.equals("default"))
-      { namespace=ElementUnit.DEFAULT_ELEMENT_PACKAGE;
-      }
-      return namespace;
+    else 
+    { return super.getNamespaceResolver();
     }
-    
-    return null;
   }
-  
-  
+    
   @Override
   public Element bind(Element parentElement)
     throws MarkupException
   {
     NamespaceElement element
       =new NamespaceElement
-        (new NamespaceResolver()
-        {
-
-          @Override
-          public URI getDefaultNamespaceURI()
-          { 
-            return ElementUnit.DEFAULT_ELEMENT_PACKAGE;
-            // return NamespaceUnit.this.resolveNamespace("default");
-          }
-
-          @Override
-          public URI resolveNamespace(String prefix)
-          { 
-            if (debug)
-            { log.fine("resolveNamespace "+prefix);
-            }
-            return NamespaceUnit.this.resolveNamespace(prefix);
-          }
-        }
-        );
+        (getNamespaceResolver());
+    
     element.setParent(parentElement);
     try
     { element.bind(children);

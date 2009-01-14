@@ -148,7 +148,6 @@ public class Generator
    * @return The rendered markup
    * @throws IOException
    */
-  @Override
   public String render()
     throws IOException
   { 

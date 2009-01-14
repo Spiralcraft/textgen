@@ -23,6 +23,7 @@ import spiralcraft.text.markup.MarkupException;
 import spiralcraft.text.ParseException;
 import spiralcraft.text.ParsePosition;
 import spiralcraft.text.Renderer;
+import spiralcraft.text.Wrapper;
 
 import spiralcraft.textgen.Element;
 
@@ -120,9 +121,31 @@ public class ElementFactory
   }
 
   private void handlePropertyUnit(PropertyUnit unit)
+    throws MarkupException
   {
-        
-    Attribute nature=unit.getAttribute("nature");
+    Attribute nature=null;
+    Attribute expression=null;
+    
+    for (Attribute attrib:unit.getAttributes())
+    { 
+      if (attrib.getName().equals("nature"))
+      { nature=attrib;
+      }
+      else if (attrib.getName().equals("x"))
+      { expression=attrib;
+      }
+      else
+      { 
+        throw new MarkupException
+          ("Unrecognized attribute "
+           +"'"+attrib.getName()+"' in property specifier '"
+           +unit.getName()+"'. Use one of [nature,x]"
+          ,position
+          );
+      }
+      
+    }
+    
         
     StringBuilder buf=new StringBuilder();
     List<ElementUnit> objectUnits=new ArrayList<ElementUnit>();
@@ -150,32 +173,43 @@ public class ElementFactory
         
     if (nature==null)
     {
+      PropertySpecifier property
+        =new PropertySpecifier
+        (assemblyClass
+        ,unit.getPropertyName()
+        );      
+      
+      boolean set=false;
       if (objectUnits.size()>0)
       { 
         // This is the quick way- build an assembly tree from the
         //   property tree and instantiate that.
-        PropertySpecifier property
-          =new PropertySpecifier
-          (assemblyClass
-          ,unit.getPropertyName()
-          );        
+        
         for (ElementUnit objectUnit:objectUnits)
         { property.addAssemblyClass(objectUnit.getAssemblyClass());
         }
-        assemblyClass.addPropertySpecifier(property);
-        
+        set=true;
       }
-      else if (buf.length()>0)
+      
+      if (expression!=null)
       { 
-        // Add immediately
-        PropertySpecifier property
-          =new PropertySpecifier
-          (assemblyClass
-          ,unit.getPropertyName()
-          );        
-        property.addCharacters(buf.toString().toCharArray());
-        assemblyClass.addPropertySpecifier(property);
+        if (objectUnits.size()>0)
+        { 
+          throw new MarkupException
+            ("Property specifier with expression cannot also have contents"
+            ,position
+            );
+        }
+        property.setExpression(expression.getValue());
+        set=true;
       }
+      
+      if (!set && buf.length()>0)
+      {        
+        property.addCharacters(buf.toString().toCharArray());
+      }
+      assemblyClass.addPropertySpecifier(property);
+      
     }
     else if (nature.getValue().equals("bean"))
     { 
@@ -204,6 +238,9 @@ public class ElementFactory
       }
       else if (object instanceof Renderer)
       { element=new RendererElement((Renderer) object);
+      }
+      else if (object instanceof Wrapper)
+      { element=new WrapperElement((Wrapper) object);
       }
       else
       { 

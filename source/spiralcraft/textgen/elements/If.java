@@ -19,10 +19,10 @@ import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Channel;
 
-import spiralcraft.textgen.ElementState;
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.InitializeMessage;
+import spiralcraft.textgen.ValueState;
 
 import spiralcraft.textgen.Message;
 
@@ -43,7 +43,8 @@ import java.util.List;
  * 
  * XXX: We need to evaluate the filter on prepare, and cache it for render and
  *   later events if this component is stateful. This may require some sort
- *   of "invalidate" notification to signal a re-evaluation requirement
+ *   of "invalidate" notification to signal a re-evaluation requirement.
+ *   Use FocusElement
  * 
  * @author mike
  *
@@ -219,27 +220,10 @@ public class If
   }
   
   @Override
-  public IfState createState()
-  { return new IfState(getChildCount());
+  public ValueState<Boolean> createState()
+  { return new ValueState<Boolean>(this);
   }  
 }
 
-class IfState
-  extends ElementState
-{
-  private Boolean result;
-  
-  public IfState(int childCount)
-  { super(childCount);
-  }
-  
-  public Boolean getResult()
-  { return result;
-  }
-  
-  public void setResult(Boolean result)
-  { this.result=result;
-  }
-}
 
 
