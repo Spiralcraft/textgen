@@ -88,7 +88,7 @@ public abstract class Element
   protected void logHandledException(EventContext context,Throwable x)
   { log.log(Level.INFO,getLogPrefix(context)+": Caught handled exception ",x);
   }
-      
+
   /**
    * <p>Override to incorporate contextual information from the EventContext
    *   into log messages

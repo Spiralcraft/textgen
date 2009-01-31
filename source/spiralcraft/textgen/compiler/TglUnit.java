@@ -59,6 +59,7 @@ public abstract class TglUnit
   
   public DefineUnit findDefinition(String name)
   {
+    
     DefineUnit ret=defines!=null?defines.get(name):null;
     if (ret==null && parent!=null)
     { return parent.findDefinition(name);
