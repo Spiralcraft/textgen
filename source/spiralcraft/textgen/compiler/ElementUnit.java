@@ -80,6 +80,13 @@ public class ElementUnit
     {  
       elementPackage
         =getNamespaceResolver().resolvePrefix(name.substring(0,nspos));
+      if (elementPackage==null)
+      { 
+        throw new ParseException
+          ("Namespace prefix '"+name.substring(0,nspos)+"' not found"
+          ,getPosition()
+          );
+      }
       
       elementName=name.substring(nspos+1);
     }
