@@ -34,6 +34,7 @@ import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.text.ParseException;
 import spiralcraft.text.ParsePosition;
+import spiralcraft.util.ContextDictionary;
 
 /**
  * A Unit which contains an expression for output
@@ -93,6 +94,16 @@ public class ExpressionUnit
     }
     else
     { expressionText=markup.subSequence(1,markup.length()-1);
+    }
+    
+    try
+    { expressionText=ContextDictionary.substitute(expressionText.toString());
+    }
+    catch (ParseException x)
+    {
+      ParsePosition position=getPosition().clone();
+      position.setContext(expressionText);
+      throw new MarkupException(position,x);
     }
     
     try
