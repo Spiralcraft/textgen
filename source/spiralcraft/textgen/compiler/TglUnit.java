@@ -59,12 +59,20 @@ public abstract class TglUnit
   
   public DefineUnit findDefinition(String name)
   {
-    
-    DefineUnit ret=defines!=null?defines.get(name):null;
-    if (ret==null && parent!=null)
-    { return parent.findDefinition(name);
+    // Parent takes precedence
+    DefineUnit ret=parent!=null?parent.findDefinition(name):null;
+    if (ret==null && defines!=null)
+    { ret=defines.get(name);
     }
     return ret;
+      
+//    // Local takes precedence 
+//    // (deprecated- parent precedence facilitates inheritance)
+//    DefineUnit ret=defines!=null?defines.get(name):null;
+//    if (ret==null && parent!=null)
+//    { return parent.findDefinition(name);
+//    }
+//    return ret;
   }
   
   public boolean allowsChildren()
