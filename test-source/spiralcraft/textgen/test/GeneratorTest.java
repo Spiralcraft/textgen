@@ -77,7 +77,7 @@ public class GeneratorTest
       long duration=5000;
 
       StringWriter stringWriter=new StringWriter();
-      context.setWriter(stringWriter);
+      context=new EventContext(writer,false);
       long iterations=0;
       while (true)
       { 

@@ -16,9 +16,13 @@ package spiralcraft.textgen;
 
 import java.io.Writer;
 
+import spiralcraft.sax.XmlWriter;
+
+import org.xml.sax.ContentHandler;
 
 /**
- * <p>Provides Elements with access to the rendering context as well as
+ * <p>Provides all Elements in the document tree access to the rendering
+ *   context across a complete rendering cycle. Provides 
  *   a mechanism for Elements to share state between events.
  * </p>
  * 
@@ -26,8 +30,10 @@ import java.io.Writer;
  */
 public class EventContext
 {
+  @SuppressWarnings("unused")
   private final EventContext parent;
-  private Writer writer;
+  private final Writer writer;
+  private ContentHandler contentHandler;
   private ElementState elementState;
   private final boolean stateful;
   private String logPrefix;
@@ -43,17 +49,29 @@ public class EventContext
     this.stateful=stateful;
   }
   
+  
   /**
    * Create a GenerationContext that refers to its ancestors for the resolution
    *   of dependencies.
    * 
    * @param parent The parent GenerationContext
    */
-  public EventContext(EventContext parent)
+  public EventContext(Writer writer,EventContext parent)
   { 
     this.parent=parent;
-    this.writer=this.parent.getWriter();
+    this.writer=writer;
     this.stateful=parent.isStateful();
+  }
+  
+  /** 
+   * @return The ContentHandler to which XML output will be rendered
+   */
+  public ContentHandler getContentHandler()
+  { 
+    if (contentHandler==null)
+    { contentHandler=new XmlWriter(writer,null);
+    }
+    return contentHandler;
   }
   
   /** 
@@ -63,13 +81,6 @@ public class EventContext
   { return writer;
   }
   
-  
-  /** 
-   * Provide the Writer to which output will be rendered
-   */
-  public void setWriter(Writer writer)
-  { this.writer=writer;
-  }
   
   /**
    * 
