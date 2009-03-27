@@ -1,2 +1,2 @@
-spiralcraft-textgen.jar
-spiralcraft-textgen-test.jar
+*.jar
+ivy.xml
