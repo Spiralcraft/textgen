@@ -105,7 +105,7 @@ public class LocalReference<Treferent>
     
     // This instance just used to infer a type
     AbstractXmlObject ref
-      =AbstractXmlObject.create
+      =AbstractXmlObject.activate
         (type.getURI(),instanceURI,null,getParent().getFocus());
         
     channel=new ThreadLocalChannel
@@ -151,7 +151,7 @@ public class LocalReference<Treferent>
       else
       { 
         reference
-          =AbstractXmlObject.<Treferent>create
+          =AbstractXmlObject.<Treferent>activate
             (type.getURI()
             ,instanceURI
             ,null
@@ -191,7 +191,7 @@ public class LocalReference<Treferent>
       else
       { 
         reference
-          =AbstractXmlObject.<Treferent>create
+          =AbstractXmlObject.<Treferent>activate
             (type.getURI(),instanceURI,null,getParent().getFocus());
       }
       
@@ -232,7 +232,7 @@ class ReferenceState<T>
     if (reference==null)
     { 
       reference
-        =AbstractXmlObject.<T>create(typeURI,instanceURI,null,null);
+        =AbstractXmlObject.<T>activate(typeURI,instanceURI,null,null);
     }
 
     return reference;

@@ -1,0 +1,24 @@
+<scm:Change.list
+  xmlns:scm="class:/spiralcraft/scm/meta/"
+  >
+  <scm:Change>
+    <revision>0.3.2
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <notes>
+      <scm:Note>Refactor for AbstractXmlObject.create() change
+      </scm:Note>
+    </notes>
+    
+    <path>/source/spiralcraft/textgen
+    </path>
+    
+    <resources>
+      <URI>
+    </resources>
+  </scm:Change>
+  
+</scm:Change.list>
