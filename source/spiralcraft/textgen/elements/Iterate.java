@@ -30,8 +30,8 @@ import spiralcraft.textgen.Element;
 import spiralcraft.textgen.IterationState;
 import spiralcraft.textgen.MementoState;
 import spiralcraft.textgen.Message;
+
 import spiralcraft.textgen.InitializeMessage;
-import spiralcraft.textgen.PrepareMessage;
 
 import spiralcraft.textgen.compiler.TglUnit;
 
@@ -211,7 +211,11 @@ public class Iterate
     bindChildren(childUnits);
   }
   
-  
+  /**
+   * Called from messageStateful to refresh state before propagating message
+   * 
+   * @param state
+   */
   private void refreshState(IterationState state)
   {
     if (debug)
@@ -223,7 +227,6 @@ public class Iterate
     while (cursor.hasNext())
     { state.ensureChild(i++,cursor.next());
     }
-    state.setStale(false);
     state.trim(i);
     if (debug)
     { log.fine(toString()+": iterated "+i+" elements");
@@ -278,8 +281,6 @@ public class Iterate
         }
       }
       
-      
-      state.setStale(false);
       state.trim(i);
       if (debug)
       { log.fine(toString()+": iterated "+i+" elements");
@@ -415,17 +416,10 @@ public class Iterate
       }
       else
       {
-        if (state.isStale())
-        {
-          if (debug)
-          { log.fine(toString()+" refreshing on message because stale");
-          }
-          refreshState(state);
-        }
-        else if (message.getType()==PrepareMessage.TYPE)
+        if (state.frameChanged(genContext.getCurrentFrame()))
         { 
           if (debug)
-          { log.fine(toString()+" refreshing on Prepare");
+          { log.fine(toString()+" refreshing on Frame change");
           }
           refreshState(state);
         }
@@ -455,28 +449,17 @@ public class Iterate
   
   @Override
   public void message
-    (final EventContext genContext
+    (final EventContext context
     ,Message message
     ,LinkedList<Integer> path
     )
   {
-    if (genContext.isStateful())
-    { messageStateful(genContext,message,path);
+    if (context.isStateful())
+    { messageStateful(context,message,path);
     }    
   }
   
-  /**
-   * Indicate whether the iteration should be re-run from the source on
-   *   rendering. Returns true by default.
-   * 
-   * @param context
-   * @return Whether the iteration should be regenerated when rendering.
-   */
-  protected boolean shouldRegenerate(EventContext context)
-  { return true;
-  }
-  
-  
+      
   private void renderRegenerate
     (final EventContext genContext
     ,IterationState state
@@ -524,9 +507,7 @@ public class Iterate
         i++;
       }
       if (state!=null)
-      {
-        state.setStale(false);
-        state.trim(i);
+      { state.trim(i);
       }
       if (debug)
       { log.fine(toString()+": iterated "+i+" elements");
@@ -606,7 +587,7 @@ public class Iterate
     try
     {
     
-      if (shouldRegenerate(genContext))
+      if (state==null || state.frameChanged(genContext.getCurrentFrame()))
       { renderRegenerate(genContext,state);
       }
       else

@@ -29,10 +29,8 @@ import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.compiler.TglUnit;
 
 /**
- * <P>Creates a new Focus for expression evaluation and additionally holds
- *   the referenced value for repeated access by this element's children
- *   during a render or message cycle.
- * </P>
+ * <p>Formats a date
+ * </p>
  * 
  * @author mike
  *

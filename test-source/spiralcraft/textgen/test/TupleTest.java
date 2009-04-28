@@ -81,7 +81,7 @@ public class TupleTest
     Element element=unit.bind(focus);
 
     Writer writer=new OutputStreamWriter(System.out);
-    EventContext context=new EventContext(writer,false);
+    EventContext context=new EventContext(writer,false,null);
     element.render(context);
     writer.flush();
     
@@ -115,7 +115,7 @@ public class TupleTest
     Element element=unit.bind(focus);
 
     Writer writer=new OutputStreamWriter(System.out);
-    EventContext context=new EventContext(writer,false);
+    EventContext context=new EventContext(writer,false,null);
     element.render(context);
     writer.flush();
 

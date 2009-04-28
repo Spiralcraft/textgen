@@ -66,7 +66,7 @@ public class GeneratorTest
         );
 
     Writer writer=new OutputStreamWriter(exContext.out());
-    EventContext context=new EventContext(writer,false);
+    EventContext context=new EventContext(writer,false,null);
     element.render(context);
     writer.flush();
 
@@ -77,7 +77,7 @@ public class GeneratorTest
       long duration=5000;
 
       StringWriter stringWriter=new StringWriter();
-      context=new EventContext(writer,false);
+      context=new EventContext(writer,false,null);
       long iterations=0;
       while (true)
       { 

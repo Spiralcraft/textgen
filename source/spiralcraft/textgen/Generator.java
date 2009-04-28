@@ -117,7 +117,7 @@ public class Generator
     {
       if (element!=null)
       {
-        EventContext context=new EventContext(writer,false);
+        EventContext context=new EventContext(writer,false,null);
         element.render(context);
       }
       else

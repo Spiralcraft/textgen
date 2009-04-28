@@ -37,16 +37,26 @@ public class EventContext
   private ElementState elementState;
   private final boolean stateful;
   private String logPrefix;
+  private StateFrame currentFrame;
   
   /**
-   * Create a GenerationContext that does not refer to any ancestors, and sends
-   *   output to the specified Writer.
+   * <p>Create a GenerationContext that does not refer to any ancestors,
+   *  and sends output to the specified Writer.
+   * </p>
+   * 
+   * <p>If a StateFrame is not provided, a new one will be created
+   * </p>
    */
-  public EventContext(Writer writer,boolean stateful)
+  public EventContext(Writer writer,boolean stateful,StateFrame frame)
   { 
     this.parent=null;
     this.writer=writer;
     this.stateful=stateful;
+    this.currentFrame=frame;
+    
+    if (currentFrame==null && stateful)
+    { currentFrame=new StateFrame();
+    }
   }
   
   
@@ -61,6 +71,16 @@ public class EventContext
     this.parent=parent;
     this.writer=writer;
     this.stateful=parent.isStateful();
+    currentFrame=parent.getCurrentFrame();
+  }
+  
+  /**
+   * Provide a new StateFrame to trigger a State refresh
+   * 
+   * @param frame
+   */
+  public void setCurrentFrame(StateFrame frame)
+  { this.currentFrame=frame;
   }
   
   /** 
@@ -117,8 +137,13 @@ public class EventContext
   { return logPrefix;
   }
   
+  public StateFrame getCurrentFrame()
+  { return currentFrame;
+  }
+  
   protected void setLogPrefix(String logPrefix)
   { this.logPrefix=logPrefix;
   }
+  
   
 }

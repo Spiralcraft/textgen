@@ -184,7 +184,7 @@ public class MetaTranslator
       
       ByteArrayOutputStream out = new ByteArrayOutputStream();
       OutputStreamWriter writer=new OutputStreamWriter(out);
-      EventContext context=new EventContext(writer,false);
+      EventContext context=new EventContext(writer,false,null);
       element.render(context);
       writer.flush();
       out.close();

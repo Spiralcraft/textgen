@@ -2,6 +2,52 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.3.3
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <notes>
+      <scm:Note>Implementing StateFrame mechanism to better synchronize
+        state changes.
+      </scm:Note>
+    </notes>
+    
+    <path>/source/spiralcraft/textgen
+    </path>
+    
+    <resources>
+      <URI>Element.java
+      </URI>
+      <URI>EventContext.java
+      </URI>
+      <URI>FocusElement.java
+      </URI>
+      <URI>Generator.java
+      </URI>
+      <URI>IterationState.java
+      </URI>
+      <URI>StateFrame.java
+      </URI>
+      <URI>ValueState.java
+      </URI>
+      <URI>elements/DateFormat.java
+      </URI>
+      <URI>elements/If.java
+      </URI>
+      <URI>elements/Iterate.java
+      </URI>
+      <URI>elements/SharedReference.java
+      </URI>
+      <URI>elements/If.java
+      </URI>
+      <URI>util/MetaTranslator.java
+      </URI>
+    </resources>
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.3.2
     </revision>
     
@@ -16,9 +62,6 @@
     <path>/source/spiralcraft/textgen
     </path>
     
-    <resources>
-      <URI>
-    </resources>
   </scm:Change>
   
 </scm:Change.list>

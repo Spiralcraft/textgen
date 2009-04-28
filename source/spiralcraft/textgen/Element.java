@@ -136,28 +136,6 @@ public abstract class Element
     handlers.add(handler);
   }
   
-  /*
-  public int[] getPath()
-  { return path;
-  }
-  
-  public void setPath(int[] path)
-  { 
-    this.path=path;
-    System.err.println("Element.setPath(): "+ArrayUtil.format(path,"/",null));
-    if (children!=null)
-    {
-      for (int i=0;i<children.length;i++)
-      {
-        int[] childPath=new int[path.length+1];
-        System.arraycopy(path,0,childPath,0,path.length);
-        childPath[childPath.length-1]=i;
-        children[i].setPath(childPath);
-      }
-    }
-  }
-  */
-  
   protected Element getChild(int i)
   { 
     if (children==null)

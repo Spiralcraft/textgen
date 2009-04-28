@@ -51,33 +51,6 @@ public abstract class FocusElement<T>
   private ThreadLocalChannel<T> channel;
   private Focus<?> focus;
   private Renderer renderer;
-  private boolean invalidateBeforePrepare=true;
-  private boolean invalidateAfterRender=false;
-  
-  
-  /**
-   * <p>Indicate whether the state should be invalidated immediately before
-   *   the Prepare stage to force recomputation
-   *   during the Prepare stage. The default value is true.
-   * </p>
-   * 
-   * @param val
-   */
-  public void setInvalidateBeforePrepare(boolean val)
-  { this.invalidateBeforePrepare=val;
-  }
-
-  /**
-   * <p>Indicate whether the state should be invalidated to force recomputation
-   *   when processing the next set of messages. The default value is false,
-   *   to enable manipulation of stateful values.
-   * </p>
-   * 
-   * @param val
-   */
-  public void setInvalidateAfterRender(boolean val)
-  { this.invalidateAfterRender=val;
-  }
   
   @Override
   public final void bind(List<TglUnit> childUnits)
@@ -151,9 +124,6 @@ public abstract class FocusElement<T>
     ,LinkedList<Integer> path
     )
   {
-    if (invalidateBeforePrepare && message.getType()==PrepareMessage.TYPE)
-    { invalidateState(context);
-    }
     push(context);
     try
     { super.message(context,message,path);
@@ -182,13 +152,9 @@ public abstract class FocusElement<T>
     finally
     { pop();
     }
-    
-    if (invalidateAfterRender)
-    { invalidateState(context);
-    }
   }
   
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "unused" })
   private final void invalidateState(EventContext context)
   { 
     ValueState<T> state=(ValueState<T>) context.getState();
@@ -209,7 +175,7 @@ public abstract class FocusElement<T>
     else
     {
       ValueState<T> state=(ValueState<T>) context.getState();
-      if (!state.isValid())
+      if (state.frameChanged(context.getCurrentFrame()) || !state.isValid())
       { state.setValue(compute());
       }
       channel.push(state.getValue());

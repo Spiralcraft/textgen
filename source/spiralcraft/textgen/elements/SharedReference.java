@@ -50,10 +50,11 @@ import spiralcraft.util.thread.DelegateException;
  *   should synchronize its own state.
  * </p>
  * 
- * <p>XXX Note that internal use of a ThreadLocal by the referent for publishing
+ * <p>We use a ThreadDelegate mechanism for the following reason: 
+ *   The internal use of a ThreadLocal by the referent for publishing
  *   an object into the Focus chain may result in the object never being
  *   removed from memory. The FocusChainObject needs a set of methods to
- *   allow for push-pop.
+ *   allow for push-pop. (The ThreadDelage mechanism accomplishes this).
  * </p>
  * 
  * @author mike

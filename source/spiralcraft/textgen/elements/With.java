@@ -21,7 +21,6 @@ import spiralcraft.textgen.ExpressionFocusElement;
 public class With<T>
   extends ExpressionFocusElement<T>
 {
-  { setInvalidateAfterRender(true);
-  }
+
   
 }

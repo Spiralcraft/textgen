@@ -35,16 +35,12 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+
 /**
  * <p>Logical element renders contents if the condition (X) is true. If the
  *   condition is false, and an "Else" element is a direct child, the contents
  *   following the Else is rendered.
  * </p>
- * 
- * XXX: We need to evaluate the filter on prepare, and cache it for render and
- *   later events if this component is stateful. This may require some sort
- *   of "invalidate" notification to signal a re-evaluation requirement.
- *   Use FocusElement
  * 
  * @author mike
  *
@@ -139,7 +135,7 @@ public class If
        )
     {
       
-      Boolean val=target.get();
+      Boolean val=currentValue(context);
       boolean passed=val!=null && val;
     
       int childCount=getChildCount();
@@ -177,6 +173,28 @@ public class If
     
   
   }
+  @SuppressWarnings("unchecked")
+  protected Boolean currentValue(EventContext context)
+  {
+    Boolean val;
+    
+    if (!context.isStateful())
+    { val=target.get();
+    }
+    else
+    {
+      ValueState<Boolean> state=(ValueState<Boolean>) context.getState();
+      if (state.frameChanged(context.getCurrentFrame()) || !state.isValid())
+      { 
+        val=target.get();
+        state.setValue(val);
+      }
+      else
+      { val=state.getValue();
+      }
+    }
+    return val;
+  }
   
   /**
    * <P>Renders the tag. A positive result is displayed only if the bound
@@ -190,7 +208,8 @@ public class If
     
     
     
-    Boolean val=target.get();
+    Boolean val=currentValue(context);
+    
     boolean passed=val!=null && val;
     
     int childCount=getChildCount();
