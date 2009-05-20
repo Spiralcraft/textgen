@@ -314,7 +314,9 @@ public class Iterate
     try
     {
       if (debug)
-      { log.fine(toString()+": retraversing on message "+state.getChildCount());
+      { 
+        log.fine(toString()+": retraversing on message "+message+" ("
+          +state.getChildCount()+" elements)");
       }
 
       // Follow pre-rendered iteration
@@ -538,7 +540,9 @@ public class Iterate
     try
     {
       if (debug)
-      { log.fine(toString()+": retraversing on render "+state.getChildCount());
+      { 
+        log.fine(toString()+": retraversing on render ("
+            +state.getChildCount()+" elements)");
       }
       
       // Follow pre-rendered iteration

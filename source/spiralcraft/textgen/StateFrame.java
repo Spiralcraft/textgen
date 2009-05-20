@@ -27,5 +27,13 @@ package spiralcraft.textgen;
  */
 public class StateFrame
 {
-
+  private static volatile int NEXT_ID=1;
+  
+  private final int id=NEXT_ID++;
+  
+  @Override
+  public String toString()
+  { return super.toString()+" #"+id;
+  }
+  
 }
