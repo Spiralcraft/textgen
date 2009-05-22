@@ -2,6 +2,31 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.3.4
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2009-05-21
+    </date>
+    
+    <notes>
+      <scm:Note>Make the referenced object in SharedReference the
+        default Focus for any contained objects.
+      </scm:Note>
+    </notes>
+    
+    <path>/source/spiralcraft/textgen
+    </path>
+    
+    <resources>
+      <URI>elements/SharedReference.java
+      </URI>
+    </resources>
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.3.3
     </revision>
     

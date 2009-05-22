@@ -25,7 +25,6 @@ import spiralcraft.data.persist.AbstractXmlObject;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.SimpleFocus;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
@@ -64,7 +63,7 @@ import spiralcraft.util.thread.DelegateException;
 public class SharedReference<Treferent>
     extends Element
 {
-  private SimpleFocus<SharedReference<Treferent>> focus;
+  private Focus<?> focus;
   private Type<?> type;
   private Expression<Type<?>> typeX;
   private URI instanceURI;
@@ -72,23 +71,22 @@ public class SharedReference<Treferent>
   
   
   @Override
-  @SuppressWarnings("unchecked") // Not using generic versions
   public void bind(List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
-    Focus<?> parentFocus=getParent().getFocus();
+    Focus<?> focusChain=getParent().getFocus();
     if (type==null && typeX!=null)
-    { type=parentFocus.bind(typeX).get();
+    { type=focusChain.bind(typeX).get();
     }
+    
+    focusChain=focusChain.chain(getAssembly().getFocus().getSubject());
+    
     
     reference
       =AbstractXmlObject.<Treferent>activate
-        (type!=null?type.getURI():null,instanceURI,null,parentFocus);
+        (type!=null?type.getURI():null,instanceURI,null,focusChain);
 
-    reference.bind(parentFocus);
-
-    focus=new SimpleFocus
-      (reference.getFocus(),getAssembly().getFocus().getSubject());
+    focus=reference.getFocus();
     
     super.bind(childUnits);
   }
@@ -134,7 +132,7 @@ public class SharedReference<Treferent>
   }
 
   @Override
-  public Focus<SharedReference<Treferent>> getFocus()
+  public Focus<?> getFocus()
   { return focus;
   }
 
