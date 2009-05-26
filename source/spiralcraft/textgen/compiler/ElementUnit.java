@@ -133,7 +133,7 @@ public class ElementUnit
     if (properties==null)
     { properties=new PropertyUnit[0];
     }
-    properties=(PropertyUnit[]) ArrayUtil
+    properties=ArrayUtil
       .append(properties,propertyUnit);
     if (debug)
     { log.fine("Added property "+propertyUnit.getPropertyName());

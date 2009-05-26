@@ -2,6 +2,30 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.3.5
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2009-05-26
+    </date>
+    
+    <notes>
+      <scm:Note>ArrayUtil signature change (generics) from core
+      </scm:Note>
+    </notes>
+    
+    <path>/source/spiralcraft/textgen
+    </path>
+    
+    <resources>
+      <URI>compiler/ElementUnit.java
+      </URI>
+    </resources>
+  </scm:Change>
+  
+  <scm:Change>
     <revision>0.3.4
     </revision>
     
