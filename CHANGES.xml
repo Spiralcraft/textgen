@@ -2,6 +2,31 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.3.6
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2009-06-19
+    </date>
+    
+    <notes>
+      <scm:Note>Trap tag syntax error- chars after last attribute in Markup
+        element tags.
+      </scm:Note>
+    </notes>
+    
+    <path>/source/spiralcraft/textgen
+    </path>
+    
+    <resources>
+      <URI>compiler/ElementUnit.java
+      </URI>
+    </resources>
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.3.5
     </revision>
     

@@ -8,6 +8,7 @@ import spiralcraft.common.NamespaceResolver;
 
 import spiralcraft.text.ParseException;
 import spiralcraft.text.ParsePosition;
+import spiralcraft.text.markup.MarkupException;
 import spiralcraft.text.xml.Attribute;
 import spiralcraft.text.LookaheadParserContext;
 import spiralcraft.text.xml.TagReader;
@@ -52,7 +53,21 @@ public abstract class MarkupUnit
     TagReader tagReader=new TagReader();
     
     try
-    { tagReader.readTag(context);
+    { 
+      tagReader.readTag(context);
+      if (!context.isEof())
+      {
+        String remainder
+          =markup.toString().substring(1)
+            .substring(context.getPosition().getIndex()-1);
+        if (remainder.trim().length()>0)
+        { 
+          throw new MarkupException
+            ("Unexpected text in tag ["+remainder.trim()+"]"
+            ,getPosition()
+            );
+        }
+      }
     }
     catch (ParseException x)
     { throw new ParseException("Error reading tag",getPosition(),x);
