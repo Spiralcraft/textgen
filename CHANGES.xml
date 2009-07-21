@@ -2,6 +2,30 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.3.7
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2009-07-20
+    </date>
+    
+    <notes>
+      <scm:Note>DateFormat tag uses current time if no expression is provided
+      </scm:Note>
+    </notes>
+    
+    <path>/source/spiralcraft/textgen/
+    </path>
+    
+    <resources>
+      <URI>elements/DateFormat.java
+      </URI>
+    </resources>
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.3.6
     </revision>
     

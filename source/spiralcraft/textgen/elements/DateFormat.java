@@ -16,13 +16,17 @@ package spiralcraft.textgen.elements;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import spiralcraft.lang.AccessException;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
+import spiralcraft.lang.reflect.BeanReflector;
+import spiralcraft.lang.spi.AbstractChannel;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
@@ -72,7 +76,22 @@ public class DateFormat
     { target=parentFocus.bind(expression);
     }
     else
-    { target=parentFocus.getSubject();
+    { 
+      target
+        =new AbstractChannel<Date>
+          (BeanReflector.<Date>getInstance(Date.class))
+      {
+
+        @Override
+        protected Date retrieve()
+        { return new Date();
+        }
+
+        @Override
+        protected boolean store(Date date) throws AccessException
+        { return false;
+        }
+      };
     }
     
     formatLocal.set(new SimpleDateFormat(formatString));
