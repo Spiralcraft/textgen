@@ -2,6 +2,38 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.3.8
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2009-07-23
+    </date>
+    
+    <notes>
+      <scm:Note>Added logging to note when ExpressionFocusElements recompute
+        their value.
+      </scm:Note>
+      <scm:Note>Fixed bug where a FocusElement erroneously starts the
+        frame and computes and caches the bound value in Initialize event.
+        Modified to defer initial computation and frame start to events
+        after Initialize.
+      </scm:Note>
+    </notes>
+    
+    <path>/source/spiralcraft/textgen/
+    </path>
+    
+    <resources>
+      <URI>FocusElement.java
+      </URI>
+      <URI>ExpressionFocusElement.java
+      </URI>
+    </resources>
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.3.7
     </revision>
     

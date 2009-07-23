@@ -56,6 +56,14 @@ public class ExpressionFocusElement<T>
 
   @Override
   protected T compute()
-  { return source.get();
+  { 
+    T val=source.get();
+    if (debug)
+    { 
+      log.fine
+        ("Recomputing "+(expression!=null?expression:"")+" ("+source+") = "
+        +val);
+    }
+    return val;
   }
 }

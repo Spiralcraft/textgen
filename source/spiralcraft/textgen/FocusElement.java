@@ -51,6 +51,7 @@ public abstract class FocusElement<T>
   private ThreadLocalChannel<T> channel;
   private Focus<?> focus;
   private Renderer renderer;
+  private boolean computeOnInitialize;
   
   @Override
   public final void bind(List<TglUnit> childUnits)
@@ -72,6 +73,16 @@ public abstract class FocusElement<T>
     }
     
     super.bind(childUnits);
+  }
+  
+  /**
+   * This Focus element will recompute its value on initialization. By
+   *   convention, data is not normally available on initialization.
+   * 
+   * @param computeOnInitialize
+   */
+  public void setComputeOnInitialize(boolean computeOnInitialize)
+  { this.computeOnInitialize=computeOnInitialize;
   }
   
   /**
@@ -124,7 +135,7 @@ public abstract class FocusElement<T>
     ,LinkedList<Integer> path
     )
   {
-    push(context);
+    push(context,message);
     try
     { super.message(context,message,path);
     }
@@ -137,7 +148,7 @@ public abstract class FocusElement<T>
   public final void render(EventContext context)
     throws IOException
   { 
-    push(context);
+    push(context,null);
     
     try
     { 
@@ -167,10 +178,23 @@ public abstract class FocusElement<T>
    * Call this to put the value into the thread context
    */
   @SuppressWarnings("unchecked")
-  private final void push(EventContext context)
+  private final void push(EventContext context,Message message)
   { 
     if (!context.isStateful())
     { channel.push(compute());
+    }
+    else if (message!=null && message.getType()==InitializeMessage.TYPE)
+    { 
+      // Don't start the frame on Initialize
+      if (computeOnInitialize)
+      { 
+        ValueState<T> state=(ValueState<T>) context.getState();        
+        state.setValue(compute());
+        channel.push(state.getValue());
+      }
+      else
+      { channel.push(null);
+      }
     }
     else
     {
