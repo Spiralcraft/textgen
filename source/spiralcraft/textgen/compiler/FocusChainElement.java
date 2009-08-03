@@ -54,6 +54,11 @@ public class FocusChainElement
   public Object getObject()
   { return object;
   }
+  
+  @Override
+  public Focus<?> getFocus()
+  { return focus;
+  } 
 
   @Override
   public void bind(List<TglUnit> childUnits) 
