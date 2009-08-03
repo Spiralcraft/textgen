@@ -2,6 +2,35 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.3.9
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2009-08-03
+    </date>
+    
+    <notes>
+      <scm:Note>Allow any Assembly to be put into the page context. 
+        FocusChainObjects/ThreadedFocusChainObjects will be automatically
+        bound and threaded, and Lifecycle elements will be automatically
+        started.
+      </scm:Note>
+    </notes>
+    
+    <path>/source/spiralcraft/textgen/compiler/
+    </path>
+    
+    <resources>
+      <URI>FocusChainElement.java
+      </URI>
+      <URI>ElementFactory.java
+      </URI>
+    </resources>
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.3.8
     </revision>
     
