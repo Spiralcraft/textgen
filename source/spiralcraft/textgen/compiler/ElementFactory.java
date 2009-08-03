@@ -233,6 +233,8 @@ public class ElementFactory
       
       Element element;
       Object object=assembly.get();
+      
+      
       if (object instanceof Element)
       { element=(Element) object;
       }
@@ -249,10 +251,8 @@ public class ElementFactory
         }
         else
         { 
-          throw new MarkupException
-            ("Only a subtype of spiralcraft.textgen.Element is allowed here"
-            ,position
-            );
+          // Put the instance directly into the Chain
+          element=new FocusChainElement(object);
         }
       }
       
