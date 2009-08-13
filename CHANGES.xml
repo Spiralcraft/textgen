@@ -15,6 +15,22 @@
 
       <scm:Change>
 
+        <date>2009-08-12
+        </date>
+        
+        <notes>
+          <scm:Note>New "Generate" scenario for incorporating text
+            generation into task chain
+          </scm:Note>
+          
+        </notes>
+        
+        <path>source/spiralcraft/textgen/Generate.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+
         <date>2009-08-08
         </date>
         
