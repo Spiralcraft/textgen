@@ -157,7 +157,14 @@ class InsertIncludeElement
   public void bind(List<TglUnit> children)
     throws BindException,MarkupException
   { 
-    ancestorInclude=findElement(IncludeElement.class);
+    // Get the nearest containing Include that is not in the same 
+    //   document.
+    
+    Element containingDocument
+      =findElement(DocletUnit.RootElement.class);
+    
+    ancestorInclude=containingDocument.findElement(IncludeElement.class);
+    
     super.bind(children);
   }
   

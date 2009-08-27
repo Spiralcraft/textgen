@@ -2,6 +2,37 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.3.11
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2009-08-26
+    </date>
+    
+    <detail>
+
+      <scm:Change>
+
+        <date>2009-08-26
+        </date>
+        
+        <notes>
+          <scm:Note>Fix issue with nested @includes, where an @insert binds to
+            the wrong include, creating an infinite loop.
+          </scm:Note>
+          
+        </notes>
+        
+        <path>source/spiralcraft/textgen/InsertUnit.java
+        </path>
+      </scm:Change>
+
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.3.10
     </revision>
     
