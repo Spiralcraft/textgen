@@ -24,11 +24,11 @@ import spiralcraft.textgen.compiler.DocletUnit;
 import spiralcraft.lang.reflect.BeanFocus;
 
 import java.io.OutputStreamWriter;
-import java.io.StringWriter;
+//import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
 
-import spiralcraft.time.Clock;
+//import spiralcraft.time.Clock;
 
 import spiralcraft.data.persist.XmlAssembly;
 import spiralcraft.exec.Executable;
@@ -70,28 +70,28 @@ public class GeneratorTest
     element.render(context);
     writer.flush();
 
-    if (false)
-    {
-      Clock clock=Clock.instance();
-      long time=System.currentTimeMillis();
-      long duration=5000;
-
-      StringWriter stringWriter=new StringWriter();
-      context=new EventContext(writer,false,null);
-      long iterations=0;
-      while (true)
-      { 
-        element.render(context);
-        stringWriter.getBuffer().setLength(0);
-        iterations++;
-        if (clock.approxTimeMillis()-time>duration)
-        { break;
-        }
-      }
-
-      exContext.out().println
-        ("rate="+(iterations) / ((System.currentTimeMillis()-time)/(float) 1000));
-    }
+//    if (false)
+//    {
+//      Clock clock=Clock.instance();
+//      long time=System.currentTimeMillis();
+//      long duration=5000;
+//
+//      StringWriter stringWriter=new StringWriter();
+//      context=new EventContext(writer,false,null);
+//      long iterations=0;
+//      while (true)
+//      { 
+//        element.render(context);
+//        stringWriter.getBuffer().setLength(0);
+//        iterations++;
+//        if (clock.approxTimeMillis()-time>duration)
+//        { break;
+//        }
+//      }
+//
+//      exContext.out().println
+//        ("rate="+(iterations) / ((System.currentTimeMillis()-time)/(float) 1000));
+//    }
     }
     catch (Exception x)
     { throw new ExecutionException("Error",x);
