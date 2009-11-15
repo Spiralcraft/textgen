@@ -2,6 +2,37 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.3.12
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2009-11-15
+    </date>
+    
+    <detail>
+
+      <scm:Change>
+
+        <date>2009-11-05
+        </date>
+        
+        <notes>
+          <scm:Note>Added outputUriX binding to Generate scenario to allow
+            output to a resource.
+          </scm:Note>
+          
+        </notes>
+        
+        <path>source/spiralcraft/textgen/Generate.java
+        </path>
+      </scm:Change>
+
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.3.11
     </revision>
     
