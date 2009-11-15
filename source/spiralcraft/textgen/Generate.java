@@ -14,7 +14,11 @@
 //
 package spiralcraft.textgen;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.URI;
 
 import spiralcraft.lang.BindException;
@@ -24,6 +28,8 @@ import spiralcraft.lang.Focus;
 import spiralcraft.task.AbstractTask;
 import spiralcraft.task.Scenario;
 import spiralcraft.task.Task;
+import spiralcraft.vfs.Resolver;
+import spiralcraft.vfs.Resource;
 
 /**
  * <p>A scenario which generates output from a template and publishes the
@@ -39,16 +45,28 @@ public class Generate
 
   private Expression<String> targetX;
   private Channel<String> target;
+  private Expression<URI> outputUriX;
+  private Channel<URI> outputUri;
   private URI templateURI;
   private Generator generator;
   
   /**
-   * An expression which specifies where to store the generated content 
+   * An expression which specifies where to store the generated content
+   *   as a String
    * 
    * @param targetX
    */
   public void setTargetX(Expression<String> targetX)
   { this.targetX=targetX;
+  }
+  
+  /**
+   * An expression which specifies a destination URI for the generated content 
+   * 
+   * @param targetX
+   */
+  public void setOutputUriX(Expression<URI> outputUriX)
+  { this.outputUriX=outputUriX;
   }
   
   /**
@@ -73,7 +91,24 @@ public class Generate
     protected void work() throws InterruptedException
     {
       try
-      { target.set(generator.render());
+      { 
+        if (target!=null)
+        { target.set(generator.render());
+        }
+        else
+        { 
+          Resource resource=Resolver.getInstance().resolve(outputUri.get());
+          OutputStream out=resource.getOutputStream();
+          Writer writer=new BufferedWriter(new OutputStreamWriter(out));
+          try
+          {
+            generator.render(writer);
+            writer.flush();
+          }
+          finally
+          { writer.close();
+          }
+        }
       }
       catch (IOException x)
       { addException(x);
@@ -89,8 +124,11 @@ public class Generate
     if (targetX!=null)
     { target=focus.bind(targetX);
     }
+    else if (outputUriX!=null)
+    { outputUri=focus.bind(outputUriX);
+    }
     else
-    { throw new BindException("Property targetX is required");
+    { throw new BindException("Property targetX or outputUriX is required");
     }
     
     try
