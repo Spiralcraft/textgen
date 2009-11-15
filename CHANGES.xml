@@ -15,6 +15,30 @@
 
       <scm:Change>
 
+        <date>2009-11-15
+        </date>
+        
+        <notes>
+          <scm:Note>Refactor for deprecated CompoundFocus
+          </scm:Note>
+          
+        </notes>
+        
+        <path>source/spiralcraft/textgen/elements/
+        </path>
+        
+        <resources>
+          <URI>Group.java
+          </URI>
+          <URI>Iterate.java
+          </URI>
+          <URI>LocalReference.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+
         <date>2009-11-05
         </date>
         
