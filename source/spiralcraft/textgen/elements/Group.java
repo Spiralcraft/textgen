@@ -15,7 +15,7 @@
 package spiralcraft.textgen.elements;
 
 import spiralcraft.lang.BindException;
-import spiralcraft.lang.CompoundFocus;
+import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Channel;
@@ -90,9 +90,9 @@ public class Group
     lookahead=iterate.getLookaheadFocus().bind(expression);    
     lookbehind=iterate.getLookbehindFocus().bind(expression);    
     
-    CompoundFocus<?> focus
-      =new CompoundFocus(parentFocus,parentFocus.getSubject());
-    focus.bindFocus("spiralcraft.servlet.webui",getAssembly().getFocus());
+    SimpleFocus<?> focus
+      =new SimpleFocus(parentFocus,parentFocus.getSubject());
+    focus.addFacet(getAssembly().getFocus());
     this.focus=focus;
     
     

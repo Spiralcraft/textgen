@@ -23,7 +23,7 @@ import spiralcraft.data.DataException;
 import spiralcraft.data.Type;
 import spiralcraft.data.persist.AbstractXmlObject;
 import spiralcraft.lang.BindException;
-import spiralcraft.lang.CompoundFocus;
+import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.ThreadedFocusChainObject;
 import spiralcraft.lang.reflect.BeanReflector;
@@ -57,7 +57,7 @@ public class LocalReference<Treferent>
     extends Element
 {
   private ThreadLocalChannel<Treferent> channel;
-  private CompoundFocus<Treferent> focus;
+  private Focus<Treferent> focus;
   private Type<?> type;
   private URI instanceURI;
   private boolean stateless;
@@ -119,8 +119,8 @@ public class LocalReference<Treferent>
         );
     }
       
-    focus=new CompoundFocus(parentFocus,channel);
-    focus.bindFocus(getId(),getAssembly().getFocus());
+    focus=new SimpleFocus(parentFocus,channel);
+    focus.addFacet(getAssembly().getFocus());
     
     super.bind(childUnits);
   }

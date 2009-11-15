@@ -15,7 +15,7 @@
 package spiralcraft.textgen.elements;
 
 import spiralcraft.lang.BindException;
-import spiralcraft.lang.CompoundFocus;
+import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.Focus;
 
 import spiralcraft.lang.Channel;
@@ -170,11 +170,11 @@ public class Iterate
         =new ThreadLocalChannel(decorator.getComponentReflector());
     
 
-      CompoundFocus compoundFocus
-        =new CompoundFocus(parentFocus,valueChannel);
+      SimpleFocus compoundFocus
+        =new SimpleFocus(parentFocus,valueChannel);
     
-      compoundFocus.bindFocus
-        ("spiralcraft.servlet.webui",this.getAssembly().getFocus());
+      compoundFocus.addFacet
+        (this.getAssembly().getFocus());
       currentFocus=compoundFocus;
     }
     
@@ -182,11 +182,11 @@ public class Iterate
       lookaheadChannel
         =new ThreadLocalChannel(decorator.getComponentReflector());
 
-      CompoundFocus compoundFocus
-        =new CompoundFocus(parentFocus,lookaheadChannel);
+      SimpleFocus compoundFocus
+        =new SimpleFocus(parentFocus,lookaheadChannel);
     
-      compoundFocus.bindFocus
-        ("spiralcraft.servlet.webui",this.getAssembly().getFocus());
+      compoundFocus.addFacet
+        (this.getAssembly().getFocus());
       lookaheadFocus=compoundFocus;
       
     }
@@ -195,11 +195,10 @@ public class Iterate
       lookbehindChannel
         =new ThreadLocalChannel(decorator.getComponentReflector());
 
-      CompoundFocus compoundFocus
-        =new CompoundFocus(parentFocus,lookbehindChannel);
+      SimpleFocus compoundFocus
+        =new SimpleFocus(parentFocus,lookbehindChannel);
     
-      compoundFocus.bindFocus
-        ("spiralcraft.servlet.webui",this.getAssembly().getFocus());
+      compoundFocus.addFacet(this.getAssembly().getFocus());
       lookbehindFocus=compoundFocus;
       
     }
