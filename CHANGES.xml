@@ -2,6 +2,37 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+  
+    <revision>0.4.0
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>????
+    </date>
+    
+    <detail>
+
+      <scm:Change>
+
+        <date>2009-12-14
+        </date>
+        
+        <notes>
+          <scm:Note>Refactor for Scenario signature change
+          </scm:Note>
+          
+        </notes>
+        
+        <path>source/spiralcraft/textgen/Generate.java
+        </path>
+        
+      </scm:Change>
+    </detail>
+  </scm:Change>
+  
+  <scm:Change>
     <revision>0.3.12
     </revision>
     
