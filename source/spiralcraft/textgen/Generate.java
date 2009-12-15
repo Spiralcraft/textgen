@@ -40,7 +40,7 @@ import spiralcraft.vfs.Resource;
  *
  */
 public class Generate
-    extends Scenario
+    extends Scenario<Void,Void>
 {
 
   private Expression<String> targetX;
