@@ -16,8 +16,8 @@ package spiralcraft.textgen.compiler;
 
 import java.net.URI;
 
-import spiralcraft.common.NamespaceResolver;
-import spiralcraft.sax.PrefixResolver;
+import spiralcraft.common.namespace.PrefixResolver;
+import spiralcraft.sax.SaxPrefixResolver;
 
 /**
  * <p>Fixes the default namespace
@@ -27,18 +27,24 @@ import spiralcraft.sax.PrefixResolver;
  *
  */
 public class TglPrefixResolver
-    extends PrefixResolver
+    extends SaxPrefixResolver
 {
   public TglPrefixResolver()
   {
   }
   
-  public TglPrefixResolver(NamespaceResolver parent)
+  public TglPrefixResolver(PrefixResolver parent)
   { super(parent);
   }
   
   @Override
-  public URI getDefaultURI()
-  { return ElementUnit.DEFAULT_ELEMENT_PACKAGE;
+  public URI resolvePrefix(String name)
+  { 
+    if (!name.equals(""))
+    { return super.resolvePrefix(name);
+    }
+    else
+    { return ElementUnit.DEFAULT_ELEMENT_PACKAGE;
+    }
   }
 }

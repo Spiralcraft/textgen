@@ -15,6 +15,10 @@
 package spiralcraft.textgen.compiler;
 
 
+import java.net.URI;
+
+import spiralcraft.common.namespace.PrefixResolver;
+
 import spiralcraft.lang.BindException;
 
 import spiralcraft.text.ParseException;
@@ -55,7 +59,45 @@ public class IncludeUnit
       try
       {
         if (attrib.getName().equals("resource"))
-        { docletUnit=includeResource(attrib.getValue(),compiler);
+        { 
+          String qname=attrib.getValue();
+          
+          if (qname.startsWith(":"))
+          { 
+            // Translate namsepace prefix
+            String prefix=qname.substring(1,qname.indexOf(":",1));
+            String suffix=qname.substring(prefix.length()+2);
+            PrefixResolver resolver=getNamespaceResolver();
+            if (resolver!=null)
+            {
+              URI uri=resolver.resolvePrefix(prefix);
+              if (uri!=null)
+              {
+                if (!uri.getPath().endsWith("/"))
+                { uri=URI.create(uri.toString()+"/");
+                }
+                uri=uri.resolve(suffix);
+                qname=uri.toString();
+              }
+              else
+              { 
+                throw new MarkupException
+                  ("Namespace prefix '"+prefix+"' not defined"
+                  ,compiler.getPosition()
+                  );
+              }
+              
+            }
+            else
+            { 
+              throw new MarkupException
+                ("No namespace prefixes defined: resolving '"+prefix+"'- parent is "+parent
+                ,compiler.getPosition()
+                );
+            }
+          }
+          
+          docletUnit=includeResource(qname,compiler);
         }
         else if (!checkUnitAttribute(attrib))
         { 

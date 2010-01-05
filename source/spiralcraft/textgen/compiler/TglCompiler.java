@@ -240,6 +240,7 @@ public class TglCompiler<T extends DocletUnit>
     if (processingUnit==null)
     { throw new MarkupException("Unknown processing unit '"+name+"'",position);
     }
+    
     if (tagReader.isClosed())
     { processingUnit.close();
     }

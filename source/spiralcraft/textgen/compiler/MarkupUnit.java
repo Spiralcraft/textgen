@@ -4,7 +4,7 @@ import java.net.URI;
 
 import java.util.ArrayList;
 
-import spiralcraft.common.NamespaceResolver;
+import spiralcraft.common.namespace.PrefixResolver;
 
 import spiralcraft.text.ParseException;
 import spiralcraft.text.ParsePosition;
@@ -139,7 +139,7 @@ public abstract class MarkupUnit
   }
  
   @Override
-  public NamespaceResolver getNamespaceResolver()
+  public PrefixResolver getNamespaceResolver()
   { 
     if (prefixResolver!=null)
     { return prefixResolver;

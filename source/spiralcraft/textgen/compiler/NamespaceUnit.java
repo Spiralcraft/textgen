@@ -18,7 +18,7 @@ package spiralcraft.textgen.compiler;
 import spiralcraft.lang.BindException;
 
 
-import spiralcraft.common.NamespaceResolver;
+import spiralcraft.common.namespace.PrefixResolver;
 
 import spiralcraft.textgen.Element;
 
@@ -49,7 +49,7 @@ public class NamespaceUnit
   { 
     super(parent);
     prefixResolver=new TglPrefixResolver(parent.getNamespaceResolver());
-      
+    
     for (Attribute attrib: attribs)
     {
       
@@ -91,7 +91,7 @@ public class NamespaceUnit
   }
    
   @Override
-  public NamespaceResolver getNamespaceResolver()
+  public PrefixResolver getNamespaceResolver()
   { 
     if (prefixResolver!=null)
     { return prefixResolver;

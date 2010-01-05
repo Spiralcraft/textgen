@@ -3,6 +3,63 @@
   >
   <scm:Change>
   
+    <revision>0.4.1
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-01-05
+    </date>
+    
+    <detail>
+
+      <scm:Change>
+
+        <date>2009-12-31
+        </date>
+        
+        <notes>
+          <scm:Note>Refactor for Namespace->PrefixResolver refactor. Use
+            new spiralcraft.common.namespace package.
+          </scm:Note>
+          <scm:Note>Include component now accepts namespace qualified
+            resource names.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen/compiler/
+        </path>
+        
+        <resources>
+          <URI>DocletUnit.java
+          </URI>
+          <URI>ElementUnit.java
+          </URI>
+          <URI>IncludeUnit.java
+          </URI>
+          <URI>MarkupUnit.java
+          </URI>
+          <URI>NamespaceElement.java
+          </URI>
+          <URI>NamespaceUnit.java
+          </URI>
+          <URI>TglCompiler.java
+          </URI>
+          <URI>TglPrefixResolver.java
+          </URI>
+          <URI>TglUnit.java
+          </URI>
+          
+        </resources>
+        
+      </scm:Change>
+    </detail>
+  </scm:Change>
+
+
+  <scm:Change>
+  
     <revision>0.4.0
     </revision>
     

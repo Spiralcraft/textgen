@@ -7,7 +7,7 @@ import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
 
-import spiralcraft.common.NamespaceResolver;
+import spiralcraft.common.namespace.PrefixResolver;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
@@ -20,10 +20,10 @@ public class NamespaceElement
   @SuppressWarnings("unused")
   private static final ClassLog log=ClassLog.getInstance(NamespaceElement.class);
   
-  private NamespaceResolver resolver;
+  private PrefixResolver resolver;
   private Focus<?> focus;
   
-  public NamespaceElement(NamespaceResolver resolver)
+  public NamespaceElement(PrefixResolver resolver)
   { this.resolver=resolver;
   }
 

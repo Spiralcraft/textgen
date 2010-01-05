@@ -24,7 +24,7 @@ import spiralcraft.text.markup.Unit;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
 
-import spiralcraft.common.NamespaceResolver;
+import spiralcraft.common.namespace.PrefixResolver;
 
 import java.io.IOException;
 
@@ -45,7 +45,7 @@ public class DocletUnit
   protected final Resource resource;
   private final ArrayList<DocletUnit> subDocs
     =new ArrayList<DocletUnit>();
-  private NamespaceResolver resolver;
+  private PrefixResolver resolver;
   
   public DocletUnit(TglUnit parent,Resource resource)
   { 

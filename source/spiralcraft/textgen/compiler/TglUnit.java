@@ -16,7 +16,8 @@ package spiralcraft.textgen.compiler;
 
 import java.io.PrintWriter;
 
-import spiralcraft.common.NamespaceResolver;
+import spiralcraft.common.namespace.PrefixResolver;
+
 import spiralcraft.lang.BindException;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
@@ -164,7 +165,7 @@ public abstract class TglUnit
    * @return The NamespaceResolver which provides namespace mappings
    *   currently in effect.
    */
-  public NamespaceResolver getNamespaceResolver()
+  public PrefixResolver getNamespaceResolver()
   { 
     if (parent!=null)
     { return parent.getNamespaceResolver();

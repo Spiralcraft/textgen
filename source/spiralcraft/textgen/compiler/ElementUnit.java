@@ -18,7 +18,7 @@ package spiralcraft.textgen.compiler;
 import java.net.URI;
 
 import spiralcraft.builder.AssemblyClass;
-import spiralcraft.common.NamespaceResolver;
+import spiralcraft.common.namespace.PrefixResolver;
 import spiralcraft.lang.BindException;
 
 import spiralcraft.textgen.Element;
@@ -79,7 +79,7 @@ public class ElementUnit
     int nspos=name.indexOf(':');
     if (nspos>-1)
     {  
-      NamespaceResolver resolver
+      PrefixResolver resolver
         =getNamespaceResolver();
       
       elementPackage
