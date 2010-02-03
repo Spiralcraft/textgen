@@ -3,6 +3,29 @@
   >
   <scm:Change>
   
+    <revision>0.4.4
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-01-05
+    </date>
+    
+    <notes>
+      <scm:Note>Sync with core 0.4.4
+      </scm:Note>
+      <scm:Note>Fix NPE: Insert no longer chokes when it is used outside of an
+        Include.
+      </scm:Note>
+    </notes>
+    
+    <path>spiralcraft/textgen/compiler/InsertUnit.java
+    </path>
+  </scm:Change>
+    
+  <scm:Change>
+  
     <revision>0.4.1
     </revision>
     
