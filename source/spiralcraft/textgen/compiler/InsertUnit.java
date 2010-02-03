@@ -163,7 +163,9 @@ class InsertIncludeElement
     Element containingDocument
       =findElement(DocletUnit.RootElement.class);
     
-    ancestorInclude=containingDocument.findElement(IncludeElement.class);
+    if (containingDocument!=null)
+    { ancestorInclude=containingDocument.findElement(IncludeElement.class);
+    }
     
     super.bind(children);
   }
