@@ -3,6 +3,39 @@
   >
   <scm:Change>
   
+    <revision>0.4.8
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>????
+    </date>
+    
+    <notes>
+      <scm:Note>Sync with core 0.4.8
+      </scm:Note>
+      <scm:Note>spiralcraft.sax.SaxPrefixResolver changed to 
+        spiralcraft.common.StandardPrefixResolver
+      </scm:Note>
+      <scm:Note>spiralcraft.vfs.AbstractResource changed to 
+        spiralcraft.vfs.spi.AbstractResource
+      </scm:Note>
+    </notes>
+    
+    <path>source/spiralcraft/textgen</path>
+    
+    <resources>
+      <URI>compiler/TglPrefixResolver.java
+      </URI>
+      <URI>util/MetaTranslator.java
+      </URI>
+    </resources>
+    
+  </scm:Change>
+
+  <scm:Change>
+  
     <revision>0.4.4
     </revision>
     
