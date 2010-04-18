@@ -10,7 +10,8 @@ import spiralcraft.vfs.Resource;
 import spiralcraft.vfs.Resolver;
 import spiralcraft.vfs.TranslationException;
 import spiralcraft.vfs.Translator;
-import spiralcraft.vfs.AbstractResource;
+
+import spiralcraft.vfs.spi.AbstractResource;
 
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.compiler.TglCompiler;
