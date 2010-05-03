@@ -21,12 +21,21 @@
       <scm:Note>spiralcraft.vfs.AbstractResource changed to 
         spiralcraft.vfs.spi.AbstractResource
       </scm:Note>
+      <scm:Note>spiralcraft.lang.FocusChainObject changed to  
+        spiralcraft.lang.Contextual
+      </scm:Note>
     </notes>
     
     <path>source/spiralcraft/textgen</path>
     
     <resources>
       <URI>compiler/TglPrefixResolver.java
+      </URI>
+      <URI>compiler/FocusChainElement.java
+      </URI>
+      <URI>compiler/RendererElement.java
+      </URI>
+      <URI>compiler/WrapperElement.java
       </URI>
       <URI>util/MetaTranslator.java
       </URI>
