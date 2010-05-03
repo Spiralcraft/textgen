@@ -8,7 +8,7 @@ import spiralcraft.common.Lifecycle;
 import spiralcraft.common.LifecycleException;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.FocusChainObject;
+import spiralcraft.lang.Contextual;
 import spiralcraft.lang.ThreadedFocusChainObject;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
@@ -29,15 +29,15 @@ public class FocusChainElement
 {
 
   private final Object object;
-  private final FocusChainObject fco;
+  private final Contextual fco;
   private final ThreadedFocusChainObject tfco;
   private Focus<?> focus;
   
   public FocusChainElement(Object object)
   { 
     this.object=object;
-    if (object instanceof FocusChainObject)
-    { fco=(FocusChainObject) object;
+    if (object instanceof Contextual)
+    { fco=(Contextual) object;
     }
     else
     { fco=null;

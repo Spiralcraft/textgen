@@ -6,7 +6,7 @@ import java.util.List;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.FocusChainObject;
+import spiralcraft.lang.Contextual;
 
 import spiralcraft.text.Renderer;
 import spiralcraft.text.markup.MarkupException;
@@ -42,9 +42,9 @@ public class RendererElement
   { 
     focus=getParent().getFocus();
     
-    if (renderer instanceof FocusChainObject)
+    if (renderer instanceof Contextual)
     { 
-      FocusChainObject fco=(FocusChainObject) renderer;
+      Contextual fco=(Contextual) renderer;
       focus=fco.bind(focus);
       
     }

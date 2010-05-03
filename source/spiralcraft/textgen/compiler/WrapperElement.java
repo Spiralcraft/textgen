@@ -6,7 +6,7 @@ import java.util.List;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.FocusChainObject;
+import spiralcraft.lang.Contextual;
 
 import spiralcraft.text.Renderer;
 import spiralcraft.text.Wrapper;
@@ -43,9 +43,9 @@ public class WrapperElement
   { 
     focus=getParent().getFocus();
     
-    if (wrapper instanceof FocusChainObject)
+    if (wrapper instanceof Contextual)
     { 
-      FocusChainObject fco=(FocusChainObject) wrapper;
+      Contextual fco=(Contextual) wrapper;
       focus=fco.bind(focus);
       
     }
