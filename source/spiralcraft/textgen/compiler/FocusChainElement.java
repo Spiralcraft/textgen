@@ -9,13 +9,11 @@ import spiralcraft.common.LifecycleException;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Contextual;
-import spiralcraft.lang.ThreadedFocusChainObject;
+import spiralcraft.lang.ThreadContextual;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Message;
-import spiralcraft.util.thread.Delegate;
-import spiralcraft.util.thread.DelegateException;
 
 /**
  * <p>Puts an object reference into the Focus chain
@@ -30,7 +28,7 @@ public class FocusChainElement
 
   private final Object object;
   private final Contextual fco;
-  private final ThreadedFocusChainObject tfco;
+  private final ThreadContextual tfco;
   private Focus<?> focus;
   
   public FocusChainElement(Object object)
@@ -43,8 +41,8 @@ public class FocusChainElement
     { fco=null;
     }
     
-    if (object instanceof ThreadedFocusChainObject)
-    { tfco=(ThreadedFocusChainObject) object;
+    if (object instanceof ThreadContextual)
+    { tfco=(ThreadContextual) object;
     }
     else
     { tfco=null;
@@ -98,23 +96,12 @@ public class FocusChainElement
     }
     else
     {
+      tfco.push();
       try
-      { 
-        tfco.runInContext
-          (new Delegate<Void>()
-          {
-            @Override
-            public Void run()
-              throws DelegateException
-            { 
-              FocusChainElement.super.message(context,message,path);
-              return null;
-            }
-          }
-          );
+      { super.message(context,message,path);
       }
-      catch (DelegateException x)
-      { throw new RuntimeException(x);
+      finally
+      { tfco.pop();
       }
     }
     
@@ -130,35 +117,12 @@ public class FocusChainElement
     }
     else
     {
-     try
-       { 
-        tfco.runInContext
-          (new Delegate<Void>()
-          {
-            @Override
-            public Void run()
-              throws DelegateException
-            { 
-              try
-              { 
-                renderChildren(context);
-                return null;
-              }
-              catch (IOException x)
-              { throw new DelegateException(x);
-              }
-            }
-          }
-          );
+      tfco.push();
+      try
+      { renderChildren(context);
       }
-      catch (DelegateException x)
-      { 
-        if (x.getCause() instanceof IOException)
-        { throw (IOException) x.getCause();
-        }
-        else
-        { throw new RuntimeException(x);
-        }
+      finally
+      { tfco.pop();
       }
     }
   }

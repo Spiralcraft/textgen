@@ -25,7 +25,7 @@ import spiralcraft.data.persist.AbstractXmlObject;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.ThreadedFocusChainObject;
+import spiralcraft.lang.ThreadContextual;
 import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.text.markup.MarkupException;
@@ -111,10 +111,10 @@ public class LocalReference<Treferent>
     channel=new ThreadLocalChannel
       (BeanReflector.getInstance(ref.get().getClass()));
     
-    if (ThreadedFocusChainObject.class.isAssignableFrom(ref.get().getClass()))
+    if (ThreadContextual.class.isAssignableFrom(ref.get().getClass()))
     { 
       throw new BindException
-        ("To properly use this ThreadedFocusChainObject, use the "
+        ("To properly use this ThreadContextual, use the "
         +" SharedReference element instead of LocalReference"
         );
     }

@@ -30,8 +30,6 @@ import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Message;
 import spiralcraft.textgen.compiler.TglUnit;
-import spiralcraft.util.thread.Delegate;
-import spiralcraft.util.thread.DelegateException;
 
 /**
  * <p>Exposes an object reference via the Focus chain, via the
@@ -143,61 +141,25 @@ public class SharedReference<Treferent>
     ,final LinkedList<Integer> path
     )
   { 
+    reference.push();
     try
-    { 
-      reference.runInContext
-        (new Delegate<Void>()
-        {
-          @Override
-          public Void run()
-            throws DelegateException
-          { 
-            SharedReference.super.message(context,message,path);
-            return null;
-          }
-        }
-        );
+    { super.message(context,message,path);
     }
-    catch (DelegateException x)
-    { throw new RuntimeException(x);
+    finally
+    { reference.pop();
     }
-    
-    
   }
   
   @Override
   public void render(final EventContext context)
     throws IOException
   { 
+    reference.push();
     try
-    { 
-      reference.runInContext
-        (new Delegate<Void>()
-        {
-          @Override
-          public Void run()
-            throws DelegateException
-          { 
-            try
-            { 
-              renderChildren(context);
-              return null;
-            }
-            catch (IOException x)
-            { throw new DelegateException(x);
-            }
-          }
-        }
-        );
+    { renderChildren(context);
     }
-    catch (DelegateException x)
-    { 
-      if (x.getCause() instanceof IOException)
-      { throw (IOException) x.getCause();
-      }
-      else
-      { throw new RuntimeException(x);
-      }
+    finally
+    { reference.pop();
     }
   }
   

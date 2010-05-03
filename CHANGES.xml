@@ -24,6 +24,9 @@
       <scm:Note>spiralcraft.lang.FocusChainObject changed to  
         spiralcraft.lang.Contextual
       </scm:Note>
+      <scm:Note>spiralcraft.lang.ThreadedFocusChainObject changed to  
+        spiralcraft.lang.ThreadContextual
+      </scm:Note>
     </notes>
     
     <path>source/spiralcraft/textgen</path>
@@ -38,6 +41,10 @@
       <URI>compiler/WrapperElement.java
       </URI>
       <URI>util/MetaTranslator.java
+      </URI>
+      <URI>elements/LocalReference.java
+      </URI>
+      <URI>elements/SharedReference.java
       </URI>
     </resources>
     
