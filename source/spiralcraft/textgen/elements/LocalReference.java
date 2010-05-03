@@ -44,7 +44,7 @@ import spiralcraft.textgen.compiler.TglUnit;
  *    
  * </p>
  * 
- * <p>Note that if the referent implements spiralcraft.lang.FocusChainObject,
+ * <p>Note that if the referent implements spiralcraft.lang.Contextual,
  *   it will have access to the Focus Chain, but it cannot publish its own
  *   interfaces into the chain due to its narrower lifecycle.
  * </p>

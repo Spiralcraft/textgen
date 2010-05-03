@@ -38,8 +38,8 @@ import spiralcraft.textgen.compiler.TglUnit;
  *   all individual state trees and renderings.
  * </p>
  * 
- * <p>If the referent implements spiralcraft.lang.FocusChainObject,
- *   the referent will be bound into the Focus Chain so it can publish
+ * <p>If the referent implements spiralcraft.lang.Contextual,
+ *   the referent will be bound into the Focus chain so it can publish
  *   any necessary interfaces.
  * </p>
  * 
@@ -47,12 +47,6 @@ import spiralcraft.textgen.compiler.TglUnit;
  *   should synchronize its own state.
  * </p>
  * 
- * <p>We use a ThreadDelegate mechanism for the following reason: 
- *   The internal use of a ThreadLocal by the referent for publishing
- *   an object into the Focus chain may result in the object never being
- *   removed from memory. The FocusChainObject needs a set of methods to
- *   allow for push-pop. (The ThreadDelage mechanism accomplishes this).
- * </p>
  * 
  * @author mike
  *
