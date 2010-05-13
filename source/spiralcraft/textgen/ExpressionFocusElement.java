@@ -54,7 +54,11 @@ public class ExpressionFocusElement<T>
   { return focusChain;
   }
 
-  @Override
+  /**
+   * Called when the Stateful value should be recomputed
+   * 
+   */
+  @Override  
   protected T compute()
   { 
     T val=source.get();

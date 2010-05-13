@@ -18,15 +18,13 @@ import spiralcraft.textgen.ExpressionFocusElement;
 
 
 /**
- * <p>Creates a new Focus for the result of an expression evaluation and 
- *   the computed value for repeated access by this element's children
- *   during a render or message cycle.
+ * <p>Publishes the result of an Expression into the Focus chain.
  * </p>
  * 
- * <p>By default, this element will invalidate before prepare and after 
- *   rendering. If data is valid between rendering and a future prepare
- *   stage, set invalidateAfterRender=false
+ * <p>The expression is recomputed every time the StateFrame changes, unless
+ *   otherwise configured.
  * </p>
+ * 
  * 
  * @author mike
  *

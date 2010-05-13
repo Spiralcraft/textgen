@@ -52,7 +52,7 @@ public class ValueState<Tvalue>
   }
   
   /**
-   * <p>Invalidate the state and set the value to null
+   * <p>Invalidate the state and set the value to null.
    * </p>
    * 
    * @param valid
