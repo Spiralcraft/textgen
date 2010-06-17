@@ -25,6 +25,7 @@ import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
+import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.task.AbstractTask;
 import spiralcraft.task.Scenario;
 import spiralcraft.task.Task;
@@ -93,9 +94,12 @@ public class Generate
       try
       { 
         if (target!=null)
-        { target.set(generator.render());
+        { 
+          String result=generator.render();
+          addResult(result);
+          target.set(result);
         }
-        else
+        else if (outputUri!=null)
         { 
           Resource resource=Resolver.getInstance().resolve(outputUri.get());
           OutputStream out=resource.getOutputStream();
@@ -109,6 +113,9 @@ public class Generate
           { writer.close();
           }
         }
+        else
+        { addResult(generator.render());
+        }
       }
       catch (IOException x)
       { addException(x);
@@ -117,10 +124,15 @@ public class Generate
     }
   }
   
+  
   @Override
   public void bindChildren(Focus<?> focus)
     throws BindException
   {
+    if (outputUri==null)
+    { resultReflector=BeanReflector.getInstance(String.class);
+    }
+    
     if (targetX!=null)
     { target=focus.bind(targetX);
     }
