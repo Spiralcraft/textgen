@@ -58,7 +58,7 @@ public abstract class FocusElement<T>
     throws BindException,MarkupException
   { 
 
-    Focus<?> parentFocus=getParent().getFocus();
+    Focus<?> parentFocus=bindImports(getParent().getFocus());
     
     Channel<T> target=bindSource(parentFocus);
     channel=new ThreadLocalChannel<T>(target.getReflector());
@@ -83,6 +83,20 @@ public abstract class FocusElement<T>
    */
   public void setComputeOnInitialize(boolean computeOnInitialize)
   { this.computeOnInitialize=computeOnInitialize;
+  }
+  
+  /**
+   * <p>Override to set up the context this FocusElement
+   * </p>
+   * 
+   * @param parentFocus
+   * @return The new contextual Focus against which the source and exports
+   *   will be bound
+   * @throws BindException
+   */
+  protected Focus<?> bindImports(Focus<?> focusChain)
+    throws BindException
+  { return focusChain;
   }
   
   /**
@@ -114,9 +128,11 @@ public abstract class FocusElement<T>
    * <p>Recompute the current value that will be exported by this FocusElement
    * </p>
    * 
-   * @return
+   * @return The value that will be pushed into the context and exported
+   *    to children. If the state is non-null, the return value will
+   *    be put into the ValueState.
    */
-  protected abstract T compute();
+  protected abstract T computeExportValue(ValueState<T> state);
   
   protected final void setRenderer(Renderer renderer)
   { this.renderer=renderer;
@@ -181,7 +197,7 @@ public abstract class FocusElement<T>
   private final void push(EventContext context,Message message)
   { 
     if (!context.isStateful())
-    { channel.push(compute());
+    { channel.push(computeExportValue(null));
     }
     else if (message!=null && message.getType()==InitializeMessage.TYPE)
     { 
@@ -189,7 +205,7 @@ public abstract class FocusElement<T>
       if (computeOnInitialize)
       { 
         ValueState<T> state=(ValueState<T>) context.getState();        
-        state.setValue(compute());
+        state.setValue(computeExportValue(state));
         channel.push(state.getValue());
       }
       else
@@ -200,7 +216,7 @@ public abstract class FocusElement<T>
     {
       ValueState<T> state=(ValueState<T>) context.getState();
       if (state.frameChanged(context.getCurrentFrame()) || !state.isValid())
-      { state.setValue(compute());
+      { state.setValue(computeExportValue(state));
       }
       channel.push(state.getValue());
     }

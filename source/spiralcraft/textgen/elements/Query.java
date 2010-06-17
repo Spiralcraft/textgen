@@ -22,6 +22,7 @@ import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 
 import spiralcraft.textgen.FocusElement;
+import spiralcraft.textgen.ValueState;
 
 import spiralcraft.data.DataComposite;
 import spiralcraft.data.DataException;
@@ -30,8 +31,10 @@ import spiralcraft.data.query.BoundQuery;
 import spiralcraft.data.query.Queryable;
 
 /**
- * <p>Exposes the results of a query
+ * <p>Exposes the results of a Query, which will be performed for every
+ *   State frame.
  * </p>
+ * 
  * @author mike
  *
  * @param <Tresult>
@@ -79,8 +82,10 @@ public class Query<Tresult extends DataComposite>
   }
 
   @Override
-  protected Tresult compute()
+  protected Tresult computeExportValue(ValueState<Tresult> state)
   { return resultChannel.get();
   }
+
+
 
 }

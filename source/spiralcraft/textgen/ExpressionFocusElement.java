@@ -59,7 +59,7 @@ public class ExpressionFocusElement<T>
    * 
    */
   @Override  
-  protected T compute()
+  protected T computeExportValue(ValueState<T> state)
   { 
     T val=source.get();
     if (debug)
