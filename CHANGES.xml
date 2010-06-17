@@ -3,6 +3,46 @@
   >
   <scm:Change>
   
+    <revision>0.4.9
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-06-????
+    </date>
+    
+    <notes>
+      <scm:Note>"Generate" scenario returns a result
+      </scm:Note>
+      <scm:Note>Provide hold and trigger key functionality to "With"
+        element via
+        holdWhileX and triggerKeyX properties.
+      </scm:Note>
+      <scm:Note>Internal interface change to rename compute() method to
+        computeExportValue()
+      </scm:Note>
+    </notes>
+    
+    <path>source/spiralcraft/textgen</path>
+    
+    <resources>
+      <URI>Generate.java
+      </URI>
+      <URI>FocusElement.java
+      </URI>
+      <URI>ExpressionFocusElement.java
+      </URI>
+      <URI>elements/Query.java
+      </URI>
+      <URI>elements/With.java
+      </URI>
+    </resources>
+    
+  </scm:Change>
+
+  <scm:Change>
+  
     <revision>0.4.8
     </revision>
     
