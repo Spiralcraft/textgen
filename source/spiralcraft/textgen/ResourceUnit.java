@@ -156,6 +156,7 @@ public class ResourceUnit<T extends DocletUnit>
           || (exception!=null
               && now-maxRecompileRateMs>lastRecompile
              )
+          || (lastModified==0 && unit==null && exception==null)
          )
       { 
         recompile();
@@ -189,8 +190,14 @@ public class ResourceUnit<T extends DocletUnit>
       else if (exception instanceof ParseException)
       { throw (ParseException) exception;
       }
+      else if (exception!=null)
+      { throw new RuntimeException(exception.toString(),exception);
+      }
       else
-      { throw new RuntimeException(exception);
+      { throw new IOException
+          (resource.getURI()+" not compiled- last modified "
+          +resource.getLastModified()
+          );
       }
     }
   }
