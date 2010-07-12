@@ -139,9 +139,6 @@ public class Generate
     else if (outputUriX!=null)
     { outputUri=focus.bind(outputUriX);
     }
-    else
-    { throw new BindException("Property targetX or outputUriX is required");
-    }
     
     try
     { generator=new Generator(templateURI,focus);
