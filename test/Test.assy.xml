@@ -1,0 +1,84 @@
+<task:TaskRunner
+  xmlns:task="class:/spiralcraft/task/"
+  xmlns:example="class:/spiralcraft/data/test/example/"
+  xmlns:query="class:/spiralcraft/data/query/"
+  xmlns:dtask="class:/spiralcraft/data/task/"
+  xmlns:dxml="class:/spiralcraft/data/xml/"
+  xmlns:data="class:/spiralcraft/data/"
+  xmlns:test="class:/spiralcraft/test/"
+  xmlns:tg="class:/spiralcraft/textgen/"
+  xmlns:jnet="class:/java/net/"
+  >
+  
+  <service>
+    <data:Space>
+      <stores>
+        <dxml:XmlStore>
+          <name>local
+          </name>
+          
+          <subscriber>
+            <dxml:Subscriber>
+              <debug>true
+              </debug>
+            </dxml:Subscriber>
+          </subscriber>
+          
+          <masterURI>class:/spiralcraft/data/test/example/Snapshot.xml
+          </masterURI>
+          
+          <baseResourceURI>out/data/store/
+          </baseResourceURI>
+          
+          <schema 
+            dataURI="example:Example.schema.xml"
+          />
+          
+          <debugLevel>DEBUG
+          </debugLevel>
+        </dxml:XmlStore>
+      </stores>
+    </data:Space>
+  </service>
+  
+  <chain>
+    <test:TestGroup>
+      <name>spiralcraft-textgen:smoke
+      </name>
+      
+      <throwFailure>true
+      </throwFailure>
+      
+      <chain>
+        <task:Sequence>
+          <scenarios>
+
+            <test:Assertion>
+        
+              <name>Inline generator
+              </name>
+          
+              <subjectX>
+                [*dtask:Fetch{[*query:Scan{[@example:Customer].type}]}].()
+                .[*tg:Render
+                  {templateURI
+                    :=[*jnet:URI
+                        {"class:/spiralcraft/textgen/test/cursorTest.tgl"
+                        }
+                      ]
+                  }
+                ]
+              </subjectX>
+          
+              <testX>true
+              </testX>
+          
+            </test:Assertion>            
+          </scenarios>
+        </task:Sequence>
+      
+      </chain>
+    </test:TestGroup>
+  </chain>
+    
+</task:TaskRunner>

@@ -13,7 +13,10 @@
     </date>
     
     <notes>
-      <scm:Note>"Generate" scenario returns a result
+      <scm:Note>"Generate" scenario returns a result, no longer requiring
+        a location to push output to.
+      </scm:Note>
+      <scm:Note>"Render" ChannelFactory renders a template from input data
       </scm:Note>
       <scm:Note>Provide hold and trigger key functionality to "With"
         element via
@@ -22,6 +25,11 @@
       <scm:Note>Internal interface change to rename compute() method to
         computeExportValue()
       </scm:Note>
+      <scm:Note>Fixed deprecated lang syntax in GroupFooter and GroupHeader
+      </scm:Note>
+      <scm:Note>Ensure that ResourceUnit auto-initializes for a resource
+        with an unavailable lastModified time
+      </scm:Note>
     </notes>
     
     <path>source/spiralcraft/textgen</path>
@@ -29,13 +37,21 @@
     <resources>
       <URI>Generate.java
       </URI>
+      <URI>Render.java
+      </URI>
       <URI>FocusElement.java
       </URI>
       <URI>ExpressionFocusElement.java
       </URI>
+      <URI>ResourceUnit.java
+      </URI>
       <URI>elements/Query.java
       </URI>
       <URI>elements/With.java
+      </URI>
+      <URI>elements/GroupFooter.assy.xml
+      </URI>
+      <URI>elements/GroupHeader.assy.xml
       </URI>
     </resources>
     
