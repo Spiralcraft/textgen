@@ -3,6 +3,37 @@
   >
   <scm:Change>
   
+    <revision>0.4.10
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-07-21
+    </date>
+    
+    <notes>
+      <scm:Note>Sync with core 0.4.10
+      </scm:Note>
+      <scm:Note>Removed spiralcraft.registry package and all dependencies
+      </scm:Note>
+    </notes>
+    
+    <path>source/spiralcraft/textgen/elements
+    </path>
+    
+    <resources>
+      <URI>SharedReference.java
+      </URI>
+      <URI>LoclaReference.java
+      </URI>
+    </resources>
+    
+    
+  </scm:Change>
+
+  <scm:Change>
+  
     <revision>0.4.9
     </revision>
     

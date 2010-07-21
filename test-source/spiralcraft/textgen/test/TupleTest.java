@@ -74,7 +74,10 @@ public class TupleTest
 
 
 
-    TupleFocus<Tuple> focus=new TupleFocus<Tuple>(tuple.getType().getScheme());
+    TupleFocus<Tuple> focus
+      =TupleFocus.<Tuple>create
+        (null,tuple.getType().getScheme());
+    
     focus.setTuple(tuple);
 
     DocletUnit unit=new TglCompiler<DocletUnit>().compile(uri);    
