@@ -76,7 +76,7 @@ public class SharedReference<Treferent>
     
     reference
       =AbstractXmlObject.<Treferent>activate
-        (type!=null?type.getURI():null,instanceURI,null,focusChain);
+        (type!=null?type.getURI():null,instanceURI,focusChain);
 
     focus=reference.getFocus();
     
