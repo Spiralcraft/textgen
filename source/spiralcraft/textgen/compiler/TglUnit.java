@@ -19,6 +19,7 @@ import java.io.PrintWriter;
 import spiralcraft.common.namespace.PrefixResolver;
 
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.Focus;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
 
@@ -29,6 +30,8 @@ import spiralcraft.text.markup.MarkupException;
 import spiralcraft.text.xml.Attribute;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 
 /**
@@ -85,7 +88,7 @@ public abstract class TglUnit
    *   (the Assembly) which implements the functional behavior 
    *   specified by the TGL document.
    */
-  public abstract Element bind(Element parentElement)
+  public abstract Element bind(Focus<?> focus,Element parentElement)
     throws MarkupException;
 
   public void dumpTree(PrintWriter writer,String linePrefix)
@@ -96,13 +99,12 @@ public abstract class TglUnit
     }
   }  
   
-  protected Element defaultBind(Element parentElement)
+  protected Element defaultBind(Focus<?> focus,Element parentElement)
     throws MarkupException
   { 
-    Element element=new DefaultElement();
-    element.setParent(parentElement);
+    Element element=new DefaultElement(parentElement);
     try
-    { element.bind(children);
+    { element.bind(focus,children);
     }
     catch (BindException x)
     { throw new MarkupException(x.toString(),getPosition(),x);
@@ -173,11 +175,106 @@ public abstract class TglUnit
     return null;
   }  
   
+  protected DocletUnit includeResource(String qname,TglCompiler<?> compiler)
+    throws MarkupException
+  {
+
+    String resourceRef;
+    if (qname.startsWith(":"))
+    { 
+      // Translate namsepace prefix
+      String prefix=qname.substring(1,qname.indexOf(":",1));
+      String suffix=qname.substring(prefix.length()+2);
+      PrefixResolver resolver=getNamespaceResolver();
+      if (resolver!=null)
+      {
+        URI uri=resolver.resolvePrefix(prefix);
+        if (uri!=null)
+        {
+          if (!uri.getPath().endsWith("/"))
+          { uri=URI.create(uri.toString()+"/");
+          }
+          uri=uri.resolve(suffix);
+          resourceRef=uri.toString();
+        }
+        else
+        { 
+          throw new MarkupException
+          ("Namespace prefix '"+prefix+"' not defined"
+            ,compiler.getPosition()
+          );
+        }
+
+      }
+      else
+      { 
+        throw new MarkupException
+        ("No namespace prefixes defined: resolving '"+prefix+"'- parent is "+parent
+          ,compiler.getPosition()
+        );
+      }
+    }
+    else
+    { resourceRef=qname;
+    }
+
+
+    URI resourceURI=null;
+    try
+    { resourceURI=new URI(resourceRef);
+    }
+    catch (URISyntaxException x)
+    { 
+      throw new MarkupException
+      ("Error creating URI '"+resourceRef+"':"+x
+        ,compiler.getPosition()
+      );
+    }
+
+
+    if (!resourceURI.isAbsolute())
+    {
+      DocletUnit parentDoc=findUnit(DocletUnit.class);
+      URI baseURI=parentDoc.getSourceURI();
+      resourceURI=baseURI.resolve(resourceURI);
+
+    }
+
+    try
+    { 
+      // This will add the Unit defined by the specified resource
+      //   as the first child of this unit.
+      return compiler.subCompile(this,resourceURI);
+    }
+    catch (ParseException x)
+    { 
+
+      throw new MarkupException
+      ("Error including URI '"+resourceRef+"':"+x
+        ,compiler.getPosition()
+        ,x
+      );
+    }
+    catch (IOException x)
+    {
+      throw new MarkupException
+      ("Error including URI '"+resourceRef+"':"+x
+        ,compiler.getPosition()
+        ,x
+      );
+    }
+  }
+  
+  
 }
 
 class DefaultElement
   extends Element
 {
+  public DefaultElement(Element parent)
+  { super(parent);
+  }
+  
   @Override
   public void render(EventContext context)
     throws IOException

@@ -16,6 +16,7 @@ import spiralcraft.vfs.spi.AbstractResource;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.compiler.TglCompiler;
 import spiralcraft.textgen.compiler.DocletUnit;
+import spiralcraft.textgen.compiler.TglUnit;
 import spiralcraft.textgen.EventContext;
 
 import spiralcraft.text.ParseException;
@@ -38,7 +39,7 @@ public class MetaTranslator
     implements Translator
 {
   private URI templateURI;
-  private DocletUnit tglUnit;
+  private TglUnit tglUnit;
   private Resource templateResource;
   private long templateLastUpdated;
 
@@ -140,7 +141,7 @@ public class MetaTranslator
     
     private void bind()
       throws MarkupException
-    { element=tglUnit.bind(focus);
+    { element=tglUnit.bind(focus,null);
     }
     
     private synchronized void checkLastModified()

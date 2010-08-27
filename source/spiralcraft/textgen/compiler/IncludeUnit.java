@@ -15,11 +15,8 @@
 package spiralcraft.textgen.compiler;
 
 
-import java.net.URI;
-
-import spiralcraft.common.namespace.PrefixResolver;
-
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.Focus;
 
 import spiralcraft.text.ParseException;
 import spiralcraft.text.markup.MarkupException;
@@ -62,40 +59,6 @@ public class IncludeUnit
         { 
           String qname=attrib.getValue();
           
-          if (qname.startsWith(":"))
-          { 
-            // Translate namsepace prefix
-            String prefix=qname.substring(1,qname.indexOf(":",1));
-            String suffix=qname.substring(prefix.length()+2);
-            PrefixResolver resolver=getNamespaceResolver();
-            if (resolver!=null)
-            {
-              URI uri=resolver.resolvePrefix(prefix);
-              if (uri!=null)
-              {
-                if (!uri.getPath().endsWith("/"))
-                { uri=URI.create(uri.toString()+"/");
-                }
-                uri=uri.resolve(suffix);
-                qname=uri.toString();
-              }
-              else
-              { 
-                throw new MarkupException
-                  ("Namespace prefix '"+prefix+"' not defined"
-                  ,compiler.getPosition()
-                  );
-              }
-              
-            }
-            else
-            { 
-              throw new MarkupException
-                ("No namespace prefixes defined: resolving '"+prefix+"'- parent is "+parent
-                ,compiler.getPosition()
-                );
-            }
-          }
           
           docletUnit=includeResource(qname,compiler);
         }
@@ -125,14 +88,12 @@ public class IncludeUnit
   }
   
   @Override
-  public Element bind(Element parentElement)
+  public Element bind(Focus<?> focus,Element parentElement)
     throws MarkupException
   {
-    IncludeElement includeElement=new IncludeElement();
-    includeElement.setParent(parentElement);
-    
+    IncludeElement includeElement=new IncludeElement(parentElement);
     try
-    { includeElement.bind(children);
+    { includeElement.bind(focus,children);
     }
     catch (BindException x)
     { throw new MarkupException(x.toString(),getPosition());

@@ -15,6 +15,7 @@
 package spiralcraft.textgen.compiler;
 
 
+import spiralcraft.lang.Focus;
 import spiralcraft.text.ParseException;
 import spiralcraft.text.ParsePosition;
 
@@ -110,14 +111,12 @@ public class PropertyUnit
   }
   
   @Override
-  public Element bind(Element parentElement)
+  public Element bind(Focus<?> focus,Element parentElement)
     throws MarkupException
   { 
     // Properties don't have Elements that output anything directly
-    PropertyElement element=new PropertyElement();
-    element.setParent(parentElement);
-    
-    element.bind(children);
+    PropertyElement element=new PropertyElement(parentElement);
+    element.bind(focus,children);
     return element;
   }
   

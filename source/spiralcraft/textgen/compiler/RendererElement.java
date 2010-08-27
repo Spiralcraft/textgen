@@ -30,17 +30,15 @@ public class RendererElement
 {
 
   private final Renderer renderer;
-  private Focus<?> focus;
   
   public RendererElement(Renderer renderer)
   { this.renderer=renderer;
   }
   
   @Override
-  public void bind(List<TglUnit> childUnits) 
+  public void bind(Focus<?> focus,List<TglUnit> childUnits) 
     throws MarkupException, BindException 
   { 
-    focus=getParent().getFocus();
     
     if (renderer instanceof Contextual)
     { 
@@ -49,13 +47,9 @@ public class RendererElement
       
     }
     focus=focus.chain(getAssembly().getFocus().getSubject());
-    super.bind(childUnits);
+    super.bind(focus,childUnits);
   }
   
-  @Override
-  public Focus<?> getFocus()
-  { return focus;
-  }
   
   @Override
   public void render(EventContext context)

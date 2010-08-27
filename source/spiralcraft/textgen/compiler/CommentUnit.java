@@ -14,6 +14,7 @@
 //
 package spiralcraft.textgen.compiler;
 
+import spiralcraft.lang.Focus;
 import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.Element;
@@ -54,9 +55,9 @@ public class CommentUnit
   }
   
   @Override
-  public Element bind(Element parentElement)
+  public Element bind(Focus<?> focus,Element parentElement)
     throws MarkupException
-  { return new NullElement();
+  { return new NullElement(parentElement);
   }
   
   

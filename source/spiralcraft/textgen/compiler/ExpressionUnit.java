@@ -18,6 +18,7 @@ import spiralcraft.lang.Expression;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
+import spiralcraft.lang.Focus;
 
 
 import java.net.URI;
@@ -140,13 +141,12 @@ public class ExpressionUnit
 
   
   @Override
-  public Element bind(Element parentElement)
+  public Element bind(Focus<?> focus,Element parentElement)
     throws MarkupException
   { 
-    Element element=new ExpressionElement();
-    element.setParent(parentElement);
+    Element element=new ExpressionElement(parentElement);
     try
-    { element.bind(children);
+    { element.bind(focus,children);
     }
     catch (BindException x)
     { throw new MarkupException(x.toString(),getPosition(),x);
@@ -161,18 +161,22 @@ public class ExpressionUnit
     
     private Channel<?> _source;
     
+    public ExpressionElement(Element parent)
+    { super(parent);
+    }
+    
     @Override
-    public void bind(List<TglUnit> children)
+    public void bind(Focus<?> focus,List<TglUnit> children)
       throws BindException,MarkupException
     { 
-      super.bind(children);
+      super.bind(focus,children);
       try
       {
-        _source=getFocus().bind(expression);
+        _source=focus.bind(expression);
       }
       catch (BindException x)
       { 
-        log.warning("Caught "+x.toString()+"\r\n    focus="+getFocus().getFocusChain().toString());
+        log.warning("Caught "+x.toString()+"\r\n    focus="+focus.getFocusChain().toString());
         throw new MarkupException
           ("Error binding '"+expression+"': "+x.toString()
           ,getPosition()

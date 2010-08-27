@@ -16,6 +16,7 @@ import spiralcraft.lang.AccessException;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
+import spiralcraft.lang.Focus;
 
 //import spiralcraft.log.ClassLogger;
 import spiralcraft.text.markup.MarkupException;
@@ -222,14 +223,14 @@ public class ElementFactory
   
   
   @SuppressWarnings("unchecked")
-  public Element createElement(Element parentElement)
+  public Element createElement(Focus<?> focus,Element parentElement)
     throws MarkupException
   {
     
     try
     { 
       Assembly assembly
-        =assemblyClass.newInstance(parentElement.getFocus());
+        =assemblyClass.newInstance(focus);
       
       Element element;
       Object object=assembly.get();

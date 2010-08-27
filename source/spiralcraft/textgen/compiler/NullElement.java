@@ -9,6 +9,10 @@ public class NullElement
     extends Element
 {
 
+  public NullElement(Element parent)
+  { super(parent);
+  }
+  
   @Override
   public void render(EventContext context) throws IOException
   { }

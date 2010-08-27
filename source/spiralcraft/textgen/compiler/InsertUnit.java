@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.Focus;
 import spiralcraft.log.ClassLog;
 import spiralcraft.text.ParseException;
 import spiralcraft.text.markup.MarkupException;
@@ -82,7 +83,7 @@ public class InsertUnit
   }
   
   @Override
-  public Element bind(Element parentElement)
+  public Element bind(Focus<?> focus,Element parentElement)
     throws MarkupException
   {
     if (referencedName!=null)
@@ -93,7 +94,7 @@ public class InsertUnit
         if (debug)
         { log.fine("Binding define unit '"+referencedName+"'");
         }
-        return defineUnit.bindContent(parentElement);
+        return defineUnit.bindContent(focus,parentElement);
       }
       else if (!require)
       { 
@@ -101,10 +102,9 @@ public class InsertUnit
         { log.fine("Binding default for '"+referencedName+"'");
         }
         // Render default
-        InsertElement element=new InsertElement();
-        element.setParent(parentElement);
+        InsertElement element=new InsertElement(parentElement);
         try
-        { element.bind(children);
+        { element.bind(focus,children);
         }
         catch (BindException x)
         { throw new MarkupException(x.toString(),getPosition());
@@ -123,10 +123,9 @@ public class InsertUnit
     else
     {
     
-      InsertIncludeElement element=new InsertIncludeElement();
-      element.setParent(parentElement);
+      InsertIncludeElement element=new InsertIncludeElement(parentElement);
       try
-      { element.bind(children);
+      { element.bind(focus,children);
       }
       catch (BindException x)
       { throw new MarkupException(x.toString(),getPosition());
@@ -141,6 +140,10 @@ public class InsertUnit
 class InsertElement
   extends Element
 {
+  public InsertElement(Element parent)
+  { super(parent);
+  }
+  
   @Override
   public void render(EventContext context)
     throws IOException
@@ -153,8 +156,12 @@ class InsertIncludeElement
 {
   private IncludeElement ancestorInclude;
   
+  public InsertIncludeElement(Element parent)
+  { super(parent);
+  }
+  
   @Override
-  public void bind(List<TglUnit> children)
+  public void bind(Focus<?> focus,List<TglUnit> children)
     throws BindException,MarkupException
   { 
     // Get the nearest containing Include that is not in the same 
@@ -167,7 +174,7 @@ class InsertIncludeElement
     { ancestorInclude=containingDocument.findElement(IncludeElement.class);
     }
     
-    super.bind(children);
+    super.bind(focus,children);
   }
   
   @Override

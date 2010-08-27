@@ -31,17 +31,15 @@ public class WrapperElement
 {
 
   private final Wrapper wrapper;
-  private Focus<?> focus;
   
   public WrapperElement(Wrapper wrapper)
   { this.wrapper=wrapper;
   }
   
   @Override
-  public void bind(List<TglUnit> childUnits) 
+  public void bind(Focus<?> focus,List<TglUnit> childUnits) 
     throws MarkupException, BindException 
   { 
-    focus=getParent().getFocus();
     
     if (wrapper instanceof Contextual)
     { 
@@ -50,13 +48,10 @@ public class WrapperElement
       
     }
     focus=focus.chain(getAssembly().getFocus().getSubject());
-    super.bind(childUnits);
+    super.bind(focus,childUnits);
   }
   
-  @Override
-  public Focus<?> getFocus()
-  { return focus;
-  }
+
   
   @Override
   public void render(final EventContext context)

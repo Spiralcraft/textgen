@@ -29,7 +29,6 @@ public class FocusChainElement
   private final Object object;
   private final Contextual fco;
   private final ThreadContextual tfco;
-  private Focus<?> focus;
   
   public FocusChainElement(Object object)
   { 
@@ -53,16 +52,13 @@ public class FocusChainElement
   { return object;
   }
   
-  @Override
-  public Focus<?> getFocus()
-  { return focus;
-  } 
+
 
   @Override
-  public void bind(List<TglUnit> childUnits) 
+  public void bind(Focus<?> focus,List<TglUnit> childUnits) 
     throws MarkupException, BindException 
   { 
-    focus=getParent().getFocus();
+    
     
     if (fco!=null)
     { focus=fco.bind(focus);
@@ -70,7 +66,7 @@ public class FocusChainElement
     else
     { focus=focus.chain(getAssembly().getFocus().getSubject());
     }
-    super.bind(childUnits);
+    super.bind(focus,childUnits);
     
     if (object instanceof Lifecycle)
     { 

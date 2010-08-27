@@ -21,18 +21,13 @@ public class NamespaceElement
   private static final ClassLog log=ClassLog.getInstance(NamespaceElement.class);
   
   private PrefixResolver resolver;
-  private Focus<?> focus;
   
-  public NamespaceElement(PrefixResolver resolver)
-  { this.resolver=resolver;
+  public NamespaceElement(Element parent,PrefixResolver resolver)
+  { 
+    super(parent);
+    this.resolver=resolver;
   }
 
-  @Override
-  public Focus<?> getFocus()
-  { 
-    // log.fine("XXX "+focus.toString());
-    return focus;
-  }
   
   @Override
   public void render(EventContext context) throws IOException
@@ -41,12 +36,12 @@ public class NamespaceElement
   }
   
   @Override
-  public void bind(List<TglUnit> childUnits)
+  public void bind(Focus<?> focus,List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
-    Focus<?> parentFocus=getParent().getFocus();
-    focus=parentFocus.chain(resolver);
-    super.bind(childUnits);
+    
+    focus=focus.chain(resolver);
+    super.bind(focus,childUnits);
     
   }
 

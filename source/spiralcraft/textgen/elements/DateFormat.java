@@ -67,10 +67,9 @@ public class DateFormat
   }
   
   @Override
-  public void bind(List<TglUnit> childUnits)
+  public void bind(Focus<?> parentFocus,List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
-    Focus<?> parentFocus=getParent().getFocus();
     
     if (expression!=null)
     { target=parentFocus.bind(expression);
@@ -100,7 +99,7 @@ public class DateFormat
     { timeZone=parentFocus.bind(timeZoneExpression);
     }
     
-    super.bind(childUnits);
+    super.bind(parentFocus,childUnits);
   }
   
 

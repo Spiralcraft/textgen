@@ -103,31 +103,29 @@ public class DocletUnit
     return time;
   }
   
-  public Element bind(Focus<?> focus)
-    throws MarkupException
-  {
-    RootElement element=new RootElement();
-    element.setFocus(focus);
-    
-    try
-    { element.bind(children);
-    }
-    catch (BindException x)
-    { throw new MarkupException(x.toString(),getPosition());
-    }
-    // element.setPath(new int[0]);
-    return element;
-    
-  }
+//  public Element bind(Focus<?> focus)
+//    throws MarkupException
+//  {
+//    RootElement element=new RootElement(null);
+//    
+//    try
+//    { element.bind(focus,children);
+//    }
+//    catch (BindException x)
+//    { throw new MarkupException(x.toString(),getPosition());
+//    }
+//    // element.setPath(new int[0]);
+//    return element;
+//    
+//  }
   
   @Override
-  public Element bind(Element parentElement)
+  public Element bind(Focus<?> focus,Element parentElement)
     throws MarkupException
   { 
-    Element element=new RootElement();
-    element.setParent(parentElement);
+    Element element=new RootElement(parentElement);
     try
-    { element.bind(children);
+    { element.bind(focus,children);
     }
     catch (BindException x)
     { throw new MarkupException(x.toString(),getPosition());
@@ -139,10 +137,14 @@ public class DocletUnit
   class RootElement
     extends Element
   {
-    private Focus<?> _focus;
+//    private Focus<?> _focus;
     
-    public void setFocus(Focus<?> focus)
-    { _focus=focus;
+//    public void setFocus(Focus<?> focus)
+//    { _focus=focus;
+//    }
+    
+    public RootElement(Element parentElement)
+    { super(parentElement);
     }
     
     @Override
@@ -150,10 +152,10 @@ public class DocletUnit
     { return resource.getURI();
     }
     
-    @Override
-    public Focus<?> getFocus()
-    { return _focus;
-    }
+//    @Override
+//    public Focus<?> getFocus()
+//    { return _focus;
+//    }
     
     @Override
     public void render(EventContext context)
@@ -162,19 +164,13 @@ public class DocletUnit
     }
     
     @Override
-    public void bind(List<TglUnit> childUnits)
+    public void bind(Focus<?> focus,List<TglUnit> childUnits)
       throws BindException,MarkupException
     { 
-      Focus<?> wrappedFocus=_focus;
-      if (wrappedFocus==null && getParent()!=null)
-      { wrappedFocus=getParent().getFocus();
-      }
-      if (wrappedFocus!=null)
-      {
-        resolver=new TglPrefixResolver(wrappedFocus.getNamespaceResolver());
-        _focus=wrappedFocus.chain(resolver);
-      }
-      super.bind(childUnits);
+
+      resolver=new TglPrefixResolver(focus.getNamespaceResolver());
+      focus=focus.chain(resolver);
+      super.bind(focus,childUnits);
     
     }    
   }

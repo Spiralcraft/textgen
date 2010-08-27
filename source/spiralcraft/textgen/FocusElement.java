@@ -49,16 +49,15 @@ public abstract class FocusElement<T>
   extends Element
 {
   private ThreadLocalChannel<T> channel;
-  private Focus<?> focus;
   private Renderer renderer;
   private boolean computeOnInitialize;
   
   @Override
-  public final void bind(List<TglUnit> childUnits)
+  public final void bind(Focus<?> focus,List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
 
-    Focus<?> parentFocus=bindImports(getParent().getFocus());
+    Focus<?> parentFocus=bindImports(focus);
     
     Channel<T> target=bindSource(parentFocus);
     channel=new ThreadLocalChannel<T>(target.getReflector());
@@ -72,7 +71,7 @@ public abstract class FocusElement<T>
     { throw new BindException(getErrorContext()+": Focus cannot be null");
     }
     
-    super.bind(childUnits);
+    super.bind(focus,childUnits);
   }
   
   /**
@@ -138,11 +137,6 @@ public abstract class FocusElement<T>
   { this.renderer=renderer;
   }
   
-  @Override
-  public final Focus<?> getFocus()
-  { return focus;
-  }
-
 
   @Override
   public final void message

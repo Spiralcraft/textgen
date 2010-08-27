@@ -30,6 +30,10 @@ public class IncludeElement
   protected ThreadLocal<ElementState> threadLocalState
     =new ThreadLocal<ElementState>();
 
+  public IncludeElement(Element parent)
+  { super(parent);
+  }
+  
   @Override
   public void render(EventContext context)
     throws IOException

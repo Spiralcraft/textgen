@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.List;
 
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.Focus;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
@@ -39,13 +40,12 @@ public class ContentUnit
   }
   
   @Override
-  public Element bind(Element parentElement)
+  public Element bind(Focus<?> focus,Element parentElement)
     throws MarkupException
   { 
-    TextElement ret=new TextElement();
-    ret.setParent(parentElement);
+    TextElement ret=new TextElement(parentElement);
     try
-    { ret.bind(children);
+    { ret.bind(focus,children);
     }
     catch (BindException x)
     { throw new MarkupException(x.toString(),getPosition(),x);
@@ -62,8 +62,12 @@ public class ContentUnit
   {
     private CharSequence elementContent;
     
+    public TextElement(Element parent)
+    { super(parent);
+    }
+    
     @Override
-    public void bind(List<TglUnit> children)
+    public void bind(Focus<?> focus,List<TglUnit> children)
       throws BindException,MarkupException
     { 
       elementContent=ContentUnit.this.content;
@@ -73,7 +77,7 @@ public class ContentUnit
       { elementContent=elementContent.toString().trim();
       }
       
-      super.bind(children);
+      super.bind(focus,children);
     }
     
     @Override

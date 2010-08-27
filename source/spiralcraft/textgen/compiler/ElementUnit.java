@@ -20,6 +20,7 @@ import java.net.URI;
 import spiralcraft.builder.AssemblyClass;
 import spiralcraft.common.namespace.PrefixResolver;
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.Focus;
 
 import spiralcraft.textgen.Element;
 
@@ -149,13 +150,13 @@ public class ElementUnit
   }
   
   @Override
-  public Element bind(Element parentElement)
+  public Element bind(Focus<?> focus,Element parentElement)
     throws MarkupException
   { 
 
-    Element element=elementFactory.createElement(parentElement);
+    Element element=elementFactory.createElement(focus,parentElement);
     try
-    { element.bind(children);
+    { element.bind(focus,children);
     }
     catch (BindException x)
     { throw new MarkupException(x.toString(),getPosition(),x);

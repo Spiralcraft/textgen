@@ -55,7 +55,6 @@ import spiralcraft.textgen.compiler.TglUnit;
 public class SharedReference<Treferent>
     extends Element
 {
-  private Focus<?> focus;
   private Type<?> type;
   private Expression<Type<?>> typeX;
   private URI instanceURI;
@@ -63,10 +62,9 @@ public class SharedReference<Treferent>
   
   
   @Override
-  public void bind(List<TglUnit> childUnits)
+  public void bind(Focus<?> focusChain,List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
-    Focus<?> focusChain=getParent().getFocus();
     if (type==null && typeX!=null)
     { type=focusChain.bind(typeX).get();
     }
@@ -78,9 +76,8 @@ public class SharedReference<Treferent>
       =AbstractXmlObject.<Treferent>activate
         (type!=null?type.getURI():null,instanceURI,focusChain);
 
-    focus=reference.getFocus();
     
-    super.bind(childUnits);
+    super.bind(reference.getFocus(),childUnits);
   }
 
   /**
@@ -123,10 +120,7 @@ public class SharedReference<Treferent>
   { this.instanceURI=instanceURI;
   }
 
-  @Override
-  public Focus<?> getFocus()
-  { return focus;
-  }
+
 
   @Override
   public void message

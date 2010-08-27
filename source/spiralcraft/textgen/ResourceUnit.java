@@ -180,7 +180,7 @@ public class ResourceUnit<T extends DocletUnit>
   {
     DocletUnit unit=getUnit();
     if (unit!=null)
-    { return unit.bind(focus);
+    { return unit.bind(focus,null);
     }
     else
     {

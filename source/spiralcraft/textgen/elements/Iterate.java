@@ -100,7 +100,6 @@ public class Iterate
   { return iterationLocal.get().index==0;
   }
 
-  @Override
   public Focus<?> getFocus()
   { return currentFocus;
   }
@@ -129,10 +128,9 @@ public class Iterate
   }
   
   @Override
-  public void bind(List<TglUnit> childUnits)
+  public void bind(Focus<?> parentFocus,List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
-    Focus<?> parentFocus=getParent().getFocus();
     Channel<?> target=null;
     if (expression!=null)
     { target=parentFocus.bind(expression);
@@ -207,7 +205,7 @@ public class Iterate
     { log.fine("Iterator exposes "+valueChannel);
     }
     
-    bindChildren(childUnits);
+    bindChildren(currentFocus,childUnits);
   }
   
   /**

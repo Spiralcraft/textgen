@@ -90,7 +90,7 @@ public class Generator
     {
       try
       { 
-        element=unit.bind(focus);
+        element=unit.bind(focus,null);
         exception=null;
       }
       catch (ParseException x)

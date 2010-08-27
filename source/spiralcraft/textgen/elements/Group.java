@@ -53,11 +53,7 @@ public class Group
   
   private Iterate iterate;
   private Group parentGroup;
-
-  private Focus<?> focus;
-  
-
-  
+ 
   
   public void setX(Expression<?> expression)
   { this.expression=expression;
@@ -65,7 +61,7 @@ public class Group
   
   @Override
   @SuppressWarnings("unchecked") // Not using generic versions
-  public void bind(List<TglUnit> childUnits)
+  public void bind(Focus<?> parentFocus,List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
     if (expression==null)
@@ -74,7 +70,6 @@ public class Group
         ("Group element must be assigned an expression in the 'x' property ");
       
     }
-    
     iterate=findElement(Iterate.class);
     if (iterate==null)
     { 
@@ -84,7 +79,6 @@ public class Group
     
     parentGroup=getParent().findElement(Group.class,Iterate.class);
     
-    Focus parentFocus=getParent().getFocus();
     
     current=iterate.getFocus().bind(expression);
     lookahead=iterate.getLookaheadFocus().bind(expression);    
@@ -93,15 +87,10 @@ public class Group
     SimpleFocus<?> focus
       =new SimpleFocus(parentFocus,parentFocus.getSubject());
     focus.addFacet(getAssembly().getFocus());
-    this.focus=focus;
+
     
     
-    bindChildren(childUnits);
-  }
-  
-  @Override
-  public Focus<?> getFocus()
-  { return focus;
+    bindChildren(focus,childUnits);
   }
   
   

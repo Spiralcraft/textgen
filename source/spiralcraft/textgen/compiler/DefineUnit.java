@@ -17,6 +17,7 @@ package spiralcraft.textgen.compiler;
 import java.io.IOException;
 
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.Focus;
 import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.Element;
@@ -84,12 +85,12 @@ public class DefineUnit
    * The DefineUnit does not bind into it's container. Binding is deferred
    *   so the content can be bound into the referencing Insert unit.
    */
-  public Element bind(Element parentElement)
+  public Element bind(Focus<?> focus,Element parentElement)
     throws MarkupException
   { 
-    NullElement ret=new NullElement();
+    NullElement ret=new NullElement(parentElement);
     try
-    { ret.bind(null);
+    { ret.bind(focus,null);
     }
     catch (BindException x)
     { throw new MarkupException("Error binding null element",getPosition(),x);
@@ -98,13 +99,12 @@ public class DefineUnit
     
   }
   
-  public Element bindContent(Element parentElement)
+  public Element bindContent(Focus<?> focus,Element parentElement)
     throws MarkupException
   {
-    DefineElement element=new DefineElement();
-    element.setParent(parentElement);
+    DefineElement element=new DefineElement(parentElement);
     try
-    { element.bind(children);
+    { element.bind(focus,children);
     }
     catch (BindException x)
     { throw new MarkupException(x.toString(),getPosition());
@@ -119,6 +119,10 @@ public class DefineUnit
 class DefineElement
   extends Element
 {
+  
+  public DefineElement(Element parentElement)
+  { super(parentElement);
+  }
   
   @Override
   public void render(EventContext context)

@@ -61,6 +61,7 @@ public class LocalReference<Treferent>
   private Type<?> type;
   private URI instanceURI;
   private boolean stateless;
+  private Focus<?> context;
   
 
   /**
@@ -92,21 +93,21 @@ public class LocalReference<Treferent>
   
   @Override
   @SuppressWarnings("unchecked") // Not using generic versions
-  public void bind(List<TglUnit> childUnits)
+  public void bind(Focus<?> parentFocus,List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
-    Focus<?> parentFocus=getParent().getFocus();
     
     if (type==null)
     { 
       throw new BindException
         ("TypeURI must be specified");
     }
+    this.context=parentFocus;
     
     // This instance just used to infer a type
     AbstractXmlObject ref
       =AbstractXmlObject.activate
-        (type.getURI(),instanceURI,getParent().getFocus());
+        (type.getURI(),instanceURI,parentFocus);
         
     channel=new ThreadLocalChannel
       (BeanReflector.getInstance(ref.get().getClass()));
@@ -122,14 +123,11 @@ public class LocalReference<Treferent>
     focus=new SimpleFocus(parentFocus,channel);
     focus.addFacet(getAssembly().getFocus());
     
-    super.bind(childUnits);
+    super.bind(focus,childUnits);
   }
 
   
-  @Override
-  public Focus<Treferent> getFocus()
-  { return focus;
-  }
+
 
   @SuppressWarnings("unchecked")
   @Override
@@ -154,7 +152,7 @@ public class LocalReference<Treferent>
           =AbstractXmlObject.<Treferent>activate
             (type.getURI()
             ,instanceURI
-            ,getParent().getFocus()
+            ,this.context
             );
       }
       
@@ -191,7 +189,7 @@ public class LocalReference<Treferent>
       { 
         reference
           =AbstractXmlObject.<Treferent>activate
-            (type.getURI(),instanceURI,getParent().getFocus());
+            (type.getURI(),instanceURI,this.context);
       }
       
       channel.push(reference.get());

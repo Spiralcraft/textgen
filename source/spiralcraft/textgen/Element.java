@@ -75,6 +75,15 @@ public abstract class Element
   private ParsePosition position;
   protected final ClassLog log=ClassLog.getInstance(getClass());
   
+  
+  public Element(Element parent)
+  { this.parent=parent;
+  }
+  
+  public Element()
+  {
+  }
+  
   public void setCodePosition(ParsePosition position)
   { this.position=position.clone();
   }
@@ -144,18 +153,18 @@ public abstract class Element
     return children[i];
   }
   
-  /**
-   * @return The Focus associated with this Element. Defaults to the parent
-   *   Element's Focus, unless overridden.
-   */
-  public Focus<?> getFocus()
-  { 
-    if (parent!=null)
-    { return parent.getFocus();
-    }
-    System.err.println("Element: "+getClass().getName()+" no parent, no focus");
-    return null;
-  }
+//  /**
+//   * @return The Focus associated with this Element. Defaults to the parent
+//   *   Element's Focus, unless overridden.
+//   */
+//  protected Focus<?> getFocus()
+//  { 
+//    if (parent!=null)
+//    { return parent.getFocus();
+//    }
+//    System.err.println("Element: "+getClass().getName()+" no parent, no focus");
+//    return null;
+//  }
   
   /**
    * @return The context URI associated with this Element, which is generally
@@ -219,26 +228,57 @@ public abstract class Element
    * @throws BindException 
    * @throws MarkupException
    */
-  public void bind(List<TglUnit> childUnits)
+  public void bind(Focus<?> focus,List<TglUnit> childUnits)
     throws BindException,MarkupException
-  { bindChildren(childUnits);
+  { bindChildren(focus,childUnits);
   }
 
-  protected void bindChildren
-    (List<TglUnit> childUnits
+  /**
+   * Called by bind to descend the containership hierarchy 
+   * 
+   * @param focus
+   * @param childUnits
+   * @throws MarkupException
+   */
+  protected final void bindChildren
+    (Focus<?> focus,List<TglUnit> childUnits
     )
     throws MarkupException
   {
+    childUnits=expandChildren(focus,childUnits);
     if (childUnits!=null)
     { 
       children=new Element[childUnits.size()];
       int i=0;
       for (TglUnit child: childUnits)
-      { children[i++]=child.bind(this);
+      { children[i++]=child.bind(focus,this);
       }
     }
   }
 
+  /**
+   * <p>Called by bindChildren() before binding to expand the tree between
+   *   this node and the specified children.
+   * </p>
+   * 
+   * <p>This is where layout components, default views, or other automatically
+   *   inserted structure is applied
+   * </p>
+   * 
+   * <p>The default behavior does not alter the predefined children
+   * </p>
+   * 
+   * @param focus
+   * @param childUnits
+   * @return
+   */
+  protected List<TglUnit> expandChildren
+    (Focus<?> focus,List<TglUnit> childUnits)
+  { 
+    
+    return childUnits;
+  }
+  
 
 
   /**
