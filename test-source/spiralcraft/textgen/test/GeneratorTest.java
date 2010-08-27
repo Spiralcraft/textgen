@@ -63,6 +63,7 @@ public class GeneratorTest
               (URI.create("class:/spiralcraft/textgen/test/MyWidget.assy"),null)
           .get()
           )
+        ,null
         );
 
     Writer writer=new OutputStreamWriter(exContext.out());

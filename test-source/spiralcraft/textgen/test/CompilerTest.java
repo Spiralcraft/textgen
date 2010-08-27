@@ -60,7 +60,7 @@ public class CompilerTest
       while (true)
       { 
         DocletUnit unit=compiler.compile(uri);
-        unit.bind(focus);
+        unit.bind(focus,null);
         iterations++;
         if (clock.approxTimeMillis()-time>duration)
         { break;

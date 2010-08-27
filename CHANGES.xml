@@ -1,6 +1,109 @@
 <scm:Change.list
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
+  
+  <scm:Change>
+  
+    <revision>0.4.11
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-08-26
+    </date>
+    
+    <notes>
+      <scm:Note>Internal refactoring of composition and binding pattern to
+        move towards compatibility with generalized component model
+      </scm:Note>
+    </notes>
+            
+    <detail>
+      <scm:Change>
+        <notes>
+          <scm:Note>Internal refactoring of composition and binding pattern to
+            move towards compatibility with generalized component model.
+          </scm:Note>
+          <scm:Note>Focus is now transmitted through the bind() call tree
+            instead of being pulled from the hierarchy.
+          </scm:Note>
+        </notes>
+      
+        <path>source/spiralcraft/textgen/
+        </path>
+    
+        <resources>
+          <URI>Element.java
+          </URI>
+          <URI>FocusElement.java
+          </URI>
+          <URI>Generator.java
+          </URI>
+          <URI>ResourceUnit.java
+          </URI>
+          <URI>compiler/CommentUnit.java
+          </URI>
+          <URI>compiler/ContentUnit.java
+          </URI>
+          <URI>compiler/DefineUnit.java
+          </URI>
+          <URI>compiler/DocletUnit.java
+          </URI>
+          <URI>compiler/ElementFactory.java
+          </URI>
+          <URI>compiler/ElementUnit.java
+          </URI>
+          <URI>compiler/ExpressionUnit.java
+          </URI>
+          <URI>compiler/FocusChainElement.java
+          </URI>
+          <URI>compiler/IncludeElement.java
+          </URI>
+          <URI>compiler/IncludeUnit.java
+          </URI>
+          <URI>compiler/InsertUnit.java
+          </URI>
+          <URI>compiler/NamespaceElement.java
+          </URI>
+          <URI>compiler/NamespaceUnit.java
+          </URI>
+          <URI>compiler/NullElement.java
+          </URI>
+          <URI>compiler/ProcessingUnit.java
+          </URI>
+          <URI>compiler/PropertyElement.java
+          </URI>
+          <URI>compiler/PropertyUnit.java
+          </URI>
+          <URI>compiler/RendererElement.java
+          </URI>
+          <URI>compiler/TglUnit.java
+          </URI>
+          <URI>compiler/WrapperElement.java
+          </URI>
+          <URI>elements/DateFormat.java
+          </URI>
+          <URI>elements/Group.java
+          </URI>
+          <URI>elements/If.java
+          </URI>
+          <URI>elements/Iterate.java
+          </URI>
+          <URI>elements/LocalReference.java
+          </URI>
+          <URI>elements/SharedReference.java
+          </URI>
+          <URI>util/MetaTranslator.java
+          </URI>
+        </resources>
+      
+      </scm:Change>
+    </detail>
+    
+    
+  </scm:Change>
+
   <scm:Change>
   
     <revision>0.4.10
@@ -25,7 +128,7 @@
     <resources>
       <URI>SharedReference.java
       </URI>
-      <URI>LoclaReference.java
+      <URI>LocalReference.java
       </URI>
     </resources>
     

@@ -81,7 +81,7 @@ public class TupleTest
     focus.setTuple(tuple);
 
     DocletUnit unit=new TglCompiler<DocletUnit>().compile(uri);    
-    Element element=unit.bind(focus);
+    Element element=unit.bind(focus,null);
 
     Writer writer=new OutputStreamWriter(System.out);
     EventContext context=new EventContext(writer,false,null);
@@ -115,7 +115,7 @@ public class TupleTest
 
 
     DocletUnit unit=new TglCompiler().compile(uri);    
-    Element element=unit.bind(focus);
+    Element element=unit.bind(focus,null);
 
     Writer writer=new OutputStreamWriter(System.out);
     EventContext context=new EventContext(writer,false,null);
