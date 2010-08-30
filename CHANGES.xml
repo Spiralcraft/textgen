@@ -23,6 +23,9 @@
           <scm:Note>[SCPUBLIC-33] Improve facilities for skinning and UI markup 
             re-use
           </scm:Note>
+          <scm:Note>[SCPUBLIC-35] Elements should be referenceable in the focus
+            chain by the URI used to instantiate them
+          </scm:Note>          
           <scm:Note>Internal refactoring of composition and binding pattern to
             move towards compatibility with generalized component model.
           </scm:Note>          
