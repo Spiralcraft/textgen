@@ -76,6 +76,7 @@ public abstract class Element
   private ParsePosition position;
   protected final ClassLog log=ClassLog.getInstance(getClass());
   protected DefineUnit skin;
+  protected URI focusURI;
   
   public Element(Element parent)
   { this.parent=parent;
@@ -83,6 +84,10 @@ public abstract class Element
   
   public Element()
   {
+  }
+  
+  public void setFocusURI(URI focusURI)
+  { this.focusURI=focusURI;
   }
   
   public void setCodePosition(ParsePosition position)

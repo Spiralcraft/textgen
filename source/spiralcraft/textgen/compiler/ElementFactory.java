@@ -51,12 +51,12 @@ public class ElementFactory
   
   private final AssemblyClass assemblyClass;
   private final ParsePosition position;
-//  private URI namespaceUri;
+  private URI namespaceURI;
   private String elementClassName;
   private LinkedHashMap<String,PropertyUnit> properties;
   
   public ElementFactory
-    (URI namespaceUri
+    (URI namespaceURI
     ,String elementName
     ,Attribute[] attributes
     ,PropertyUnit[] properties
@@ -67,11 +67,11 @@ public class ElementFactory
   {
     elementClassName=elementName;
     this.position=position.clone();
-//    this.namespaceUri=namespaceUri;
+    this.namespaceURI=namespaceURI;
     
     assemblyClass=new AssemblyClass
       (position.getContextURI()
-        ,namespaceUri
+        ,namespaceURI
         ,elementClassName
         ,null
         ,null
@@ -109,7 +109,7 @@ public class ElementFactory
       if  (x.getCause() instanceof ClassNotFoundException)
       { 
         throw new MarkupException
-          (namespaceUri+elementClassName+" does not resolve to an" +
+          (namespaceURI+elementClassName+" does not resolve to an" +
            " Assembly or a Class."
           ,position
           ,x.getCause()
@@ -262,11 +262,13 @@ public class ElementFactory
         }
       }
       
+      URI focusURI=URI.create(namespaceURI.toString()+elementClassName);
       
       element.setCodePosition(position);
       element.setAssembly(assembly);
+      assembly.getFocus().addAlias(focusURI);
       element.setParent(parentElement);
-        
+      element.setFocusURI(focusURI);
       
       if (properties!=null)
       {
