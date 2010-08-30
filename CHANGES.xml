@@ -10,21 +10,22 @@
     <authorId>miketoth
     </authorId>
     
-    <date>2010-08-26
+    <date>2010-08-29
     </date>
     
-    <notes>
-      <scm:Note>Internal refactoring of composition and binding pattern to
-        move towards compatibility with generalized component model
-      </scm:Note>
-    </notes>
             
     <detail>
       <scm:Change>
         <notes>
+          <scm:Note>[SCPUBLIC-29] Namespace definitions should be exclusively 
+            document-scoped
+          </scm:Note>
+          <scm:Note>[SCPUBLIC-33] Improve facilities for skinning and UI markup 
+            re-use
+          </scm:Note>
           <scm:Note>Internal refactoring of composition and binding pattern to
             move towards compatibility with generalized component model.
-          </scm:Note>
+          </scm:Note>          
           <scm:Note>Focus is now transmitted through the bind() call tree
             instead of being pulled from the hierarchy.
           </scm:Note>
@@ -64,6 +65,8 @@
           </URI>
           <URI>compiler/InsertUnit.java
           </URI>
+          <URI>compiler/MarkupUnit.java
+          </URI>
           <URI>compiler/NamespaceElement.java
           </URI>
           <URI>compiler/NamespaceUnit.java
@@ -80,11 +83,19 @@
           </URI>
           <URI>compiler/TglUnit.java
           </URI>
+          <URI>compiler/TglCompiler.java
+          </URI>
+          <URI>compiler/TglPrefixResolver.java
+          </URI>
           <URI>compiler/WrapperElement.java
           </URI>
           <URI>elements/DateFormat.java
           </URI>
           <URI>elements/Group.java
+          </URI>
+          <URI>elements/GroupFooter.assy.xml
+          </URI>
+          <URI>elements/GroupHeader.assy.xml
           </URI>
           <URI>elements/If.java
           </URI>

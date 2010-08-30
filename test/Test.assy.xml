@@ -27,6 +27,9 @@
           <masterURI>class:/spiralcraft/data/test/example/Snapshot.xml
           </masterURI>
           
+          <masterRefreshSeconds>10
+          </masterRefreshSeconds>
+          
           <baseResourceURI>out/data/store/
           </baseResourceURI>
           
