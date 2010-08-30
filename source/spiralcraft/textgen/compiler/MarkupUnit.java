@@ -1,10 +1,7 @@
 package spiralcraft.textgen.compiler;
 
-import java.net.URI;
-
 import java.util.ArrayList;
 
-import spiralcraft.common.namespace.PrefixResolver;
 
 import spiralcraft.text.ParseException;
 import spiralcraft.text.ParsePosition;
@@ -27,7 +24,6 @@ public abstract class MarkupUnit
   protected CharSequence markup;
   protected Attribute[] attributes;
   protected boolean open;
-  private TglPrefixResolver prefixResolver;
 
   public MarkupUnit
     (TglUnit parent
@@ -86,13 +82,6 @@ public abstract class MarkupUnit
       if (checkUnitAttribute(attrib))
       { 
       }
-      else if (attrib.getName().startsWith("xmlns:"))
-      { 
-        mapNamespace
-          (attrib.getName().substring(6)
-          ,URI.create(attrib.getValue())
-          );
-      }
       else
       { elementAttributes.add(attrib);
       }
@@ -103,20 +92,7 @@ public abstract class MarkupUnit
     
   }
   
-  private void mapNamespace(String prefix,URI namespace)
-  { 
-    if (prefixResolver==null)
-    { 
-      if (parent==null)
-      { prefixResolver=new TglPrefixResolver();
-      }
-      else
-      { prefixResolver=new TglPrefixResolver(parent.getNamespaceResolver());
-      }
-      
-    }
-    prefixResolver.mapPrefix(prefix, namespace);
-  }
+
   
   public Attribute getAttribute(String name)
   {
@@ -138,15 +114,4 @@ public abstract class MarkupUnit
   { return open;
   }
  
-  @Override
-  public PrefixResolver getNamespaceResolver()
-  { 
-    if (prefixResolver!=null)
-    { return prefixResolver;
-    }
-    else 
-    { return super.getNamespaceResolver();
-    }
-  }
-
 }

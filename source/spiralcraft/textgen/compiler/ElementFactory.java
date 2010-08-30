@@ -4,6 +4,7 @@ import spiralcraft.builder.Assembly;
 import spiralcraft.builder.AssemblyClass;
 import spiralcraft.builder.BuildException;
 import spiralcraft.builder.PropertySpecifier;
+import spiralcraft.common.namespace.StandardPrefixResolver;
 
 import spiralcraft.data.DataComposite;
 import spiralcraft.data.DataException;
@@ -60,6 +61,7 @@ public class ElementFactory
     ,Attribute[] attributes
     ,PropertyUnit[] properties
     ,ParsePosition position
+    ,StandardPrefixResolver prefixResolver
     )
     throws MarkupException
   {
@@ -75,17 +77,20 @@ public class ElementFactory
         ,null
       );
 
+    
     if (attributes!=null)
     { 
       for (int i=0;i<attributes.length;i++)
       { 
-        assemblyClass.addPropertySpecifier
-          (new PropertySpecifier
+        PropertySpecifier specifier
+          =new PropertySpecifier
             (assemblyClass
-                ,attributes[i].getName()
-                ,attributes[i].getValue()
-            )
-          );
+              ,attributes[i].getName()
+              ,attributes[i].getValue()
+            );
+        specifier.setPrefixResolver(prefixResolver);
+        assemblyClass.addPropertySpecifier
+          (specifier);
       }
     }
     

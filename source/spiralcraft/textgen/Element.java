@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.LinkedList;
 
+import spiralcraft.textgen.compiler.DefineUnit;
 import spiralcraft.textgen.compiler.TglUnit;
 
 import spiralcraft.text.ParsePosition;
@@ -74,7 +75,7 @@ public abstract class Element
   protected boolean debug;
   private ParsePosition position;
   protected final ClassLog log=ClassLog.getInstance(getClass());
-  
+  protected DefineUnit skin;
   
   public Element(Element parent)
   { this.parent=parent;
@@ -86,6 +87,10 @@ public abstract class Element
   
   public void setCodePosition(ParsePosition position)
   { this.position=position.clone();
+  }
+  
+  public void setSkin(DefineUnit skin)
+  { this.skin=skin;
   }
   
   /**
@@ -246,12 +251,21 @@ public abstract class Element
     throws MarkupException
   {
     childUnits=expandChildren(focus,childUnits);
-    if (childUnits!=null)
-    { 
-      children=new Element[childUnits.size()];
-      int i=0;
-      for (TglUnit child: childUnits)
-      { children[i++]=child.bind(focus,this);
+    if (skin!=null)
+    {
+      Element skinElement=skin.bindContent(focus,this,childUnits);
+      children=new Element[1];
+      children[0]=skinElement;
+    }
+    else
+    {
+      if (childUnits!=null)
+      { 
+        children=new Element[childUnits.size()];
+        int i=0;
+        for (TglUnit child: childUnits)
+        { children[i++]=child.bind(focus,this);
+        }
       }
     }
   }
@@ -274,9 +288,7 @@ public abstract class Element
    */
   protected List<TglUnit> expandChildren
     (Focus<?> focus,List<TglUnit> childUnits)
-  { 
-    
-    return childUnits;
+  { return childUnits;
   }
   
 

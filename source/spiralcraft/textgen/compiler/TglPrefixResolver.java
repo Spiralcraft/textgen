@@ -15,6 +15,7 @@
 package spiralcraft.textgen.compiler;
 
 import java.net.URI;
+import java.util.Map;
 
 import spiralcraft.common.namespace.PrefixResolver;
 import spiralcraft.common.namespace.StandardPrefixResolver;
@@ -47,4 +48,12 @@ public class TglPrefixResolver
     { return ElementUnit.DEFAULT_ELEMENT_PACKAGE;
     }
   }
+  
+  @Override
+  public Map<String,URI> computeMappings()
+  { 
+    Map<String,URI> computedMappings=super.computeMappings();
+    computedMappings.put("",ElementUnit.DEFAULT_ELEMENT_PACKAGE);
+    return computedMappings;
+  }    
 }

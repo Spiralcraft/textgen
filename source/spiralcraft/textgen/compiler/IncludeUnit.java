@@ -61,6 +61,7 @@ public class IncludeUnit
           
           
           docletUnit=includeResource(qname,compiler);
+          docletUnit.exportDefines();
         }
         else if (!checkUnitAttribute(attrib))
         { 

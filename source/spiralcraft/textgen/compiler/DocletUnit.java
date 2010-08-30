@@ -24,7 +24,6 @@ import spiralcraft.text.markup.Unit;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
 
-import spiralcraft.common.namespace.PrefixResolver;
 
 import java.io.IOException;
 
@@ -33,7 +32,6 @@ import java.net.URI;
 import spiralcraft.vfs.Resource;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A compilation unit (ie. a file or other container) of tgl markup.
@@ -45,12 +43,13 @@ public class DocletUnit
   protected final Resource resource;
   private final ArrayList<DocletUnit> subDocs
     =new ArrayList<DocletUnit>();
-  private PrefixResolver resolver;
+  
   
   public DocletUnit(TglUnit parent,Resource resource)
   { 
     super(parent);
     this.resource=resource;
+    initPrefixResolver();
 
     if (parent!=null)
     {
@@ -103,21 +102,23 @@ public class DocletUnit
     return time;
   }
   
-//  public Element bind(Focus<?> focus)
-//    throws MarkupException
-//  {
-//    RootElement element=new RootElement(null);
-//    
-//    try
-//    { element.bind(focus,children);
-//    }
-//    catch (BindException x)
-//    { throw new MarkupException(x.toString(),getPosition());
-//    }
-//    // element.setPath(new int[0]);
-//    return element;
-//    
-//  }
+  
+  /**
+   * Finds a unit that is an ancestor in the containership hierarchy within
+   *   the scope of the current document.
+   * 
+   * @param unitClass
+   * @return
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public <X extends TglUnit> X findUnitInDocument(Class<X> unitClass)
+  { 
+    if (getClass().isAssignableFrom(unitClass))
+    { return (X) this;
+    }
+    else return null;
+  }
   
   @Override
   public Element bind(Focus<?> focus,Element parentElement)
@@ -137,11 +138,7 @@ public class DocletUnit
   class RootElement
     extends Element
   {
-//    private Focus<?> _focus;
-    
-//    public void setFocus(Focus<?> focus)
-//    { _focus=focus;
-//    }
+
     
     public RootElement(Element parentElement)
     { super(parentElement);
@@ -152,10 +149,7 @@ public class DocletUnit
     { return resource.getURI();
     }
     
-//    @Override
-//    public Focus<?> getFocus()
-//    { return _focus;
-//    }
+
     
     @Override
     public void render(EventContext context)
@@ -163,16 +157,7 @@ public class DocletUnit
     { renderChildren(context);
     }
     
-    @Override
-    public void bind(Focus<?> focus,List<TglUnit> childUnits)
-      throws BindException,MarkupException
-    { 
-
-      resolver=new TglPrefixResolver(focus.getNamespaceResolver());
-      focus=focus.chain(resolver);
-      super.bind(focus,childUnits);
-    
-    }    
+  
   }
   
 }

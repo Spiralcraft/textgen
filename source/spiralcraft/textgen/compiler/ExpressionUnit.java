@@ -14,6 +14,7 @@
 //
 package spiralcraft.textgen.compiler;
 
+import spiralcraft.common.namespace.NamespaceContext;
 import spiralcraft.lang.Expression;
 
 import spiralcraft.lang.BindException;
@@ -108,13 +109,18 @@ public class ExpressionUnit
     }
     
     try
-    { expression=Expression.parse(expressionText.toString());
+    { 
+      NamespaceContext.push(getNamespaceResolver());
+      expression=Expression.parse(expressionText.toString());
     }
     catch (spiralcraft.lang.ParseException x)
     { 
       ParsePosition position=getPosition().clone();
       position.setContext(expressionText);
       throw new MarkupException(position,x);
+    }
+    finally
+    { NamespaceContext.pop();
     }
     open=false;
   }

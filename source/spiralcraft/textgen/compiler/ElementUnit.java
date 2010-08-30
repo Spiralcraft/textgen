@@ -18,7 +18,9 @@ package spiralcraft.textgen.compiler;
 import java.net.URI;
 
 import spiralcraft.builder.AssemblyClass;
+import spiralcraft.common.namespace.NamespaceContext;
 import spiralcraft.common.namespace.PrefixResolver;
+import spiralcraft.common.namespace.StandardPrefixResolver;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
 
@@ -50,6 +52,7 @@ public class ElementUnit
   private URI elementPackage;
   private String elementName;
   private PropertyUnit[] properties;
+  private String skinName;
   
   public ElementUnit
     (TglUnit parent
@@ -132,6 +135,7 @@ public class ElementUnit
       ,attributes
       ,properties
       ,getPosition()
+      ,new StandardPrefixResolver(getNamespaceResolver())
       );
   }
 
@@ -153,19 +157,57 @@ public class ElementUnit
   public Element bind(Focus<?> focus,Element parentElement)
     throws MarkupException
   { 
-
-    Element element=elementFactory.createElement(focus,parentElement);
+    NamespaceContext.push(getNamespaceResolver());
     try
-    { element.bind(focus,children);
+    { 
+      
+      Element element=elementFactory.createElement(focus,parentElement);
+
+      // An element that has a skin should insert it around its children
+      if (skinName!=null)
+      {
+        DefineUnit skin=findDefinition(skinName);
+        if (skin!=null)
+        { element.setSkin(skin);
+        }
+        else
+        { 
+          throw new MarkupException
+          ("Skin '"+skinName+"' not defined",getPosition());
+        }
+      }
+
+      try
+      { element.bind(focus,children);
+      }
+      catch (BindException x)
+      { throw new MarkupException(x.toString(),getPosition(),x);
+      }
+      return element;
+    
     }
-    catch (BindException x)
-    { throw new MarkupException(x.toString(),getPosition(),x);
+    finally
+    { NamespaceContext.pop();
     }
-    return element;
   }
   
   public AssemblyClass getAssemblyClass()
   { return elementFactory.getAssemblyClass();
   }
+  
+  @Override
+  protected void addUnitAttribute(String name,String value)
+    throws ParseException
+  { 
+    name=name.intern();
+    if (name.equals("skin"))
+    { skinName=value;
+    }
+    else
+    { super.addUnitAttribute(name,value);
+    }
+    
+  }
+
 
 }

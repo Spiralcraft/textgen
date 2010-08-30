@@ -14,6 +14,7 @@
 //
 package spiralcraft.textgen.compiler;
 
+import spiralcraft.common.namespace.StandardPrefixResolver;
 import spiralcraft.log.ClassLog;
 import spiralcraft.text.Trimmer;
 
@@ -129,11 +130,12 @@ public class TglCompiler<T extends DocletUnit>
     ,Attribute[] attributes
     ,PropertyUnit[] properties
     ,ParsePosition parsePosition
+    ,StandardPrefixResolver prefixResolver
     )
     throws MarkupException
   {
     return new ElementFactory
-      (namespaceUri,elementName,attributes,properties,parsePosition);
+      (namespaceUri,elementName,attributes,properties,parsePosition,prefixResolver);
     
     
   }
@@ -179,6 +181,9 @@ public class TglCompiler<T extends DocletUnit>
     else if (code.charAt(0)=='@')
     { pushUnit(parseProcessingUnit(code));
     }
+    else if (code.charAt(0)=='$')
+    { pushUnit(parseDefineUnit(code));
+    }    
     else if (code.charAt(0)=='.')
     { 
       PropertyUnit propertyUnit
@@ -191,6 +196,9 @@ public class TglCompiler<T extends DocletUnit>
         =new ExpressionUnit(getUnit(),code,position);
       pushUnit(expressionUnit);
     }
+    else if (pushInsert(code))
+    {
+    }
     else
     {
       ElementUnit tglElementUnit
@@ -200,6 +208,110 @@ public class TglCompiler<T extends DocletUnit>
     }
   }
   
+  protected boolean pushInsert(CharSequence code)
+    throws MarkupException,ParseException
+  { 
+    LookaheadParserContext context
+      =new LookaheadParserContext(code);
+    TagReader tagReader=new TagReader();
+    tagReader.readTag(context);
+    if (!context.isEof())
+    {
+      String remainder
+        =code.toString().substring(context.getPosition().getIndex()-1);
+      if (remainder.trim().length()>0)
+      { 
+        if (tagReader.getTagName().equals(""))
+        { 
+          throw new MarkupException
+            ("Unexpected text after tag close ["+remainder.trim()+"]. Perhaps "
+            +"you meant <%/@"+remainder+"%> ?"
+            ,getPosition()
+            );
+        }
+        else
+        {
+          throw new MarkupException
+            ("Unexpected text after tag close ["+remainder.trim()+"]"
+            ,getPosition()
+            );
+        }
+      }
+    }
+  
+    String name=tagReader.getTagName();
+    
+    if (!name.contains(":") && getUnit().findDefinition(name)!=null)
+    { 
+      Attribute[] attributes=tagReader.getAttributes();
+      InsertUnit processingUnit=new InsertUnit(getUnit(),this,attributes,name);
+      if (tagReader.isClosed())
+      { processingUnit.close();
+      }
+      else if (!processingUnit.allowsChildren())
+      { 
+        throw new MarkupException
+          (processingUnit.getName()
+          +" does not accept content- close tag with '/' "
+          ,position
+          );
+      }
+      pushUnit(processingUnit);
+      return true;
+      
+    }
+    else
+    { return false;
+    }
+  
+    
+    
+  }
+  
+  protected TglUnit parseDefineUnit(CharSequence code)
+    throws ParseException,MarkupException
+  {
+
+    LookaheadParserContext context
+      =new LookaheadParserContext(code.toString().substring(1));
+    TagReader tagReader=new TagReader();
+    tagReader.readTag(context);
+    if (!context.isEof())
+    {
+      String remainder
+      =code.toString().substring(1)
+      .substring(context.getPosition().getIndex()-1);
+      if (remainder.trim().length()>0)
+      { 
+        if (tagReader.getTagName().equals(""))
+        { 
+          throw new MarkupException
+          ("Unexpected text after tag close ["+remainder.trim()+"]. Perhaps "
+            +"you meant <%/$"+remainder+"%> ?"
+            ,getPosition()
+          );
+        }
+        else
+        {
+          throw new MarkupException
+          ("Unexpected text after tag close ["+remainder.trim()+"]"
+            ,getPosition()
+          );
+        }
+      }
+    }
+
+    String name=tagReader.getTagName();
+    Attribute[] attributes=tagReader.getAttributes();
+
+    TglUnit processingUnit=new DefineUnit(getUnit(),this,attributes,"$"+name);
+
+    if (tagReader.isClosed())
+    { processingUnit.close();
+    }
+    return processingUnit;
+  }
+
   protected TglUnit parseProcessingUnit(CharSequence code)
     throws ParseException,MarkupException
   {
@@ -264,10 +376,10 @@ public class TglCompiler<T extends DocletUnit>
       { return new IncludeUnit(getUnit(),this,attributes);
       }
       else if (name.equals("insert"))
-      { return new InsertUnit(getUnit(),this,attributes);
+      { return new InsertUnit(getUnit(),this,attributes,"@insert");
       }
       else if (name.equals("define"))
-      { return new DefineUnit(getUnit(),this,attributes);
+      { return new DefineUnit(getUnit(),this,attributes,"@define");
       }
       else if (name.equals("namespace"))
       { return new NamespaceUnit(getUnit(),this,attributes);

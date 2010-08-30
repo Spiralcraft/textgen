@@ -20,6 +20,7 @@ import spiralcraft.common.namespace.PrefixResolver;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
+import spiralcraft.log.ClassLog;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
 
@@ -41,12 +42,15 @@ import java.util.HashMap;
 public abstract class TglUnit
   extends Unit<TglUnit>
 {
-  
+  protected final ClassLog log
+    =ClassLog.getInstance(getClass());
   protected boolean allowsChildren=true;
   protected boolean trim;
   protected boolean debug;
 
   private HashMap<String,DefineUnit> defines;
+
+  private TglPrefixResolver prefixResolver;
   
   public TglUnit(TglUnit parent)
   { super(parent);
@@ -59,6 +63,59 @@ public abstract class TglUnit
     }
     
     defines.put(name, unit);
+  }
+  
+  public void exportDefines()
+  { 
+    if (defines==null)
+    { return;
+    }
+    for (String name: defines.keySet())
+    { 
+      DefineUnit define=defines.get(name);
+      if (define.isExported())
+      { 
+        parent.define(name,define);
+        define.setExported(false);
+      }
+    }
+  }
+  
+  protected void initPrefixResolver()
+  {
+    if (parent==null)
+    { prefixResolver=new TglPrefixResolver();
+    }
+    else
+    { prefixResolver=new TglPrefixResolver(parent.getNamespaceResolver());
+    }
+  }
+    
+  private void mapNamespace(String prefix,URI namespace)
+  { 
+    initPrefixResolver();
+    prefixResolver.mapPrefix(prefix, namespace);
+  }
+  
+  /**
+   * Finds a unit that is an ancestor in the containership hierarchy within
+   *   the scope of the current document.
+   * 
+   * @param unitClass
+   * @return
+   */
+  @SuppressWarnings("unchecked")
+  public <X extends TglUnit> X findUnitInDocument(Class<X> unitClass)
+  { 
+    if (getClass().isAssignableFrom(unitClass))
+    { return (X) this;
+    }
+    else if (parent!=null)
+    { return parent.findUnitInDocument(unitClass);
+    }
+    else
+    { return null;
+    }
   }
   
   public DefineUnit findDefinition(String name)
@@ -123,6 +180,14 @@ public abstract class TglUnit
       return true;
 
     }
+    else if (attrib.getName().startsWith("tgns:"))
+    { 
+      mapNamespace
+        (attrib.getName().substring(5)
+        ,URI.create(attrib.getValue())
+        );
+      return true;
+    }
     return false;
   }
   
@@ -169,7 +234,10 @@ public abstract class TglUnit
    */
   public PrefixResolver getNamespaceResolver()
   { 
-    if (parent!=null)
+    if (prefixResolver!=null)
+    { return prefixResolver;
+    }
+    else if (parent!=null)
     { return parent.getNamespaceResolver();
     }
     return null;
@@ -243,7 +311,7 @@ public abstract class TglUnit
     try
     { 
       // This will add the Unit defined by the specified resource
-      //   as the first child of this unit.
+      //   as the first child of this unit, and return the unit
       return compiler.subCompile(this,resourceURI);
     }
     catch (ParseException x)

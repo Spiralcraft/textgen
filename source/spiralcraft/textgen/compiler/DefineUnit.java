@@ -15,9 +15,11 @@
 package spiralcraft.textgen.compiler;
 
 import java.io.IOException;
+import java.util.List;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
+import spiralcraft.text.ParseException;
 import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.Element;
@@ -34,15 +36,35 @@ public class DefineUnit
 {
   
   private String publishedName;
+  private boolean exported;
+  private boolean imported;
+  private String tagName;
+  
+  public DefineUnit
+    (TglUnit parent
+    ,TglCompiler<?> compiler
+    ,String importName
+    )
+  { 
+    super(parent);
+    publishedName=importName;
+    imported=true;
+    debug=parent.debug;
+  }
   
   public DefineUnit
     (TglUnit parent
     ,TglCompiler<?> compiler
     ,Attribute[] attribs
+    ,String tagName
     )
-    throws MarkupException
+    throws MarkupException,ParseException
   { 
     super(parent);
+    this.tagName=tagName;
+    if (tagName.startsWith("$"))
+    { publishedName=tagName.substring(1);
+    }
     allowsChildren=true;
     
     for (Attribute attrib: attribs)
@@ -53,10 +75,33 @@ public class DefineUnit
       else if (attrib.getName().equals("resource"))
       { includeResource(attrib.getValue(),compiler);
       }
+      else if (attrib.getName().equals("export"))
+      { this.exported=Boolean.valueOf(attrib.getValue());
+      }
+      else if (attrib.getName().equals("imports"))
+      { 
+        String[] imports=attrib.getValue().split(",");
+        for (String name : imports)
+        {
+          name=name.trim();
+          define
+            (name
+            ,new DefineUnit
+              (this
+              ,compiler
+              ,name
+              )
+            );
+        }
+        
+      }
+      else if (super.checkUnitAttribute(attrib))
+      {
+      }      
       else
       { 
         throw new MarkupException
-          ("Attribute '"+attrib.getName()+"' not in {resource,value}"
+          ("Attribute '"+attrib.getName()+"' not in {resource,value,export}"
           ,compiler.getPosition()
           );
       }
@@ -71,13 +116,27 @@ public class DefineUnit
 
   }
   
+  public boolean isImported()
+  { return imported;
+  }
+  
+  public boolean isExported()
+  { return exported;
+  }
+
+  
+  // only called once to reset exported after exporting
+  void setExported(boolean exported)
+  { this.exported=exported; 
+  }
+  
   public String getPublishedName()
   { return publishedName;
   }  
   
   @Override
   public String getName()
-  { return "@define";
+  { return tagName;
   }
   
   @Override
@@ -99,10 +158,89 @@ public class DefineUnit
     
   }
   
-  public Element bindContent(Focus<?> focus,Element parentElement)
+  /**
+   * Find the bound reference to this DefineUnit within the ancestral
+   *   element tree, in order to resolve contextual information (imports,
+   *   overlay children) from the binding site.
+   *   
+   * @param child
+   * @return
+   */
+  public DefineElement findBoundElement(Element child)
+  {
+    DefineElement ret=null;
+    while (child!=null)
+    {
+      ret=child.findElement(DefineElement.class);
+      if (ret.isFromUnit(this))
+      { break;
+      }
+      child=ret.getParent();
+      ret=null;
+    }
+    return ret;
+  }
+  
+  /**
+   * Called from an insert unit to bind an instance of the defined subtree to 
+   *   the location of use.
+   *   
+   * The overlay is content contained within the referencing insert unit, and
+   *   will be if/where the defined unit contains an inner insert.
+   *   
+   *   
+   * If this element is imported, the actual DefineElement that will be
+   *   used will be retrieved from the overlay
+   *   
+   * @param focus
+   * @param parentElement
+   * @param overlay
+   * @return
+   * @throws MarkupException
+   */
+  public Element bindContent
+    (Focus<?> focus,Element parentElement,List<TglUnit> overlay)
     throws MarkupException
   {
-    DefineElement element=new DefineElement(parentElement);
+    
+    
+    
+    // If this is an imported define, the parentElement will be the parent
+    //   of the insert that referenced us, which is in the local set.
+    //   We can find the DefineElement that binds our block into the target
+    //   location and look up our import in its children. 
+    
+    if (imported)
+    { 
+
+      
+      DefineElement boundContainer
+        =((DefineUnit) parent).findBoundElement(parentElement);
+      
+      
+      for (TglUnit overlayChild : boundContainer.getOverlay())
+      {
+        if (debug)
+        { log.fine("Checking overlay for import '"+publishedName+"': "
+            +overlayChild);
+        }
+        
+        if (overlayChild instanceof DefineUnit)
+        { 
+          DefineUnit subst=(DefineUnit) overlayChild;
+          if (subst.getPublishedName().equals(publishedName))
+          { return subst.bindContent(focus,parentElement,children);
+          }
+        }
+      }
+    }
+
+    if (imported && debug)
+    {
+      log.debug("Could not resolve imported '"+publishedName+"'");
+    }
+    
+    DefineElement element=new DefineElement(parentElement,this,overlay);
     try
     { element.bind(focus,children);
     }
@@ -120,8 +258,25 @@ class DefineElement
   extends Element
 {
   
-  public DefineElement(Element parentElement)
-  { super(parentElement);
+  private final DefineUnit unit;
+  private final List<TglUnit> overlay;
+  
+  public DefineElement
+    (Element parentElement,DefineUnit unit,List<TglUnit> overlay)
+  { 
+    super(parentElement);
+    this.unit=unit;
+    this.overlay=overlay;
+  }
+  
+
+  
+  public List<TglUnit> getOverlay()
+  { return overlay;
+  }
+  
+  public boolean isFromUnit(DefineUnit unit)
+  { return this.unit==unit;
   }
   
   @Override
