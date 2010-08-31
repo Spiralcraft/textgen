@@ -93,7 +93,9 @@ public abstract class TglUnit
     
   private void mapNamespace(String prefix,URI namespace)
   { 
-    initPrefixResolver();
+    if (prefixResolver==null)
+    { initPrefixResolver();
+    }
     prefixResolver.mapPrefix(prefix, namespace);
   }
   
