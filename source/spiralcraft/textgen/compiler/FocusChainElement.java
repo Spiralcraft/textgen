@@ -66,6 +66,7 @@ public class FocusChainElement
     else
     { focus=focus.chain(getAssembly().getFocus().getSubject());
     }
+    focus.addFacet(getAssembly().getFocus());
     super.bind(focus,childUnits);
     
     if (object instanceof Lifecycle)
