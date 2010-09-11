@@ -21,7 +21,7 @@
           <scm:Note>[SCPUBLIC-40] Skinning mechanism should support exports 
             from @defines at any level
           </scm:Note>
-          <scm:Note>Fix NPE when an imported define is not resolved. 
+          <scm:Note>All defines are late-binding
           </scm:Note>
           <scm:Note>Remove redundant define lookups slowing down page 
             compilation.
@@ -30,20 +30,32 @@
             interpreted as fragment names and not Elements to avoid
             searching for Element and failing when a fragment is not found.
           </scm:Note>
+          <scm:Note>Fix NPE when an imported define is not resolved. 
+          </scm:Note>
+          <scm:Note>Processing units correctly report position
+          </scm:Note>
         </notes>
       
         <path>source/spiralcraft/textgen/compiler/
         </path>
     
         <resources>
+          <URI>CommentUnit.java
+          </URI>
           <URI>DefineUnit.java
+          </URI>
+          <URI>IncludeUnit.java
           </URI>
           <URI>InsertUnit.java
           </URI>
           <URI>TglCompiler.java
           </URI>
-          <URI>TglUnit.java
+          <URI>NamespaceUnit.java
           </URI>
+          <URI>ProcessingUnit.java
+          </URI>
+          <URI>TglUnit.java
+          </URI>          
         </resources>
         
       </scm:Change>

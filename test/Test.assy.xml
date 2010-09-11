@@ -140,6 +140,26 @@
               </testX>
           
             </test:Assertion>
+            <test:Assertion>
+        
+              <name>Skinning 4- imports in include
+              </name>
+          
+              <subjectX>
+                [*tg:Render
+                  {templateURI
+                    :=[*jnet:URI
+                        {"class:/spiralcraft/textgen/test/skin4Test.tgl"
+                        }
+                      ]
+                  }
+                ]
+              </subjectX>
+          
+              <testX>.=="[so[o[[a]i[c]]o]so]"
+              </testX>
+          
+            </test:Assertion>            
           </scenarios>
         </task:Sequence>
       
