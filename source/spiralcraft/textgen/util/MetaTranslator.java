@@ -70,6 +70,7 @@ public class MetaTranslator
   }
   
   
+  @Override
   public Resource translate(Resource resource,URI translatedURI)
     throws IOException, TranslationException
   { 
@@ -129,11 +130,13 @@ public class MetaTranslator
     { return resource;
     }
     
+    @Override
     public void delete()
       throws IOException
     { throw new IOException("Rename not supported "+toString());
     }
     
+    @Override
     public void renameTo(URI name)
       throws IOException
     { throw new IOException("Rename not supported "+toString());

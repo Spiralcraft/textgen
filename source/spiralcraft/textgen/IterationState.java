@@ -76,6 +76,7 @@ public class IterationState
   { return children.size();
   }
   
+  @Override
   public Iterator<MementoState> iterator()
   { return children.iterator();
   }

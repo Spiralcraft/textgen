@@ -60,7 +60,7 @@ public class Group
   }
   
   @Override
-  @SuppressWarnings("unchecked") // Not using generic versions
+  @SuppressWarnings({ "unchecked", "rawtypes" }) // Not using generic versions
   public void bind(Focus<?> parentFocus,List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 

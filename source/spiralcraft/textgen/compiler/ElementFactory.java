@@ -227,7 +227,7 @@ public class ElementFactory
   }
   
   
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"rawtypes"})
   public Element createElement(Focus<?> focus,Element parentElement)
     throws MarkupException
   {
@@ -293,7 +293,7 @@ public class ElementFactory
   }
   
   
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   private void readBean(Assembly assembly,PropertyUnit unit)
     throws MarkupException
   {

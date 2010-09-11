@@ -74,7 +74,7 @@ public class DocletUnit
   { subDocs.add(subDoc);
   }
   
-  @SuppressWarnings("unchecked") // Downcast from runtime check
+  @SuppressWarnings({"unchecked","rawtypes"}) // Downcast from runtime check
   @Override
   public Unit findUnit(Class clazz)
   {

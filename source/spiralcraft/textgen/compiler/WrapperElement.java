@@ -61,6 +61,7 @@ public class WrapperElement
       (context.getWriter()
       ,new Renderer()
       {
+        @Override
         public void render(Writer writer)
           throws IOException
         { renderChildren(context);

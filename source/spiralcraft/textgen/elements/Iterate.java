@@ -47,7 +47,7 @@ import java.util.LinkedList;
 /**
  * Iterate through an Iterable or an Array
  */
-@SuppressWarnings("unchecked") // Runtime type resolution
+@SuppressWarnings({"unchecked","rawtypes"}) // Runtime type resolution
 public class Iterate
   extends Element
 {

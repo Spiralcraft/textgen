@@ -43,7 +43,7 @@ public class XML<T>
   private DictionaryBinding<?>[] attributeBindings;
   private DictionaryBinding<?> contentBinding;
   
-  @SuppressWarnings("unchecked") // We don't care
+  @SuppressWarnings("rawtypes") // We don't care
   private Expression contentExpression;
   
   private AttributeEncoder attributeEncoder = new AttributeEncoder();
@@ -82,7 +82,7 @@ public class XML<T>
   { this.contentExpression=contentX; 
   }
   
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   @Override
   protected Focus<?> bindExports(Focus<?> focusChain) 
     throws BindException 
@@ -138,6 +138,7 @@ public class XML<T>
   class XMLRenderer
     implements Renderer
   {
+    @Override
     public void render(EventContext context,boolean postOrder) 
       throws IOException
     {
