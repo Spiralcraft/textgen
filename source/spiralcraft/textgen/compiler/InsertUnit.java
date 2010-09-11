@@ -42,7 +42,6 @@ public class InsertUnit
     =ClassLog.getInstance(InsertUnit.class);
   
 
-  private DefineUnit referencedDefine;
   private String referencedName;
   private String tagName;
   private boolean require=false;
@@ -52,16 +51,17 @@ public class InsertUnit
     ,TglCompiler<?> compiler
     ,Attribute[] attribs
     ,String tagName
-    ,DefineUnit referencedDefine
     )
     throws MarkupException,ParseException
   { 
-    super(parent);
+    super(parent,compiler.getPosition());
     allowsChildren=true;
     this.tagName=tagName;
-    this.referencedDefine=referencedDefine;
     
-
+    if (this.referencedName==null && !tagName.startsWith("@"))
+    { this.require=true;
+    }
+    
     for (Attribute attrib: attribs)
     {
       if (attrib.getName().equals("name"))
@@ -81,18 +81,12 @@ public class InsertUnit
           );
       }
     }
+    
     if (this.referencedName==null && !tagName.startsWith("@"))
     { this.referencedName=tagName;
     }
     
     
-    if (this.referencedDefine==null && this.referencedName!=null)
-    { this.referencedDefine=findDefinition(this.referencedName);
-    }
-    
-    if (this.referencedDefine!=null)
-    { this.referencedDefine.exportDefines(this);
-    }
   }
   
   
@@ -122,18 +116,14 @@ public class InsertUnit
   {
     if (referencedName!=null)
     {
-      DefineUnit defineUnit=referencedDefine;
-      if (defineUnit==null)
-      { 
-        log.info("Late binding of insert '"+referencedName+"'");
-        defineUnit=findDefinition(referencedName);
-      }
+      DefineUnit defineUnit=findDefinition(referencedName);
       
       if (defineUnit!=null)
       { 
         if (debug)
         { log.fine("Binding define unit '"+referencedName+"'");
         }
+        defineUnit.exportDefines(this);        
         return defineUnit.bindContent(focus,parentElement,children);
       }
       else if (!require)
@@ -154,7 +144,7 @@ public class InsertUnit
       else
       { 
         throw new MarkupException
-          ("Name '"+referencedName+"' not found."
+          ("Fragment '"+referencedName+"' not found."
           ,getPosition()
           );
       }

@@ -241,20 +241,11 @@ public class TglCompiler<T extends DocletUnit>
   
     String name=tagReader.getTagName();
         
-    if (!name.contains(":") && Character.isLowerCase(name.charAt(0)))
-    { 
-      DefineUnit defineUnit=getUnit().findDefinition(name);
-      if (defineUnit==null)
-      { 
-        throw new MarkupException
-          ("Fragment '"+name+"' not defined"
-          ,getPosition()
-          );
-      }
-      
+    if (Character.isLowerCase(name.charAt(0)) && !name.contains(":"))
+    {     
       Attribute[] attributes=tagReader.getAttributes();
       InsertUnit processingUnit
-        =new InsertUnit(getUnit(),this,attributes,name,defineUnit);
+        =new InsertUnit(getUnit(),this,attributes,name);
       if (tagReader.isClosed())
       { processingUnit.close();
       }
@@ -386,7 +377,7 @@ public class TglCompiler<T extends DocletUnit>
       { return new IncludeUnit(getUnit(),this,attributes);
       }
       else if (name.equals("insert"))
-      { return new InsertUnit(getUnit(),this,attributes,"@insert",null);
+      { return new InsertUnit(getUnit(),this,attributes,"@insert");
       }
       else if (name.equals("define"))
       { return new DefineUnit(getUnit(),this,attributes,"@define");

@@ -39,6 +39,7 @@ public class DefineUnit
   private boolean exported;
   private boolean imported;
   private String tagName;
+  private boolean inDoclet;
   
   public DefineUnit
     (TglUnit parent
@@ -46,10 +47,13 @@ public class DefineUnit
     ,String importName
     )
   { 
-    super(parent);
+    super(parent,compiler.getPosition());
     publishedName=importName;
     imported=true;
     debug=parent.debug;
+    inDoclet=parent instanceof DocletUnit;
+    
+    
   }
   
   public DefineUnit
@@ -60,7 +64,7 @@ public class DefineUnit
     )
     throws MarkupException,ParseException
   { 
-    super(parent);
+    super(parent,compiler.getPosition());
     this.tagName=tagName;
     if (tagName.startsWith("$"))
     { publishedName=tagName.substring(1);
@@ -229,32 +233,56 @@ public class DefineUnit
     if (imported)
     { 
 
+      if (!inDoclet)
+      {
+        DefineElement boundContainer
+          =((DefineUnit) parent).findBoundElement(parentElement);
       
-      DefineElement boundContainer
-        =((DefineUnit) parent).findBoundElement(parentElement);
+        if (boundContainer!=null)
+        { 
       
-      if (boundContainer!=null)
-      { 
-      
-        for (TglUnit overlayChild : boundContainer.getOverlay())
-        {
-          if (debug)
-          { log.fine("Checking overlay for import '"+publishedName+"': "
-              +overlayChild);
-          }
+          for (TglUnit child : boundContainer.getOverlay())
+          {
+            if (debug)
+            { log.fine("Checking overlay for import '"+publishedName+"': "
+                +child);
+            }
         
-          if (overlayChild instanceof DefineUnit)
-          { 
-            DefineUnit subst=(DefineUnit) overlayChild;
-            if (subst.getPublishedName().equals(publishedName))
-            { return subst.bindContent(focus,parentElement,children);
+            if (child instanceof DefineUnit)
+            { 
+              DefineUnit subst=(DefineUnit) child;
+              if (subst.getPublishedName().equals(publishedName))
+              { return subst.bindContent(focus,parentElement,children);
+              }
             }
           }
         }
+        else
+        { 
+          // We're being bound directly
+        }
       }
       else
-      { 
-        // We're being bound directly
+      {
+        TglUnit includer=parent.getParent();
+        if (includer!=null)
+        {
+          for (TglUnit child : includer.getChildren())
+          {
+            if (debug)
+            { log.fine("Checking overlay for import '"+publishedName+"': "
+                +child);
+            }
+        
+            if (child instanceof DefineUnit)
+            { 
+              DefineUnit subst=(DefineUnit) child;
+              if (subst.getPublishedName().equals(publishedName))
+              { return subst.bindContent(focus,parentElement,children);
+              }
+            }                  
+          }
+        }
       }
     }
 
