@@ -76,7 +76,70 @@
               <testX>true
               </testX>
           
-            </test:Assertion>            
+            </test:Assertion>
+            
+            <test:Assertion>
+        
+              <name>Skinning 1
+              </name>
+          
+              <subjectX>
+                [*tg:Render
+                  {templateURI
+                    :=[*jnet:URI
+                        {"class:/spiralcraft/textgen/test/skin1Test.tgl"
+                        }
+                      ]
+                  }
+                ]
+              </subjectX>
+          
+              <testX>.=="[o[i]o]"
+              </testX>
+          
+            </test:Assertion>
+            
+            <test:Assertion>
+        
+              <name>Skinning 2- imports
+              </name>
+          
+              <subjectX>
+                [*tg:Render
+                  {templateURI
+                    :=[*jnet:URI
+                        {"class:/spiralcraft/textgen/test/skin2Test.tgl"
+                        }
+                      ]
+                  }
+                ]
+              </subjectX>
+          
+              <testX>.=="[o[i]o]"
+              </testX>
+          
+            </test:Assertion>
+
+            <test:Assertion>
+        
+              <name>Skinning 3- exports from define
+              </name>
+          
+              <subjectX>
+                [*tg:Render
+                  {templateURI
+                    :=[*jnet:URI
+                        {"class:/spiralcraft/textgen/test/skin3Test.tgl"
+                        }
+                      ]
+                  }
+                ]
+              </subjectX>
+          
+              <testX>.=="[o[[a]i[c]]o]"
+              </testX>
+          
+            </test:Assertion>
           </scenarios>
         </task:Sequence>
       

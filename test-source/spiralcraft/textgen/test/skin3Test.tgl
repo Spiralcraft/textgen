@@ -1,0 +1,1 @@
+<%$outer imports="inner"%><%$a export="true"%>[a]<%/$a%><%$b export="true"%>[b]<%/$b%><%$c export="true"%>[c]<%/$c%>[o<%inner/%>o]<%/$outer%><%outer%><%$inner%>[<%a/%>i<%c/%>]<%/$inner%><%/outer%>

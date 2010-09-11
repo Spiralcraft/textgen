@@ -41,7 +41,8 @@ import spiralcraft.exec.ExecutionException;
 public class GeneratorTest
   implements Executable
 {
-  @SuppressWarnings("unchecked") // Heterogeneous use of lang package
+  @Override
+  @SuppressWarnings({ "unchecked", "rawtypes" }) // Heterogeneous use of lang package
   public void execute(String ... args)
     throws ExecutionException
   {

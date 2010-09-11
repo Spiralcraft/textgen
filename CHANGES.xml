@@ -2,6 +2,54 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   
+  
+  <scm:Change>
+  
+    <revision>0.4.11.1
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-09-10
+    </date>
+    
+            
+    <detail>
+      <scm:Change>
+        <notes>
+          <scm:Note>[SCPUBLIC-40] Skinning mechanism should support exports 
+            from @defines at any level
+          </scm:Note>
+          <scm:Note>Fix NPE when an imported define is not resolved. 
+          </scm:Note>
+          <scm:Note>Remove redundant define lookups slowing down page 
+            compilation.
+          </scm:Note>
+          <scm:Note>Lowercase tag names with no namespace prefix are always
+            interpreted as fragment names and not Elements to avoid
+            searching for Element and failing when a fragment is not found.
+          </scm:Note>
+        </notes>
+      
+        <path>source/spiralcraft/textgen/compiler/
+        </path>
+    
+        <resources>
+          <URI>DefineUnit.java
+          </URI>
+          <URI>InsertUnit.java
+          </URI>
+          <URI>TglCompiler.java
+          </URI>
+          <URI>TglUnit.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+    </detail>
+  </scm:Change>
+  
   <scm:Change>
   
     <revision>0.4.11

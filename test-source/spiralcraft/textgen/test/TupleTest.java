@@ -48,6 +48,7 @@ import java.net.URI;
 public class TupleTest
   implements Executable
 {
+  @Override
   public void execute(String ... args)
     throws ExecutionException
   {    
@@ -90,7 +91,7 @@ public class TupleTest
     
   }
     
-  @SuppressWarnings("unchecked") // Cast Object to Aggregate
+  @SuppressWarnings({ "unchecked", "rawtypes" }) // Cast Object to Aggregate
   public static void listCursor()
     throws Exception
   {
