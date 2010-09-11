@@ -124,6 +124,22 @@ public class DefineUnit
   { return exported;
   }
 
+  /**
+   * Export defines to the specified non-ancestor target unit
+   */
+  public void exportDefines(TglUnit target)
+  { 
+    if (defines==null)
+    { return;
+    }
+    for (String name: defines.keySet())
+    { 
+      DefineUnit define=defines.get(name);
+      if (define.isExported())
+      { target.define(name,define);
+      }
+    }
+  }  
   
   // only called once to reset exported after exporting
   void setExported(boolean exported)
@@ -217,21 +233,28 @@ public class DefineUnit
       DefineElement boundContainer
         =((DefineUnit) parent).findBoundElement(parentElement);
       
+      if (boundContainer!=null)
+      { 
       
-      for (TglUnit overlayChild : boundContainer.getOverlay())
-      {
-        if (debug)
-        { log.fine("Checking overlay for import '"+publishedName+"': "
-            +overlayChild);
-        }
+        for (TglUnit overlayChild : boundContainer.getOverlay())
+        {
+          if (debug)
+          { log.fine("Checking overlay for import '"+publishedName+"': "
+              +overlayChild);
+          }
         
-        if (overlayChild instanceof DefineUnit)
-        { 
-          DefineUnit subst=(DefineUnit) overlayChild;
-          if (subst.getPublishedName().equals(publishedName))
-          { return subst.bindContent(focus,parentElement,children);
+          if (overlayChild instanceof DefineUnit)
+          { 
+            DefineUnit subst=(DefineUnit) overlayChild;
+            if (subst.getPublishedName().equals(publishedName))
+            { return subst.bindContent(focus,parentElement,children);
+            }
           }
         }
+      }
+      else
+      { 
+        // We're being bound directly
       }
     }
 

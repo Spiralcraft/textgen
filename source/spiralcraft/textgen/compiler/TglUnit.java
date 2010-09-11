@@ -48,7 +48,7 @@ public abstract class TglUnit
   protected boolean trim;
   protected boolean debug;
 
-  private HashMap<String,DefineUnit> defines;
+  protected HashMap<String,DefineUnit> defines;
 
   private TglPrefixResolver prefixResolver;
   
@@ -65,6 +65,9 @@ public abstract class TglUnit
     defines.put(name, unit);
   }
   
+  /**
+   * Export defines to the parent
+   */
   public void exportDefines()
   { 
     if (defines==null)

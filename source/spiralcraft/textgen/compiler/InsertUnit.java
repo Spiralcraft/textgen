@@ -41,6 +41,8 @@ public class InsertUnit
   private static final ClassLog log
     =ClassLog.getInstance(InsertUnit.class);
   
+
+  private DefineUnit referencedDefine;
   private String referencedName;
   private String tagName;
   private boolean require=false;
@@ -50,12 +52,14 @@ public class InsertUnit
     ,TglCompiler<?> compiler
     ,Attribute[] attribs
     ,String tagName
+    ,DefineUnit referencedDefine
     )
     throws MarkupException,ParseException
   { 
     super(parent);
     allowsChildren=true;
     this.tagName=tagName;
+    this.referencedDefine=referencedDefine;
     
 
     for (Attribute attrib: attribs)
@@ -81,6 +85,14 @@ public class InsertUnit
     { this.referencedName=tagName;
     }
     
+    
+    if (this.referencedDefine==null && this.referencedName!=null)
+    { this.referencedDefine=findDefinition(this.referencedName);
+    }
+    
+    if (this.referencedDefine!=null)
+    { this.referencedDefine.exportDefines(this);
+    }
   }
   
   
@@ -110,7 +122,13 @@ public class InsertUnit
   {
     if (referencedName!=null)
     {
-      DefineUnit defineUnit=findDefinition(referencedName);
+      DefineUnit defineUnit=referencedDefine;
+      if (defineUnit==null)
+      { 
+        log.info("Late binding of insert '"+referencedName+"'");
+        defineUnit=findDefinition(referencedName);
+      }
+      
       if (defineUnit!=null)
       { 
         if (debug)
