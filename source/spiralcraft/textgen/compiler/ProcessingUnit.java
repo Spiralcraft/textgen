@@ -14,6 +14,9 @@
 //
 package spiralcraft.textgen.compiler;
 
+import spiralcraft.text.ParsePosition;
+
+
 /**
  * <p>Abstract base class for units involved in processing the structure and
  *   defining the metadata of the 
@@ -28,8 +31,10 @@ public abstract class ProcessingUnit
 
   protected boolean open=true;
   
-  public ProcessingUnit(TglUnit parent)
-  { super(parent);
+  public ProcessingUnit(TglUnit parent,ParsePosition position)
+  { 
+    super(parent);
+    setPosition(position.clone());
   }
 
   @Override

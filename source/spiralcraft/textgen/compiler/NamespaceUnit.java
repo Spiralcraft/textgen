@@ -48,7 +48,7 @@ public class NamespaceUnit
     )
     throws MarkupException
   { 
-    super(parent);
+    super(parent,compiler.getPosition());
     prefixResolver=new TglPrefixResolver(parent.getNamespaceResolver());
     
     for (Attribute attrib: attribs)

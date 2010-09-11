@@ -45,7 +45,7 @@ public class IncludeUnit
     )
     throws MarkupException
   { 
-    super(parent);
+    super(parent,compiler.getPosition());
     allowsChildren=true;
 
     DocletUnit docletUnit=null;
