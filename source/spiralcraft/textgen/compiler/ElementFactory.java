@@ -184,7 +184,9 @@ public class ElementFactory
         (assemblyClass
         ,unit.getPropertyName()
         );      
-      
+
+      property.setPrefixResolver
+        ((StandardPrefixResolver) unit.getNamespaceResolver());
       boolean set=false;
       if (objectUnits.size()>0)
       { 
