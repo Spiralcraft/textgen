@@ -5,6 +5,33 @@
   
   <scm:Change>
   
+    <revision>0.4.11.2
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-09-21
+    </date>
+    
+            
+    <detail>
+      <scm:Change>
+        <notes>
+          <scm:Note>Ensure that textgen property elements containing plain 
+            text also receive the contextual prefix resolver
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/compiler/ElementFactory.java
+        </path>
+        
+      </scm:Change>
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
+  
     <revision>0.4.11.1
     </revision>
     
