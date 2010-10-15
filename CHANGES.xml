@@ -5,6 +5,29 @@
   
   <scm:Change>
   
+    <revision>0.4.12
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-10-14
+    </date>
+    
+            
+    <detail>
+      <scm:Change>
+        <notes>
+          <scm:Note>Sync with core 0.4.12
+          </scm:Note>
+        </notes>
+        
+      </scm:Change>
+    </detail>
+  </scm:Change>
+    
+  <scm:Change>
+  
     <revision>0.4.11.2
     </revision>
     
