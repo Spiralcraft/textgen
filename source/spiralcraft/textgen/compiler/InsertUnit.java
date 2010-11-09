@@ -106,6 +106,7 @@ public class InsertUnit
     throws MarkupException,BindException
   { 
     InsertElement element=new InsertElement(parentElement);
+    element.setCodePosition(this.getPosition());
     element.bind(focus,children);
     return element;
   }
@@ -164,6 +165,7 @@ public class InsertUnit
       else
       { element=new InsertIncludeElement(parentElement);
       }
+      element.setCodePosition(this.getPosition());
       try
       { element.bind(focus,children);
       }

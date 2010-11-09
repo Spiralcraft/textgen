@@ -125,6 +125,7 @@ public class DocletUnit
     throws MarkupException
   { 
     Element element=new RootElement(parentElement);
+    element.setCodePosition(this.getPosition());
     try
     { element.bind(focus,children);
     }

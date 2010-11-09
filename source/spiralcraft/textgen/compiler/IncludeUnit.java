@@ -93,6 +93,7 @@ public class IncludeUnit
     throws MarkupException
   {
     IncludeElement includeElement=new IncludeElement(parentElement);
+    includeElement.setCodePosition(this.getPosition());
     try
     { includeElement.bind(focus,children);
     }

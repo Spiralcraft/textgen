@@ -94,6 +94,10 @@ public abstract class Element
   { this.position=position.clone();
   }
   
+  public ParsePosition getCodePosition()
+  { return this.position;
+  }
+  
   public void setSkin(DefineUnit skin)
   { this.skin=skin;
   }
@@ -360,18 +364,30 @@ public abstract class Element
     ,LinkedList<Integer> path
     )
   { 
-    if (path!=null && !path.isEmpty())
-    { messageChild(path.removeFirst(),context,message,path);
-    }
-    else if (message.isMulticast())
-    { 
-      if (children!=null)
+    try
+    {
+      if (path!=null && !path.isEmpty())
+      { messageChild(path.removeFirst(),context,message,path);
+      }
+      else if (message.isMulticast())
       { 
-        for (int i=0;i<children.length;i++)
-        { messageChild(i,context,message,path);
+        if (children!=null)
+        { 
+          for (int i=0;i<children.length;i++)
+          { messageChild(i,context,message,path);
+          }
         }
       }
     }
+    catch (ElementRuntimeException x)
+    { 
+      x.addDetail(this);
+      throw x;
+    }
+    catch (RuntimeException x)
+    { throw new ElementRuntimeException(this,x);
+    }
+    
   }
   
   /**

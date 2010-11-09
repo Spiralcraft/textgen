@@ -316,6 +316,7 @@ class DefineElement
     (Element parentElement,DefineUnit unit,List<TglUnit> overlay)
   { 
     super(parentElement);
+    this.setCodePosition(unit.getPosition());
     this.unit=unit;
     this.overlay=overlay;
   }

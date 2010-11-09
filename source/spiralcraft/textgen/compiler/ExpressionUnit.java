@@ -151,6 +151,7 @@ public class ExpressionUnit
     throws MarkupException
   { 
     Element element=new ExpressionElement(parentElement);
+    element.setCodePosition(this.getPosition());
     try
     { element.bind(focus,children);
     }
