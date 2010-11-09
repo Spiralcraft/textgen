@@ -183,6 +183,12 @@ public class TglCompiler<T extends DocletUnit>
     }
     else if (code.charAt(0)=='$')
     { pushUnit(parseDefineUnit(code));
+    }   
+    else if (code.charAt(0)=='!')
+    { 
+      CommentUnit commentUnit
+        =new CommentUnit(getUnit(),this);
+      pushUnit(commentUnit);
     }    
     else if (code.charAt(0)=='.')
     { 

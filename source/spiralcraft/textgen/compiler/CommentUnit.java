@@ -28,6 +28,7 @@ public class CommentUnit
   extends ProcessingUnit
 {
   
+  private boolean shorthand;
   
   public CommentUnit
     (TglUnit parent
@@ -48,10 +49,20 @@ public class CommentUnit
     
   }
   
+  public CommentUnit
+  (TglUnit parent
+  ,TglCompiler<?> compiler
+  )
+  throws MarkupException
+  { 
+    super(parent,compiler.getPosition());
+    shorthand=true;
+  }
+
   
   @Override
   public String getName()
-  { return "@comment";
+  { return shorthand?"!":"@comment";
   }
   
   @Override
