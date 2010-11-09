@@ -19,5 +19,9 @@
     />
   </target>
 		
-	
+  <target name="clean">
+    <delete dir="out" verbose="true" quiet="true"/>
+    <mkdir dir="out"/>
+     
+  </target>	
 </project>

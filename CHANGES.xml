@@ -2,6 +2,65 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   
+  <scm:Change>
+  
+    <revision>0.4.12.3
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-11-09
+    </date>
+    
+            
+    <detail>
+      <scm:Change>
+        <notes>
+          <scm:Note>Create shorthand for comment as &lt;%!%&gt; ... &lt;%/!%&gt;
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen/compiler
+        </path>
+        
+        <resources>
+          <URI>CommentUnit.java
+          </URI>
+          <URI>TglCompiler.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+        <notes>
+          <scm:Note>Provide source code context for RuntimeExceptions
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen/
+        </path>
+        
+        <resources>
+          <URI>Element.java
+          </URI>
+          <URI>ElementRuntimeException.java
+          </URI>
+          <URI>compiler/DefineUnit.java
+          </URI>
+          <URI>compiler/DocletUnit.java
+          </URI>
+          <URI>compiler/ExpressionUnit.java
+          </URI>
+          <URI>compiler/IncludeUnit.java
+          </URI>
+          <URI>compiler/InsertUnit.java
+          </URI>
+        </resources>
+      </scm:Change>
+    </detail>
+  </scm:Change>
+  
   
   <scm:Change>
   
