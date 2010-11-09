@@ -19,7 +19,7 @@
           
           <subscriber>
             <dxml:Subscriber>
-              <debug>true
+              <debug>false
               </debug>
             </dxml:Subscriber>
           </subscriber>
@@ -37,7 +37,7 @@
             dataURI="example:Example.schema.xml"
           />
           
-          <debugLevel>DEBUG
+          <debugLevel>INFO
           </debugLevel>
         </dxml:XmlStore>
       </stores>
