@@ -4,6 +4,80 @@
   
   <scm:Change>
   
+    <revision>0.4.13
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>????
+    </date>
+    
+            
+    <detail>
+      <scm:Change>
+        <notes>
+          <scm:Note>Use Appendable in leiu of Writer where applicable to
+            increase portability
+          </scm:Note>
+        </notes>
+        <path>source/spiralcraft/textgen
+        </path>
+        <resources>
+          <URI>EventContext.java
+          </URI>
+          <URI>Generator.java
+          </URI>
+          <URI>compiler/ContentUnit.java
+          </URI>
+          <URI>compiler/ExpressionUnit.java
+          </URI>
+          <URI>compiler/WrapperElement.java
+          </URI>
+          <URI>elements/XML.java
+          </URI>
+        </resources>
+      </scm:Change>
+      
+      <scm:Change>
+        <notes>
+          <scm:Note>Provide a Decimal formatting element
+          </scm:Note>
+          <scm:Note>Refactor common DateFormat, DecimalFormat logic to base
+            Format element. 
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/elements/
+        </path>
+        
+        <resources>
+          <URI>DateFormat.java
+          </URI>
+          <URI>DecimalFormat.java
+          </URI>
+          <URI>Format.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+        <notes>
+          <scm:Note>Provide an element for declaring a constant reference that
+            is published at bind time.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/elements/Constant.java
+        </path>
+        
+      </scm:Change>
+
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
+  
     <revision>0.4.12.3
     </revision>
     
