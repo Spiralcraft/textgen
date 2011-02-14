@@ -32,7 +32,11 @@
           </URI>
           <URI>compiler/ExpressionUnit.java
           </URI>
+          <URI>compiler/RendererElement.java
+          </URI>
           <URI>compiler/WrapperElement.java
+          </URI>
+          <URI>elements/Format.java
           </URI>
           <URI>elements/XML.java
           </URI>
