@@ -207,7 +207,7 @@ public class ExpressionUnit
       }
         
       if (value!=null)
-      { context.getWriter().write(value.toString());
+      { context.getWriter().append(value.toString());
       }
     }
   }

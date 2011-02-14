@@ -16,7 +16,6 @@ package spiralcraft.textgen;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.net.URI;
 
 
@@ -109,7 +108,7 @@ public class Generator
    * @throws IOException
    */
   @Override
-  public void render(Writer writer)
+  public void render(Appendable writer)
     throws IOException
   {
     checkState();

@@ -32,7 +32,7 @@ public class EventContext
 {
   @SuppressWarnings("unused")
   private final EventContext parent;
-  private final Writer writer;
+  private final Appendable writer;
   private ContentHandler contentHandler;
   private ElementState elementState;
   private final boolean stateful;
@@ -47,7 +47,7 @@ public class EventContext
    * <p>If a StateFrame is not provided, a new one will be created
    * </p>
    */
-  public EventContext(Writer writer,boolean stateful,StateFrame frame)
+  public EventContext(Appendable writer,boolean stateful,StateFrame frame)
   { 
     this.parent=null;
     this.writer=writer;
@@ -97,7 +97,7 @@ public class EventContext
   /** 
    * @return The Writer to which output will be rendered
    */
-  public Writer getWriter()
+  public Appendable getWriter()
   { return writer;
   }
   

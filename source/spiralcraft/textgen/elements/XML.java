@@ -15,7 +15,6 @@
 package spiralcraft.textgen.elements;
 
 import java.io.IOException;
-import java.io.Writer;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Expression;
@@ -103,7 +102,7 @@ public class XML<T>
   }
 
 
-  private void renderAttributes(Writer writer)
+  private void renderAttributes(Appendable writer)
     throws IOException
   { 
     if (attributeBindings!=null)
@@ -113,11 +112,11 @@ public class XML<T>
         String value=binding.get();
         if (value!=null)
         { 
-          writer.write(" ");
-          writer.write(binding.getName());
-          writer.write(" = \"");
+          writer.append(" ");
+          writer.append(binding.getName());
+          writer.append(" = \"");
           attributeEncoder.encode(binding.get(),writer);
-          writer.write("\"");
+          writer.append("\"");
         
         }
       }
@@ -142,22 +141,22 @@ public class XML<T>
     public void render(EventContext context,boolean postOrder) 
       throws IOException
     {
-      Writer writer=context.getWriter();
+      Appendable writer=context.getWriter();
       
       if (!postOrder)
       { 
-        writer.write("<");
-        writer.write(name);
+        writer.append("<");
+        writer.append(name);
     
         renderAttributes(writer);
     
         if (hasContent)
         { 
-          writer.write(">");
+          writer.append(">");
           renderContent(context);
         }
         else
-        { writer.write("/>");
+        { writer.append("/>");
         }
       }
       else
@@ -165,9 +164,9 @@ public class XML<T>
         if (hasContent)
         {
         }
-        writer.write("</");
-        writer.write(name);
-        writer.write(">");
+        writer.append("</");
+        writer.append(name);
+        writer.append(">");
       }
     }
 

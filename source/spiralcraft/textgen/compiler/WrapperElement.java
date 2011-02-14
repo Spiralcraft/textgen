@@ -1,7 +1,6 @@
 package spiralcraft.textgen.compiler;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.List;
 
 import spiralcraft.lang.BindException;
@@ -62,7 +61,7 @@ public class WrapperElement
       ,new Renderer()
       {
         @Override
-        public void render(Writer writer)
+        public void render(Appendable writer)
           throws IOException
         { renderChildren(context);
         }
