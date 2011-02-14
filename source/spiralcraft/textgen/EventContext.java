@@ -14,8 +14,6 @@
 //
 package spiralcraft.textgen;
 
-import java.io.Writer;
-
 import spiralcraft.sax.XmlWriter;
 
 import org.xml.sax.ContentHandler;
@@ -32,7 +30,7 @@ public class EventContext
 {
   @SuppressWarnings("unused")
   private final EventContext parent;
-  private final Appendable writer;
+  private final Appendable output;
   private ContentHandler contentHandler;
   private ElementState elementState;
   private final boolean stateful;
@@ -47,10 +45,10 @@ public class EventContext
    * <p>If a StateFrame is not provided, a new one will be created
    * </p>
    */
-  public EventContext(Appendable writer,boolean stateful,StateFrame frame)
+  public EventContext(Appendable output,boolean stateful,StateFrame frame)
   { 
     this.parent=null;
-    this.writer=writer;
+    this.output=output;
     this.stateful=stateful;
     this.currentFrame=frame;
     
@@ -66,10 +64,10 @@ public class EventContext
    * 
    * @param parent The parent GenerationContext
    */
-  public EventContext(Writer writer,EventContext parent)
+  public EventContext(Appendable output,EventContext parent)
   { 
     this.parent=parent;
-    this.writer=writer;
+    this.output=output;
     this.stateful=parent.isStateful();
     currentFrame=parent.getCurrentFrame();
   }
@@ -89,7 +87,7 @@ public class EventContext
   public ContentHandler getContentHandler()
   { 
     if (contentHandler==null)
-    { contentHandler=new XmlWriter(writer,null);
+    { contentHandler=new XmlWriter(output,null);
     }
     return contentHandler;
   }
@@ -97,8 +95,8 @@ public class EventContext
   /** 
    * @return The Writer to which output will be rendered
    */
-  public Appendable getWriter()
-  { return writer;
+  public Appendable getOutput()
+  { return output;
   }
   
   

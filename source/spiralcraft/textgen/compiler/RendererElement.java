@@ -55,7 +55,7 @@ public class RendererElement
   public void render(EventContext context)
     throws IOException
   { 
-    renderer.render(context.getWriter());
+    renderer.render(context.getOutput());
     renderChildren(context);
   }
   

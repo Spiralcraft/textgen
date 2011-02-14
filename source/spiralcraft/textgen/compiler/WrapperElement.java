@@ -57,7 +57,7 @@ public class WrapperElement
     throws IOException
   { 
     wrapper.render
-      (context.getWriter()
+      (context.getOutput()
       ,new Renderer()
       {
         @Override

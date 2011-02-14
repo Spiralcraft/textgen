@@ -85,7 +85,7 @@ public class ContentUnit
       throws IOException
     { 
       if (elementContent!=null)
-      { context.getWriter().append(elementContent.toString());
+      { context.getOutput().append(elementContent.toString());
       }
     }
   }

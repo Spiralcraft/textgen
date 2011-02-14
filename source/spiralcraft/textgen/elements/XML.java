@@ -129,7 +129,7 @@ public class XML<T>
     throws IOException
   {
     if (contentBinding!=null)
-    { contentEncoder.encode(contentBinding.get(),context.getWriter());
+    { contentEncoder.encode(contentBinding.get(),context.getOutput());
     }
       
   }
@@ -141,7 +141,7 @@ public class XML<T>
     public void render(EventContext context,boolean postOrder) 
       throws IOException
     {
-      Appendable writer=context.getWriter();
+      Appendable writer=context.getOutput();
       
       if (!postOrder)
       { 

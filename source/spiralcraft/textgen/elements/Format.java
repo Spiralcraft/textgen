@@ -107,7 +107,7 @@ public abstract class Format<T extends java.text.Format>
         formatLocal.set(format);
       }
       updateFormat(format);
-      context.getWriter().append(format.format(val));
+      context.getOutput().append(format.format(val));
     }
   }
 }
