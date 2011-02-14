@@ -14,22 +14,15 @@
 //
 package spiralcraft.textgen.elements;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import spiralcraft.lang.AccessException;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.reflect.BeanReflector;
-import spiralcraft.lang.spi.AbstractChannel;
 import spiralcraft.text.markup.MarkupException;
-import spiralcraft.textgen.Element;
-import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.compiler.TglUnit;
 
 /**
@@ -41,22 +34,15 @@ import spiralcraft.textgen.compiler.TglUnit;
  * @param <T>
  */
 public class DateFormat
-    extends Element
+  extends Format<SimpleDateFormat>
 {
-  private Expression<?> expression;
   private Expression<TimeZone> timeZoneExpression;
   
-  private Channel<?> target;
   private Channel<TimeZone> timeZone;
   
-  private final ThreadLocal<SimpleDateFormat> formatLocal
-    =new ThreadLocal<SimpleDateFormat>();
   
   private String formatString;
   
-  public void setX(Expression<?> expression)
-  { this.expression=expression;
-  }
   
   public void setTimeZone(Expression<TimeZone> timeZoneExpression)
   { this.timeZoneExpression=timeZoneExpression;
@@ -67,66 +53,31 @@ public class DateFormat
   }
   
   @Override
+  protected SimpleDateFormat createFormat()
+  { return new SimpleDateFormat(formatString);
+  }
+  
+  @Override
+  protected void updateFormat(SimpleDateFormat format)
+  { 
+    if (timeZone!=null)
+    { 
+      TimeZone zone=timeZone.get();
+      // XXX Always re-apply default time zone if null- potential state leak
+      if (zone!=null)
+      { format.setTimeZone(zone);
+      }
+    }
+  }
+  
+  @Override
   public void bind(Focus<?> parentFocus,List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
-    
-    if (expression!=null)
-    { target=parentFocus.bind(expression);
-    }
-    else
-    { 
-      target
-        =new AbstractChannel<Date>
-          (BeanReflector.<Date>getInstance(Date.class))
-      {
-
-        @Override
-        protected Date retrieve()
-        { return new Date();
-        }
-
-        @Override
-        protected boolean store(Date date) throws AccessException
-        { return false;
-        }
-      };
-    }
-    
-    formatLocal.set(new SimpleDateFormat(formatString));
-    
     if (timeZoneExpression!=null)
     { timeZone=parentFocus.bind(timeZoneExpression);
     }
     
     super.bind(parentFocus,childUnits);
-  }
-  
-
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { 
-    Object val=target.get();
-    if (val!=null)
-    {
-      SimpleDateFormat format=formatLocal.get();
-      if (format==null)
-      { 
-        format=new SimpleDateFormat(formatString);
-        formatLocal.set(format);
-      }
-      if (timeZone!=null)
-      { 
-        TimeZone zone=timeZone.get();
-        // XXX Always re-apply default time zone if null- potential state leak
-        if (zone!=null)
-        { format.setTimeZone(zone);
-        }
-        
-        
-      }
-      context.getWriter().write(format.format(val));
-    }
   }
 }
