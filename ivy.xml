@@ -8,6 +8,6 @@
   </publications> 
     
   <dependencies>
-    <dependency org="spiralcraft" name="core" rev="[0.4.13-dev,0.5["/>
+    <dependency org="spiralcraft" name="core" rev="[0.4.13-rc,0.5["/>
   </dependencies>
 </ivy-module>
