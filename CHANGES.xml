@@ -17,6 +17,16 @@
     <detail>
       <scm:Change>
         <notes>
+          <scm:Note>The "With" component now uses the new ChannelBuffer
+            class to handle the refresh trigger.
+          </scm:Note>
+        </notes>
+        <path>source/spriaclraft/textgen/elements/With.java
+        </path>
+      </scm:Change>
+      
+      <scm:Change>
+        <notes>
           <scm:Note>Use Appendable in leiu of Writer where applicable to
             increase portability
           </scm:Note>
