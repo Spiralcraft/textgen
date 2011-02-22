@@ -17,6 +17,7 @@ package spiralcraft.textgen.elements;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Binding;
 import spiralcraft.lang.Focus;
+import spiralcraft.lang.util.ChannelBuffer;
 import spiralcraft.textgen.ExpressionFocusElement;
 import spiralcraft.textgen.ValueState;
 import spiralcraft.time.Clock;
@@ -116,8 +117,7 @@ public class With<T>
     
     if (triggerKeyX!=null)
     {
-      Object triggerKey=triggerKeyX.get();
-      if (!withState.updateTrigger(triggerKey) 
+      if (!withState.trigger.update() 
             && withState.getLastComputeTime()>0
          )
       { recompute=false;
@@ -137,7 +137,7 @@ public class With<T>
   
   @Override
   public WithState<T> createState()
-  { return new WithState<T>(this);
+  { return new WithState<T>(this,new ChannelBuffer<Object>(triggerKeyX));
   }   
 }
 
@@ -145,10 +145,12 @@ class WithState<T>
   extends ValueState<T>
 {
   private volatile long lastCompute;
-  private volatile Object triggerKey;
+  public final ChannelBuffer<Object> trigger;
   
-  public WithState(With<T> control)
-  { super(control);
+  public WithState(With<T> control,ChannelBuffer<Object> trigger)
+  {
+    super(control);
+    this.trigger=trigger;
   }
   
   public long getLastComputeTime()
@@ -159,17 +161,7 @@ class WithState<T>
   { lastCompute=Clock.instance().approxTimeMillis();
   }
   
-  public boolean updateTrigger(Object newTriggerKey)
-  { 
-    if (triggerKey==null?newTriggerKey!=null:!triggerKey.equals(newTriggerKey))
-    { 
-      this.triggerKey=newTriggerKey;
-      return true;
-    }
-    else
-    { return false;
-    }
-  }
+
   
   
 }
