@@ -15,6 +15,8 @@
 package spiralcraft.textgen.compiler;
 
 
+import java.util.List;
+
 import spiralcraft.lang.Focus;
 import spiralcraft.text.ParseException;
 import spiralcraft.text.ParsePosition;
@@ -119,6 +121,19 @@ public class PropertyUnit
     element.bind(focus,children);
     return element;
   }
+
+  @Override
+  public Element bindExtension(
+    Attribute[] attribs,
+    Focus<?> focus,
+    Element parentElement,
+    List<TglUnit> children)
+    throws MarkupException
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  
   
 }
 

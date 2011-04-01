@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * A Unit of text generation which represents a
@@ -47,8 +48,9 @@ public abstract class TglUnit
   protected boolean allowsChildren=true;
   protected boolean trim;
   protected boolean debug;
+  private boolean exported;
 
-  protected HashMap<String,DefineUnit> defines;
+  protected HashMap<String,TglUnit> defines;
 
   private TglPrefixResolver prefixResolver;
   
@@ -56,10 +58,20 @@ public abstract class TglUnit
   { super(parent);
   }
   
-  public void define(String name,DefineUnit unit)
+  
+  public boolean isExported()
+  { return exported;
+  }
+
+  // only called once to reset exported after exporting
+  void setExported(boolean exported)
+  { this.exported=exported; 
+  }
+  
+  public void define(String name,TglUnit unit)
   {
     if (defines==null)
-    { defines=new HashMap<String,DefineUnit>();
+    { defines=new HashMap<String,TglUnit>();
     }
     
     defines.put(name, unit);
@@ -75,7 +87,7 @@ public abstract class TglUnit
     }
     for (String name: defines.keySet())
     { 
-      DefineUnit define=defines.get(name);
+      TglUnit define=defines.get(name);
       if (define.isExported())
       { 
         parent.define(name,define);
@@ -83,6 +95,24 @@ public abstract class TglUnit
       }
     }
   }
+  
+  /**
+   * Export defines to a unit that is inserting this unit. Only defines marked for export will be
+   *   exported, and remain available for export to units that further insert the target.
+   */
+  public void exportDefines(TglUnit target)
+  { 
+    if (defines==null)
+    { return;
+    }
+    for (String name: defines.keySet())
+    { 
+      TglUnit define=defines.get(name);
+      if (define.isExported())
+      { target.define(name,define);
+      }
+    }
+  } 
   
   protected void initPrefixResolver()
   {
@@ -123,10 +153,10 @@ public abstract class TglUnit
     }
   }
   
-  public DefineUnit findDefinition(String name)
+  public TglUnit findDefinition(String name)
   {
     // Parent takes precedence
-    DefineUnit ret=parent!=null?parent.findDefinition(name):null;
+    TglUnit ret=parent!=null?parent.findDefinition(name):null;
     if (ret==null && defines!=null)
     { ret=defines.get(name);
     }
@@ -152,6 +182,29 @@ public abstract class TglUnit
    */
   public abstract Element bind(Focus<?> focus,Element parentElement)
     throws MarkupException;
+
+  /**
+   * Extend this Unit by applying the specified set of attributes and using the supplied children as content
+   *   instead of this Unit's own children.
+   * 
+   * @param attribs
+   * @param focus
+   * @param parentElement
+   * @param children
+   * @return
+   * @throws MarkupException
+   */
+  public Element bindExtension(Attribute[] attribs,Focus<?> focus,Element parentElement,List<TglUnit> children)
+    throws MarkupException
+  { 
+    if (attribs!=null && attribs.length>0)
+    { throw new MarkupException("Unrecognized attribute "+attribs[0].getName(),getPosition());
+    }
+    if (children!=null && children.size()>0)
+    { log.warning("Ignoring contents of element defined at "+getPosition());
+    }
+    return bind(focus,parentElement);
+  }
 
   public void dumpTree(PrintWriter writer,String linePrefix)
   { 

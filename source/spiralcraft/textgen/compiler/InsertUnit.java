@@ -16,6 +16,7 @@ package spiralcraft.textgen.compiler;
 
 import java.io.IOException;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,7 +34,7 @@ import spiralcraft.textgen.Message;
 import spiralcraft.text.xml.Attribute;
 
 /**
- * A Unit which inserts the contents of an ancestral IncludeUnit
+ * A Unit which inserts the contents of an ancestral IncludeUnit, or a unit referenced by a defined name
  */
 public class InsertUnit
   extends ProcessingUnit
@@ -45,6 +46,7 @@ public class InsertUnit
   private String referencedName;
   private String tagName;
   private boolean require=false;
+  private Attribute[] attributes;
   
   public InsertUnit
     (TglUnit parent
@@ -58,35 +60,48 @@ public class InsertUnit
     allowsChildren=true;
     this.tagName=tagName;
     
-    if (this.referencedName==null && !tagName.startsWith("@"))
-    { this.require=true;
-    }
     
-    for (Attribute attrib: attribs)
+    if (tagName.startsWith("@"))
     {
-      if (attrib.getName().equals("name"))
-      { this.referencedName=attrib.getValue();
-      }
-      else if (attrib.getName().equals("require"))
-      { require=Boolean.parseBoolean(attrib.getValue());
-      }
-      else if (super.checkUnitAttribute(attrib))
+      // Form <%@insert ...
+      for (Attribute attrib: attribs)
       {
-      }
-      else
-      { 
-        throw new MarkupException
-          ("Attribute '"+attrib.getName()+"' not in {name,require}"
-          ,compiler.getPosition()
-          );
+        if (attrib.getName().equals("name"))
+        { this.referencedName=attrib.getValue();
+        }
+        else if (attrib.getName().equals("require"))
+        { require=Boolean.parseBoolean(attrib.getValue());
+        }
+        else if (super.checkUnitAttribute(attrib))
+        {
+        }
+        else
+        { 
+          throw new MarkupException
+            ("Attribute '"+attrib.getName()+"' not in {name,require}"
+            ,compiler.getPosition()
+            );
+        }
       }
     }
-    
-    if (this.referencedName==null && !tagName.startsWith("@"))
-    { this.referencedName=tagName;
-    }
-    
-    
+    else
+    {
+      // Form <%refname ...
+      if (this.referencedName==null)
+      {
+        this.referencedName=tagName;
+        this.require=true;
+      }
+      
+      ArrayList<Attribute> otherAttribs=new ArrayList<Attribute>();
+      for (Attribute attrib: attribs)
+      {
+        if (!super.checkUnitAttribute(attrib))
+        { otherAttribs.add(attrib);
+        }
+      }
+      this.attributes=otherAttribs.toArray(new Attribute[otherAttribs.size()]);
+    }   
   }
   
   
@@ -117,28 +132,30 @@ public class InsertUnit
   {
     if (referencedName!=null)
     {
-      DefineUnit defineUnit=findDefinition(referencedName);
+      // This is a directive to insert a named reference to another component
       
-      if (defineUnit!=null)
+      TglUnit referencedUnit=findDefinition(referencedName);
+      
+      if (referencedUnit!=null)
       { 
         if (debug)
-        { log.fine("Binding define unit '"+referencedName+"'");
+        { log.fine("Binding referenced unit '"+referencedName+"'");
         }
-        defineUnit.exportDefines(this);        
-        return defineUnit.bindContent(focus,parentElement,children);
+        referencedUnit.exportDefines(this);
+        return referencedUnit.bindExtension(attributes,focus,parentElement,children);
       }
       else if (!require)
       { 
         if (debug)
         { log.fine("Binding default for '"+referencedName+"'");
         }
-        // Render default
+        // Render default self contents
         
         try
         { return bindContent(focus,parentElement);
         }
         catch (BindException x)
-        { throw new MarkupException(x.toString(),getPosition());
+        { throw new MarkupException(x.toString(),getPosition(),x);
         }
         
       }

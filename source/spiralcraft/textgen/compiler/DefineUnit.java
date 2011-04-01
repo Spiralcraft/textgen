@@ -29,14 +29,13 @@ import spiralcraft.textgen.EventContext;
 import spiralcraft.text.xml.Attribute;
 
 /**
- * A Unit which defines a subtree or a value for insertion elsewhere.
+ * A Unit which defines a content subtree or a value for insertion elsewhere.
  */
 public class DefineUnit
   extends ProcessingUnit
 {
   
   private String publishedName;
-  private boolean exported;
   private boolean imported;
   private String tagName;
   private boolean inDoclet;
@@ -80,7 +79,7 @@ public class DefineUnit
       { includeResource(attrib.getValue(),compiler);
       }
       else if (attrib.getName().equals("export"))
-      { this.exported=Boolean.valueOf(attrib.getValue());
+      { this.setExported(Boolean.valueOf(attrib.getValue()));
       }
       else if (attrib.getName().equals("imports"))
       { 
@@ -124,31 +123,7 @@ public class DefineUnit
   { return imported;
   }
   
-  public boolean isExported()
-  { return exported;
-  }
 
-  /**
-   * Export defines to the specified non-ancestor target unit
-   */
-  public void exportDefines(TglUnit target)
-  { 
-    if (defines==null)
-    { return;
-    }
-    for (String name: defines.keySet())
-    { 
-      DefineUnit define=defines.get(name);
-      if (define.isExported())
-      { target.define(name,define);
-      }
-    }
-  }  
-  
-  // only called once to reset exported after exporting
-  void setExported(boolean exported)
-  { this.exported=exported; 
-  }
   
   public String getPublishedName()
   { return publishedName;
@@ -300,6 +275,15 @@ public class DefineUnit
     }
     
     return element;
+  }
+  
+  public Element bindExtension(Attribute[] attribs,Focus<?> focus,Element parentElement,List<TglUnit> children)
+    throws MarkupException
+  { 
+    if (attribs!=null && attribs.length>0)
+    { throw new MarkupException("Unrecognized attribute "+attribs[0].getName(),getPosition());
+    }
+    return bindContent(focus,parentElement,children);
   }
   
   

@@ -166,9 +166,17 @@ public class ElementUnit
       // An element that has a skin should insert it around its children
       if (skinName!=null)
       {
-        DefineUnit skin=findDefinition(skinName);
+        
+        TglUnit skin=findDefinition(skinName);
         if (skin!=null)
-        { element.setSkin(skin);
+        { 
+          if (skin instanceof DefineUnit)
+          { element.setSkin((DefineUnit) skin);
+          }
+          else
+          { throw new MarkupException
+              ("Skin '"+skinName+"' must be a Define",getPosition());
+          }
         }
         else
         { 
