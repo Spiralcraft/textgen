@@ -27,7 +27,7 @@ public class ExpressionFocusElement<T>
   
   @Override
   @SuppressWarnings("unchecked") // Not using generic versions
-  public Channel<T> bindSource(Focus<?> focusChain)
+  protected Channel<T> bindSource(Focus<?> focusChain)
     throws BindException
   { 
     
