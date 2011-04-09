@@ -246,8 +246,11 @@ public class TglCompiler<T extends DocletUnit>
     }
   
     String name=tagReader.getTagName();
-        
-    if (Character.isLowerCase(name.charAt(0)) && !name.contains(":"))
+    int colonPos=name.indexOf(":");
+    String localName=colonPos==-1?name:name.substring(colonPos+1);
+    
+    // XXX need to find a better way to distinguish inserts from elements
+    if (Character.isLowerCase(localName.charAt(0)))
     {     
       Attribute[] attributes=tagReader.getAttributes();
       InsertUnit processingUnit
