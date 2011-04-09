@@ -14,10 +14,6 @@
 //
 package spiralcraft.textgen.compiler;
 
-
-import spiralcraft.lang.BindException;
-import spiralcraft.lang.Focus;
-
 import spiralcraft.text.ParseException;
 import spiralcraft.text.markup.MarkupException;
 
@@ -50,18 +46,15 @@ public class IncludeUnit
 
     DocletUnit docletUnit=null;
 
+    String qname=null;
+    
     for (Attribute attrib: attribs)
     {
       
       try
       {
         if (attrib.getName().equals("resource"))
-        { 
-          String qname=attrib.getValue();
-          
-          
-          docletUnit=includeResource(qname,compiler);
-          docletUnit.exportDefines();
+        { qname=attrib.getValue();
         }
         else if (!checkUnitAttribute(attrib))
         { 
@@ -79,6 +72,12 @@ public class IncludeUnit
       
     }
     
+    if (qname!=null)
+    {
+      docletUnit=includeResource(qname,compiler);
+      docletUnit.exportDefines();
+    }
+    
     if (docletUnit==null)
     {
       throw new MarkupException
@@ -89,20 +88,8 @@ public class IncludeUnit
   }
   
   @Override
-  public Element bind(Focus<?> focus,Element parentElement)
-    throws MarkupException
-  {
-    IncludeElement includeElement=new IncludeElement(parentElement);
-    includeElement.setCodePosition(this.getPosition());
-    try
-    { includeElement.bind(focus,children);
-    }
-    catch (BindException x)
-    { throw new MarkupException(x.toString(),getPosition());
-    }
-    
-    return includeElement;
+  public Element createElement()
+  { return new IncludeElement();
   }
-
 
 }

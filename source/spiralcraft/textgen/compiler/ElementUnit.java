@@ -19,9 +19,8 @@ import java.net.URI;
 
 import spiralcraft.builder.AssemblyClass;
 import spiralcraft.common.namespace.NamespaceContext;
-import spiralcraft.common.namespace.PrefixResolver;
+import spiralcraft.common.namespace.QName;
 import spiralcraft.common.namespace.StandardPrefixResolver;
-import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
 
 import spiralcraft.textgen.Element;
@@ -44,8 +43,7 @@ public class ElementUnit
 {
   private static final ClassLog log=ClassLog.getInstance(ElementUnit.class);
   
-  public static final URI DEFAULT_ELEMENT_PACKAGE
-    =URI.create("class:/spiralcraft/textgen/elements/");
+
   
   private final TglCompiler<?> compiler;
   private ElementFactory elementFactory;
@@ -64,50 +62,17 @@ public class ElementUnit
   { 
     super(parent,code,position);
     this.compiler=compiler;
-    readStandardElement();
+
+    QName name=resolvePrefixedName(getName(),TglUnit.DEFAULT_ELEMENT_PACKAGE);
+    elementPackage=name.getNamespaceURI();
+    elementName=name.getLocalName();
+    
     if (!open)
     { close();
     }
   }
   
   
-  /**
-   * An element with a tag name in the form <code>&lt;%namespace:name ... %&gt;</code> 
-   * 
-   * @throws ParseException
-   */
-  private void readStandardElement()
-    throws ParseException
-  { 
-    String name=getName();
-    int nspos=name.indexOf(':');
-    if (nspos>-1)
-    {  
-      PrefixResolver resolver
-        =getNamespaceResolver();
-      
-      elementPackage
-        = resolver!=null
-        ? resolver.resolvePrefix(name.substring(0,nspos))
-        : null
-        ;
-           
-      if (elementPackage==null)
-      { 
-        throw new ParseException
-          ("Namespace prefix '"+name.substring(0,nspos)+"' not found"
-          ,getPosition()
-          );
-      }
-      
-      elementName=name.substring(nspos+1);
-    }
-    else
-    { 
-      elementPackage=DEFAULT_ELEMENT_PACKAGE;
-      elementName=name;
-    }
-  }
   
 
 
@@ -184,14 +149,7 @@ public class ElementUnit
           ("Skin '"+skinName+"' not defined",getPosition());
         }
       }
-
-      try
-      { element.bind(focus,children);
-      }
-      catch (BindException x)
-      { throw new MarkupException(x.toString(),getPosition(),x);
-      }
-      return element;
+      return bind(focus,parentElement,element);
     
     }
     finally
