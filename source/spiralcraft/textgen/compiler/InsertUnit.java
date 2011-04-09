@@ -89,14 +89,17 @@ public class InsertUnit
       // Form <%refname ...
       if (this.referencedName==null)
       {
-        this.referencedName=tagName;
+        this.referencedName=resolvePrefixedName(tagName,null).toString();
         this.require=true;
       }
       
       ArrayList<Attribute> otherAttribs=new ArrayList<Attribute>();
       for (Attribute attrib: attribs)
       {
-        if (!super.checkUnitAttribute(attrib))
+        if (attrib.getName().equals("require"))
+        { require=Boolean.parseBoolean(attrib.getValue());
+        }
+        else if (!super.checkUnitAttribute(attrib))
         { otherAttribs.add(attrib);
         }
       }
@@ -119,11 +122,7 @@ public class InsertUnit
    */
   public InsertElement bindContent(Focus<?> focus,Element parentElement)
     throws MarkupException,BindException
-  { 
-    InsertElement element=new InsertElement(parentElement);
-    element.setCodePosition(this.getPosition());
-    element.bind(focus,children);
-    return element;
+  { return (InsertElement) bind(focus,parentElement,new InsertElement());
   }
   
   @Override
@@ -176,20 +175,13 @@ public class InsertUnit
       DefineUnit defineUnit=this.findUnitInDocument(DefineUnit.class);
       if (defineUnit!=null)
       {  
-        element=new InsertIncludeElement(parentElement,defineUnit);
+        element=new InsertIncludeElement(defineUnit);
         
       }
       else
-      { element=new InsertIncludeElement(parentElement);
+      { element=new InsertIncludeElement();
       }
-      element.setCodePosition(this.getPosition());
-      try
-      { element.bind(focus,children);
-      }
-      catch (BindException x)
-      { throw new MarkupException(x.toString(),getPosition());
-      }
-      return element;
+      return bind(focus,parentElement,element);
     }
   }
   
@@ -199,9 +191,6 @@ public class InsertUnit
 class InsertElement
   extends Element
 {
-  public InsertElement(Element parent)
-  { super(parent);
-  }
   
   @Override
   public void render(EventContext context)
@@ -218,22 +207,20 @@ class InsertIncludeElement
   private DefineUnit defineUnit;
   private DefineElement ancestorInsert;
   
-  public InsertIncludeElement(Element parent)
-  { super(parent);
+  public InsertIncludeElement()
+  { super();
   }
   
-  public InsertIncludeElement(Element parent,DefineUnit defineUnit)
-  { 
-    super(parent);
-    this.defineUnit=defineUnit;
+  public InsertIncludeElement(DefineUnit defineUnit)
+  { this.defineUnit=defineUnit;
   }  
   
   @Override
-  public void bind(Focus<?> focus,List<TglUnit> children)
+  public Focus<?> bind(Focus<?> focus)
     throws BindException,MarkupException
   { 
     
-    
+    List<TglUnit> children=getScaffold().getChildren();
     if (defineUnit!=null)
     {
       // If the anonymous insert is inside a define unit, bind the default
@@ -260,7 +247,8 @@ class InsertIncludeElement
     
     }
 
-    super.bind(focus,children);
+    super.bindChildren(focus,children);
+    return focus;
   }
   
   @Override

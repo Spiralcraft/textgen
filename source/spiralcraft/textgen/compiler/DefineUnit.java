@@ -17,7 +17,6 @@ package spiralcraft.textgen.compiler;
 import java.io.IOException;
 import java.util.List;
 
-import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
 import spiralcraft.text.ParseException;
 import spiralcraft.text.markup.MarkupException;
@@ -66,7 +65,7 @@ public class DefineUnit
     super(parent,compiler.getPosition());
     this.tagName=tagName;
     if (tagName.startsWith("$"))
-    { publishedName=tagName.substring(1);
+    { publishedName=resolvePrefixedName(tagName.substring(1),null).toString();
     }
     allowsChildren=true;
     
@@ -134,24 +133,15 @@ public class DefineUnit
   { return tagName;
   }
   
-  @Override
   /**
    * The DefineUnit does not bind into it's container. Binding is deferred
    *   so the content can be bound into the referencing Insert unit.
    */
-  public Element bind(Focus<?> focus,Element parentElement)
-    throws MarkupException
-  { 
-    NullElement ret=new NullElement(parentElement);
-    try
-    { ret.bind(focus,null);
-    }
-    catch (BindException x)
-    { throw new MarkupException("Error binding null element",getPosition(),x);
-    }
-    return ret;
-    
+  @Override
+  public Element createElement()
+  { return new NullElement();
   }
+  
   
   /**
    * Find the bound reference to this DefineUnit within the ancestral
@@ -167,6 +157,9 @@ public class DefineUnit
     while (child!=null)
     {
       ret=child.findElement(DefineElement.class);
+      if (ret==null)
+      { throw new IllegalStateException("No DefineElement is parent of "+child);
+      }
       if (ret.isFromUnit(this))
       { break;
       }
@@ -266,20 +259,27 @@ public class DefineUnit
       log.debug("Could not resolve imported '"+publishedName+"'");
     }
     
-    DefineElement element=new DefineElement(parentElement,this,overlay);
-    try
-    { element.bind(focus,children);
-    }
-    catch (BindException x)
-    { throw new MarkupException(x.toString(),getPosition());
-    }
-    
-    return element;
+    DefineElement element=new DefineElement(this,overlay);
+    return bind(focus,parentElement,element);
   }
   
+  @Override
   public Element bindExtension(Attribute[] attribs,Focus<?> focus,Element parentElement,List<TglUnit> children)
     throws MarkupException
   { 
+    
+    // The attributes are 'values' for the formal parameters
+    //
+    // In this case, the attribute values should be treated as expressions
+    //   for a struct that will be put into the context.
+    //
+    // The struct will be defined by this Define element. 
+    //
+    // The expressions are evaluated on bind, or according to whatever the
+    //   field definition is.
+    //
+    // Some expressions can be defined as textual substitutions? 
+    
     if (attribs!=null && attribs.length>0)
     { throw new MarkupException("Unrecognized attribute "+attribs[0].getName(),getPosition());
     }
@@ -297,9 +297,8 @@ class DefineElement
   private final List<TglUnit> overlay;
   
   public DefineElement
-    (Element parentElement,DefineUnit unit,List<TglUnit> overlay)
+    (DefineUnit unit,List<TglUnit> overlay)
   { 
-    super(parentElement);
     this.setCodePosition(unit.getPosition());
     this.unit=unit;
     this.overlay=overlay;
