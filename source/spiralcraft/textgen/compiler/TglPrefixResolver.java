@@ -45,7 +45,7 @@ public class TglPrefixResolver
     { return super.resolvePrefix(name);
     }
     else
-    { return ElementUnit.DEFAULT_ELEMENT_PACKAGE;
+    { return TglUnit.DEFAULT_ELEMENT_PACKAGE;
     }
   }
   
@@ -53,7 +53,7 @@ public class TglPrefixResolver
   public Map<String,URI> computeMappings()
   { 
     Map<String,URI> computedMappings=super.computeMappings();
-    computedMappings.put("",ElementUnit.DEFAULT_ELEMENT_PACKAGE);
+    computedMappings.put("",TglUnit.DEFAULT_ELEMENT_PACKAGE);
     return computedMappings;
   }    
 }
