@@ -17,7 +17,6 @@ package spiralcraft.textgen.elements;
 import java.io.IOException;
 import java.net.URI;
 import java.util.LinkedList;
-import java.util.List;
 
 import spiralcraft.data.DataException;
 import spiralcraft.data.Type;
@@ -29,7 +28,6 @@ import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Message;
-import spiralcraft.textgen.compiler.TglUnit;
 
 /**
  * <p>Exposes an object reference via the Focus chain, via the
@@ -62,7 +60,7 @@ public class SharedReference<Treferent>
   
   
   @Override
-  public void bind(Focus<?> focusChain,List<TglUnit> childUnits)
+  public Focus<?> bind(Focus<?> focusChain)
     throws BindException,MarkupException
   { 
     if (type==null && typeX!=null)
@@ -77,7 +75,7 @@ public class SharedReference<Treferent>
         (type!=null?type.getURI():null,instanceURI,focusChain);
 
     
-    super.bind(reference.getFocus(),childUnits);
+    return super.bind(reference.getFocus());
   }
 
   /**

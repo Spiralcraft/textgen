@@ -17,7 +17,6 @@ package spiralcraft.textgen.elements;
 import java.io.IOException;
 import java.net.URI;
 import java.util.LinkedList;
-import java.util.List;
 
 import spiralcraft.data.DataException;
 import spiralcraft.data.Type;
@@ -25,7 +24,7 @@ import spiralcraft.data.persist.AbstractXmlObject;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.ThreadContextual;
+import spiralcraft.lang.Context;
 import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.text.markup.MarkupException;
@@ -33,7 +32,6 @@ import spiralcraft.textgen.Element;
 import spiralcraft.textgen.ElementState;
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Message;
-import spiralcraft.textgen.compiler.TglUnit;
 
 /**
  * <p>Exposes an object reference via the Focus chain, via the
@@ -93,7 +91,7 @@ public class LocalReference<Treferent>
   
   @Override
   @SuppressWarnings({"unchecked","rawtypes"}) // Not using generic versions
-  public void bind(Focus<?> parentFocus,List<TglUnit> childUnits)
+  public Focus<?> bind(Focus<?> parentFocus)
     throws BindException,MarkupException
   { 
     
@@ -112,7 +110,7 @@ public class LocalReference<Treferent>
     channel=new ThreadLocalChannel
       (BeanReflector.getInstance(ref.get().getClass()));
     
-    if (ThreadContextual.class.isAssignableFrom(ref.get().getClass()))
+    if (Context.class.isAssignableFrom(ref.get().getClass()))
     { 
       throw new BindException
         ("To properly use this ThreadContextual, use the "
@@ -123,7 +121,7 @@ public class LocalReference<Treferent>
     focus=new SimpleFocus(parentFocus,channel);
     focus.addFacet(getAssembly().getFocus());
     
-    super.bind(focus,childUnits);
+    return super.bind(focus);
   }
 
   

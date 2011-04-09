@@ -2,6 +2,7 @@ package spiralcraft.textgen.compiler;
 
 import java.io.IOException;
 
+import spiralcraft.lang.Focus;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
 
@@ -9,8 +10,9 @@ public class NullElement
     extends Element
 {
 
-  public NullElement(Element parent)
-  { super(parent);
+  @Override
+  public Focus<?> bind(Focus<?> focus)
+  { return focus;
   }
   
   @Override

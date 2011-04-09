@@ -33,7 +33,6 @@ import spiralcraft.textgen.Message;
 
 import spiralcraft.textgen.InitializeMessage;
 
-import spiralcraft.textgen.compiler.TglUnit;
 
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.util.LookaroundIterator;
@@ -41,7 +40,6 @@ import spiralcraft.util.LookaroundIterator;
 import java.io.IOException;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.LinkedList;
 
 /**
@@ -128,7 +126,7 @@ public class Iterate
   }
   
   @Override
-  public void bind(Focus<?> parentFocus,List<TglUnit> childUnits)
+  public Focus<?> bind(Focus<?> parentFocus)
     throws BindException,MarkupException
   { 
     Channel<?> target=null;
@@ -205,7 +203,7 @@ public class Iterate
     { log.fine("Iterator exposes "+valueChannel);
     }
     
-    bindChildren(currentFocus,childUnits);
+    return super.bind(currentFocus);
   }
   
   /**

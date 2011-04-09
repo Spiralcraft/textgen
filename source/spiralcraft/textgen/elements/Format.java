@@ -16,7 +16,6 @@ package spiralcraft.textgen.elements;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 
 import spiralcraft.lang.AccessException;
 import spiralcraft.lang.BindException;
@@ -28,7 +27,6 @@ import spiralcraft.lang.spi.AbstractChannel;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.compiler.TglUnit;
 
 /**
  * <p>Formats a date
@@ -60,7 +58,7 @@ public abstract class Format<T extends java.text.Format>
   }
   
   @Override
-  public void bind(Focus<?> parentFocus,List<TglUnit> childUnits)
+  public Focus<?> bind(Focus<?> parentFocus)
     throws BindException,MarkupException
   { 
     
@@ -89,7 +87,7 @@ public abstract class Format<T extends java.text.Format>
     formatLocal.set(createFormat());
 
     
-    super.bind(parentFocus,childUnits);
+    return super.bind(parentFocus);
   }
   
 

@@ -16,7 +16,6 @@ package spiralcraft.textgen.elements;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
@@ -26,7 +25,6 @@ import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.compiler.TglUnit;
 
 /**
  * <p>Computes a value at bind time and publishes the result
@@ -64,7 +62,7 @@ public class Constant<Tresult>
   }
   
   @Override
-  public final void bind(Focus<?> focus,List<TglUnit> childUnits)
+  public final Focus<?> bind(Focus<?> focus)
     throws BindException,MarkupException
   { 
     Channel<Tresult> temp=focus.bind(x);
@@ -80,7 +78,7 @@ public class Constant<Tresult>
     { focus.addAlias(alias);
     }
     
-    super.bind(focus,childUnits);
+    return super.bind(focus);
   }
 
   

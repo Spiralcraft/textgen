@@ -15,7 +15,7 @@
 package spiralcraft.textgen.elements;
 
 import java.text.SimpleDateFormat;
-import java.util.List;
+
 import java.util.TimeZone;
 
 import spiralcraft.lang.BindException;
@@ -23,7 +23,6 @@ import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.text.markup.MarkupException;
-import spiralcraft.textgen.compiler.TglUnit;
 
 /**
  * <p>Formats a date
@@ -71,13 +70,13 @@ public class DateFormat
   }
   
   @Override
-  public void bind(Focus<?> parentFocus,List<TglUnit> childUnits)
+  public Focus<?> bind(Focus<?> parentFocus)
     throws BindException,MarkupException
   { 
     if (timeZoneExpression!=null)
     { timeZone=parentFocus.bind(timeZoneExpression);
     }
     
-    super.bind(parentFocus,childUnits);
+    return super.bind(parentFocus);
   }
 }

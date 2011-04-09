@@ -26,14 +26,12 @@ import spiralcraft.textgen.ValueState;
 
 import spiralcraft.textgen.Message;
 
-import spiralcraft.textgen.compiler.TglUnit;
 
 import spiralcraft.text.markup.MarkupException;
 
 import java.io.IOException;
 
 import java.util.LinkedList;
-import java.util.List;
 
 
 /**
@@ -81,7 +79,7 @@ public class If
   
   @Override
   @SuppressWarnings("unchecked") // Not using generic versions
-  public void bind(Focus<?> parentFocus,List<TglUnit> childUnits)
+  public Focus<?> bind(Focus<?> parentFocus)
     throws BindException,MarkupException
   { 
     
@@ -109,7 +107,7 @@ public class If
         ("<%If%> requires a boolean expression, not a "+target.getContentType());
     }
     
-    bindChildren(parentFocus,childUnits);
+    super.bind(parentFocus);
     int childCount=getChildCount();
     for (int i=0;i<childCount;i++)
     { 
@@ -119,6 +117,7 @@ public class If
         break;
       }
     }
+    return parentFocus;
   }
   
   @Override

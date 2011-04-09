@@ -24,13 +24,11 @@ import spiralcraft.log.ClassLog;
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Element;
 
-import spiralcraft.textgen.compiler.TglUnit;
 
 import spiralcraft.text.markup.MarkupException;
 
 import java.io.IOException;
 
-import java.util.List;
 
 /**
  * <P>Provides a means for determining at which points the sort key or 
@@ -61,7 +59,7 @@ public class Group
   
   @Override
   @SuppressWarnings({ "unchecked", "rawtypes" }) // Not using generic versions
-  public void bind(Focus<?> parentFocus,List<TglUnit> childUnits)
+  public Focus<?> bind(Focus<?> parentFocus)
     throws BindException,MarkupException
   { 
     if (expression==null)
@@ -88,9 +86,8 @@ public class Group
       =new SimpleFocus(parentFocus,parentFocus.getSubject());
     focus.addFacet(getAssembly().getFocus());
 
+    return super.bind(focus);
     
-    
-    bindChildren(focus,childUnits);
   }
   
   

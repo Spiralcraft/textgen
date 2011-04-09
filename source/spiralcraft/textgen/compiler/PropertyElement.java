@@ -6,20 +6,16 @@ import spiralcraft.lang.Focus;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
 
-import java.util.List;
 
 public class PropertyElement
     extends Element
 {
-  
-  public PropertyElement(Element parent)
-  { super(parent);
-  }
 
   @Override
-  public void bind(Focus<?> focus,List<TglUnit> childUnits)
+  public Focus<?> bind(Focus<?> focus)
   { 
     // Stop binding here, rest of tree does not contain elements
+    return focus;
   }
   
   @Override

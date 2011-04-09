@@ -1,7 +1,6 @@
 package spiralcraft.textgen.compiler;
 
 import java.io.IOException;
-import java.util.List;
 
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
@@ -22,10 +21,8 @@ public class NamespaceElement
   
   private PrefixResolver resolver;
   
-  public NamespaceElement(Element parent,PrefixResolver resolver)
-  { 
-    super(parent);
-    this.resolver=resolver;
+  public NamespaceElement(PrefixResolver resolver)
+  { this.resolver=resolver;
   }
 
   
@@ -35,13 +32,14 @@ public class NamespaceElement
     renderChildren(context);
   }
   
+
   @Override
-  public void bind(Focus<?> focus,List<TglUnit> childUnits)
+  public Focus<?> bind(Focus<?> focus)
     throws BindException,MarkupException
   { 
     
     focus=focus.chain(resolver);
-    super.bind(focus,childUnits);
+    return super.bind(focus);
     
   }
 
