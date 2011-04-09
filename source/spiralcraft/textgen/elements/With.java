@@ -42,6 +42,7 @@ public class With<T>
 
   protected Binding<Boolean> holdWhileX;
   protected Binding<Object> triggerKeyX;
+  protected boolean defaultRecompute=true;
   
   /**
    * <p>An Expression that will cause the exported value to be held (not
@@ -106,22 +107,48 @@ public class With<T>
     { return super.computeExportValue(state);
     }
     
-    boolean recompute=true;
     
-    if (holdWhileX!=null 
-        && withState.getLastComputeTime()>0
-        && Boolean.TRUE.equals(holdWhileX.get())
-        )
-    { recompute=false;
-    }
+    boolean recompute=defaultRecompute;
     
-    if (triggerKeyX!=null)
+    if (defaultRecompute)
     {
-      if (!withState.trigger.update() 
-            && withState.getLastComputeTime()>0
-         )
+      // Recompute by default for each frame
+      
+      if (holdWhileX!=null 
+          && withState.getLastComputeTime()>0
+          && Boolean.TRUE.equals(holdWhileX.get())
+          )
       { recompute=false;
       }
+    
+      if (triggerKeyX!=null)
+      {
+        if (!withState.trigger.update() 
+              && withState.getLastComputeTime()>0
+           )
+        { recompute=false;
+        }
+      }
+    }
+    else
+    {
+      // Don't recompute by default (Session mode)
+      
+      if (withState.getLastComputeTime()<=0)
+      { recompute=true;
+      }
+      
+      if (!recompute
+          && holdWhileX!=null 
+          && !Boolean.TRUE.equals(holdWhileX.get())
+          )
+      { recompute=true;
+      }
+         
+      if (triggerKeyX!=null && withState.trigger.update())
+      { recompute=true;
+      }
+      
     }
     
     if (recompute)

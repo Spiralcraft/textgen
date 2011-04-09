@@ -16,7 +16,6 @@ package spiralcraft.textgen;
 
 import java.io.IOException;
 import java.util.LinkedList;
-import java.util.List;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
@@ -26,7 +25,6 @@ import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Message;
-import spiralcraft.textgen.compiler.TglUnit;
 
 /**
  * <p>Creates a new Focus in the Focus chain that provides the results of
@@ -53,7 +51,7 @@ public abstract class FocusElement<T>
   private boolean computeOnInitialize;
   
   @Override
-  public final void bind(Focus<?> focus,List<TglUnit> childUnits)
+  public final Focus<?> bind(Focus<?> focus)
     throws BindException,MarkupException
   { 
 
@@ -62,16 +60,15 @@ public abstract class FocusElement<T>
     Channel<T> target=bindSource(parentFocus);
     channel=new ThreadLocalChannel<T>(target.getReflector());
     
-    focus=parentFocus
-      .chain(getAssembly().getFocus().getSubject())
-      .chain(channel);
+    focus=parentFocus.chain(channel);
+    focus.addFacet(getAssembly().getFocus());
     
     focus=bindExports(focus);
     if (focus==null)
     { throw new BindException(getErrorContext()+": Focus cannot be null");
     }
     
-    super.bind(focus,childUnits);
+    return super.bind(focus);
   }
   
   /**
@@ -190,8 +187,11 @@ public abstract class FocusElement<T>
   @SuppressWarnings("unchecked")
   private final void push(EventContext context,Message message)
   { 
+    boolean frameChanged;
     if (!context.isStateful())
-    { channel.push(computeExportValue(null));
+    { 
+      frameChanged=true;
+      channel.push(computeExportValue(null));
     }
     else if (message!=null && message.getType()==InitializeMessage.TYPE)
     { 
@@ -205,15 +205,36 @@ public abstract class FocusElement<T>
       else
       { channel.push(null);
       }
+      frameChanged=false;
     }
     else
     {
       ValueState<T> state=(ValueState<T>) context.getState();
-      if (state.frameChanged(context.getCurrentFrame()) || !state.isValid())
+      frameChanged=state.frameChanged(context.getCurrentFrame());
+      if (frameChanged || !state.isValid())
       { state.setValue(computeExportValue(state));
       }
       channel.push(state.getValue());
     }
+    onRecompute(context);
+    if (frameChanged)
+    { onFrameChange(context);
+    }
+  }
+  
+  /**
+   * Called after the focus value is recomputed and published into the
+   *   context.
+   */
+  protected void onRecompute(EventContext context)
+  {
+  }
+  
+  /**
+   * Called when the state frame changed
+   */
+  protected void onFrameChange(EventContext context)
+  {
   }
   
   /**
