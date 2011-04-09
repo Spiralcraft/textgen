@@ -14,6 +14,7 @@
 //
 package spiralcraft.textgen;
 
+import spiralcraft.lang.Context;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
 import spiralcraft.log.ClassLog;
@@ -37,38 +38,47 @@ import java.net.URI;
 
 
 /**
- * <P>A compositional unit of a TGL document.
+ * <p>A compositional unit of a TGL document.
+ * </p>
  * 
- * <P>An Element may contain other Elements and/or content, forming a tree of
+ * <p>An Element may contain other Elements and/or content, forming a tree of
  *   Elements which generate output.
+ * </p>
  *   
- * <P>Elements are thread-safe, and thus must not maintain dynamic 
+ * <p>Elements are thread-safe, and thus must not maintain dynamic 
  *   state internally. An element resolves its state within the render()
  *   or message() methods, and uses the EventContext object to provide
  *   a reference its state.
+ * </p>
  *   
- * <P>The Elements associate with application specific runtime context via the
+ * <p>The Elements associate with application specific runtime context via the
  *   Focus, which is provided to the root Element by the container. Elements may
  *   extend this Focus to refine the context for their child elements. The
  *   spiralcraft.lang expression language is used to access application context
  *   through this Focus.
+ * </p>
  *   
- * <P>Elements are beans which are instantiated and configured 
+ * <p>Elements are beans which are instantiated and configured 
  *   (ie. parameterized) using the spiralcraft.builder package. Each Element
  *   is associated with an Assembly. The Assembly provides a means for 
  *   Elements to associate with other elements in the Element structure
  *   without those elements being adjacent to each other.
+ * </p>
  * 
- * <P>Elements are created by first instantiating them and applying the bean
+ * <p>Elements are created by first instantiating them and applying the bean
  *   properties specified in their TGL declarations. The Element is then bound
  *   to its already bound parent Element, where it is able to resolve any
- *   expressions by binding them to the Focus provided by its parent element. 
+ *   expressions by binding them to the Focus provided by its parent element.
+ * </p> 
  */
 public abstract class Element
 { 
 
   private Element[] children;
+  
   private Element parent;
+  private TglUnit scaffold;
+  
   private Assembly<?> assembly;
   private String id;
   private ArrayList<MessageHandler> handlers;
@@ -78,9 +88,14 @@ public abstract class Element
   protected DefineUnit skin;
   protected URI focusURI;
   
-  public Element(Element parent)
-  { this.parent=parent;
-  }
+  protected Context outerContext;
+  protected Context innerContext;
+  
+//  public Element(Element parent,Scaffold<?,Element,?> scaffold)
+//  { 
+//    this.parent=parent;
+//    this.scaffold=scaffold;
+//  }
   
   public Element()
   {
@@ -95,7 +110,7 @@ public abstract class Element
   }
   
   public ParsePosition getCodePosition()
-  { return this.position;
+  { return this.position!=null?this.position:scaffold.getPosition();
   }
   
   public void setSkin(DefineUnit skin)
@@ -126,9 +141,13 @@ public abstract class Element
   }
   
   protected String getErrorContext()
-  { return " "+position.toString()+(id!=null?" id=["+id+"]: ":" ");
+  { return " "+getCodePosition().toString()+(id!=null?" id=["+id+"]: ":" ");
   }
   
+  @Override
+  public String toString()
+  { return super.toString()+getErrorContext();
+  }
   // private int[] path;
 
   /**
@@ -225,6 +244,24 @@ public abstract class Element
     this.parent=parent;
   }
   
+  /**
+   * <p>Specify the Scaffold responsible for defining this Element and
+   *   its children
+   * </p>
+   * 
+   */
+  public void setScaffold(TglUnit scaffold)
+  { 
+    if (this.scaffold!=null)
+    { throw new IllegalStateException("Scaffold already specified");
+    }
+    this.scaffold=scaffold;
+  }
+  
+  public TglUnit getScaffold()
+  { return scaffold;
+  }
+  
   public Element getParent()
   { return parent;
   }
@@ -242,13 +279,34 @@ public abstract class Element
    * @throws BindException 
    * @throws MarkupException
    */
-  public void bind(Focus<?> focus,List<TglUnit> childUnits)
+//  public void bind(Focus<?> focus,List<TglUnit> childUnits)
+//    throws BindException,MarkupException
+//  { bindChildren(focus,childUnits);
+//  }
+  public Focus<?> bind(Focus<?> focus)
     throws BindException,MarkupException
-  { bindChildren(focus,childUnits);
+  { 
+    bindChildren(focus);
+    return focus;
   }
-
+  
   /**
-   * Called by bind to descend the containership hierarchy 
+   * <p>Binds the children provided by the scaffold, if any. Called by bind
+   *   to descend the containership hierarchy
+   * </p>
+   * 
+   * @param focus
+   * @throws BindException
+   * @throws MarkupException
+   */
+  protected final void bindChildren(Focus<?> focus)
+    throws BindException,MarkupException
+  { 
+    bindChildren(focus,scaffold!=null?scaffold.getChildren():null);
+  }
+  
+  /**
+   * Binds the specified children to this component. 
    * 
    * @param focus
    * @param childUnits
@@ -257,8 +315,12 @@ public abstract class Element
   protected final void bindChildren
     (Focus<?> focus,List<TglUnit> childUnits
     )
-    throws MarkupException
+    throws BindException,MarkupException
   {
+    if (innerContext!=null)
+    { focus=innerContext.bind(focus);
+    }
+    
     childUnits=expandChildren(focus,childUnits);
     if (skin!=null)
     {
@@ -330,24 +392,38 @@ public abstract class Element
     ,LinkedList<Integer> path
     )
   {    
-    if (handlers!=null)
-    {
-      for (MessageHandler handler: handlers)
-      { handler.handleMessage(context,message,false);
-      }
+    if (outerContext!=null)
+    { outerContext.push();
     }
     
-    relayMessage(context,message,path);
-
-    if (handlers!=null)
+    try
     {
-      for (MessageHandler handler: handlers)
-      { handler.handleMessage(context,message,true);
+      if (handlers!=null)
+      {
+        for (MessageHandler handler: handlers)
+        { handler.handleMessage(context,message,false);
+        }
+      }
+    
+      relayMessage(context,message,path);
+
+      if (handlers!=null)
+      {
+        for (MessageHandler handler: handlers)
+        { handler.handleMessage(context,message,true);
+        }
+      }
+    }
+    finally
+    { 
+      if (outerContext!=null)
+      { outerContext.pop();
       }
     }
 
   }
 
+  
   /**
    * <p>Relay a message to appropriate child elements as indicated by the
    *   path. 
@@ -364,6 +440,9 @@ public abstract class Element
     ,LinkedList<Integer> path
     )
   { 
+    if (innerContext!=null)
+    { innerContext.push();
+    }
     try
     {
       if (path!=null && !path.isEmpty())
@@ -386,6 +465,12 @@ public abstract class Element
     }
     catch (RuntimeException x)
     { throw new ElementRuntimeException(this,x);
+    }
+    finally
+    { 
+      if (innerContext!=null)
+      { innerContext.pop();
+      }
     }
     
   }
@@ -463,6 +548,23 @@ public abstract class Element
   protected final void renderChild(EventContext context,int index)
     throws IOException
   { 
+    if (innerContext!=null)
+    { innerContext.push();
+    }
+    try
+    { renderChildInContext(context,index);
+    }
+    finally
+    { 
+      if (innerContext!=null)
+      { innerContext.pop();
+      }
+    }
+  }
+  
+  private final void renderChildInContext(EventContext context,int index)
+    throws IOException
+  {
     if (context.isStateful())
     {
       ElementState state=context.getState();
@@ -486,13 +588,13 @@ public abstract class Element
    * @param context
    * @throws IOException
    */
-  protected void renderChildren(EventContext context)
+  protected final void renderChildren(EventContext context)
     throws IOException
   {
     if (children!=null)
     { 
       for (int i=0;i<children.length;i++)
-      { renderChild(context,i);
+      { renderChildInContext(context,i);
       }
     }
   }
