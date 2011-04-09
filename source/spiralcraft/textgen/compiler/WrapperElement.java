@@ -1,7 +1,6 @@
 package spiralcraft.textgen.compiler;
 
 import java.io.IOException;
-import java.util.List;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
@@ -36,7 +35,7 @@ public class WrapperElement
   }
   
   @Override
-  public void bind(Focus<?> focus,List<TglUnit> childUnits) 
+  public Focus<?> bind(Focus<?> focus) 
     throws MarkupException, BindException 
   { 
     
@@ -47,7 +46,7 @@ public class WrapperElement
       
     }
     focus=focus.chain(getAssembly().getFocus().getSubject());
-    super.bind(focus,childUnits);
+    return super.bind(focus);
   }
   
 
