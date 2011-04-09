@@ -27,21 +27,11 @@ public class IterationState
   private ArrayList<MementoState> children
     =new ArrayList<MementoState>();
   
-  private volatile StateFrame lastFrame;
-  
   public IterationState(int grandchildCount)
   { this.grandchildCount=grandchildCount;
   }
 
-  public boolean frameChanged(StateFrame frame)
-  {
-    if (lastFrame!=frame)
-    { 
-      lastFrame=frame;
-      return true;
-    }
-    return false;
-  }
+
   
   public ElementState ensureChild(int index,Object memento)
   { 

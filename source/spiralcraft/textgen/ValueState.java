@@ -29,7 +29,6 @@ public class ValueState<Tvalue>
 
   private volatile Tvalue value;
   private boolean valid;
-  private volatile StateFrame lastFrame;
   
   public ValueState(Element element)
   { super(element.getChildCount());
@@ -71,13 +70,5 @@ public class ValueState<Tvalue>
   { return valid;
   }
 
-  public boolean frameChanged(StateFrame frame)
-  {
-    if (lastFrame!=frame)
-    { 
-      lastFrame=frame;
-      return true;
-    }
-    return false;
-  }
+
 }

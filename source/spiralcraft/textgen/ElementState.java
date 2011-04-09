@@ -83,6 +83,7 @@ public class ElementState
   private ElementState parent;
   private final ElementState[] children;
   private int[] path;
+  private volatile StateFrame currentFrame;
   
   protected ElementState()
   { children=null;
@@ -160,6 +161,16 @@ public class ElementState
       
       child.resolve();
     }
+  }
+  
+  public final boolean frameChanged(StateFrame frame)
+  {
+    if (currentFrame!=frame)
+    { 
+      currentFrame=frame;
+      return true;
+    }
+    return false;
   }
   
   /**
