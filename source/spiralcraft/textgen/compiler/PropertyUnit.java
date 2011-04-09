@@ -113,13 +113,8 @@ public class PropertyUnit
   }
   
   @Override
-  public Element bind(Focus<?> focus,Element parentElement)
-    throws MarkupException
-  { 
-    // Properties don't have Elements that output anything directly
-    PropertyElement element=new PropertyElement(parentElement);
-    element.bind(focus,children);
-    return element;
+  protected Element createElement()
+  { return new PropertyElement();
   }
 
   @Override
