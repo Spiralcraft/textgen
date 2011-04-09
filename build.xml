@@ -5,7 +5,8 @@
   <property name="classpath" value="lib/spiralcraft-core.jar"/>
   <property name="test-classpath" value="lib/spiralcraft-core-test.jar"/>
   <property name="manifest.class.path" value="spiralcraft-core.jar"/>
-  
+  <property name="logs.dir" location="test/log"/>
+    
   <import file="../../build/build-spiralcraft-common.xml"/>
   
 </project>

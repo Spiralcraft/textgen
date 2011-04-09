@@ -4,6 +4,199 @@
   
   <scm:Change>
   
+    <revision>0.4.14
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>
+    </date>
+    
+            
+    <detail>
+      <scm:Change>
+        <revision>-dev1
+        </revision>
+
+        <notes>
+          <scm:Note>FocusElement extensibility improvements to support
+            recompute and frame change triggers
+          </scm:Note>
+          <scm:Note>Session extension of "With" Element to support
+            value persistence as default behavior.
+          </scm:Note>
+        </notes>
+        <path>source/spiralcraft/textgen/
+        </path>
+        <resources>
+          <URI>compiler/FocusElement.java
+          </URI>
+          <URI>elements/With.java
+          </URI>
+          <URI>elements/Session.java
+          </URI>
+        </resources>
+        
+        
+      </scm:Change>
+
+
+      <scm:Change>
+        <revision>-dev1
+        </revision>
+
+        <notes>
+          <scm:Note>Names for inserts and defines can now be qualified
+            with namespace prefixes.
+          </scm:Note>
+        </notes>
+        <path>source/spiralcraft/textgen/compiler
+        </path>
+        <resources>
+          <URI>compiler/TglCompiler.java
+          </URI>
+          <URI>compiler/InsertUnit.java
+          </URI>
+          <URI>compiler/DefineUnit.java
+          </URI>
+        </resources>
+        
+        
+      </scm:Change>
+
+      <scm:Change>
+        <revision>-dev1
+        </revision>
+
+        <notes>
+          <scm:Note>spiralcraft.common.namespace.QName is now used to
+            represent qualified names.
+          </scm:Note>
+        </notes>
+        <path>source/spiralcraft/textgen
+        </path>
+        <resources>
+          <URI>compiler/TglUnit.java
+          </URI>
+          <URI>compiler/TglPrefixResolver.java
+          </URI>
+          <URI>compiler/ElementUnit.java
+          </URI>
+          <URI>compiler/IncludeUnit.java
+          </URI>
+        </resources>
+        
+        
+      </scm:Change>
+      
+      <scm:Change>
+        <revision>-dev1
+        </revision>
+
+        <notes>
+          <scm:Note>StateFrame change detection has been promoted to
+            base ElementState class.
+          </scm:Note>
+        </notes>
+        <path>source/spiralcraft/textgen
+        </path>
+        <resources>
+          <URI>Element.java
+          </URI>
+          <URI>ElementState.java
+          </URI>
+          <URI>ValueState.java
+          </URI>
+          <URI>IterationState.java
+          </URI>
+        </resources>
+      </scm:Change>
+      
+      <scm:Change>
+        <revision>-dev1
+        </revision>
+        
+        <notes>
+          <scm:Note>Refactor to migrate closer to common component model
+            in spiralcraft.app package
+          </scm:Note>
+          <scm:Note>Signature of Element.bind is now almost identical to
+            spiralcraft.app.Component.bind, and Element has no-arg 
+            constructor.
+          </scm:Note>
+          <scm:Note>Signature of TglUnit.bind now conforms to Scaffold.bind.
+            Element now uses Scaffold interface to supply children.
+          </scm:Note>
+          <scm:Note>Element supports the use of inner and outer Context 
+            chains to allow for more generic expression of component
+            functionality.
+          </scm:Note>
+        </notes>
+        <path>source/spiralcraft/textgen
+        </path>
+        <resources>
+          <URI>Element.java
+          </URI>
+          <URI>compiler/WrapperElement.java
+          </URI>
+          <URI>compiler/TglUnit.java
+          </URI>
+          <URI>compiler/RendererElement.java
+          </URI>
+          <URI>compiler/PropertyUnit.java
+          </URI>
+          <URI>compiler/PropertyElement.java
+          </URI>
+          <URI>compiler/NullElement.java
+          </URI>
+          <URI>compiler/NamespaceUnit.java
+          </URI>
+          <URI>compiler/NamespaceElement.java
+          </URI>
+          <URI>compiler/InsertUnit.java
+          </URI>
+          <URI>compiler/DefineUnit.java
+          </URI>
+          <URI>compiler/CommentUnit.java
+          </URI>
+          <URI>compiler/ContentUnit.java
+          </URI>
+          <URI>compiler/DocletUnit.java
+          </URI>
+          <URI>compiler/ElementFactory.java
+          </URI>
+          <URI>compiler/ExpressionUnit.java
+          </URI>
+          <URI>compiler/IncludeUnit.java
+          </URI>
+          <URI>compiler/FocusChainElement.java
+          </URI>
+          <URI>elements/Constant.java
+          </URI>
+          <URI>elements/DateFormat.java
+          </URI>
+          <URI>elements/Format.java
+          </URI>
+          <URI>elements/Group.java
+          </URI>
+          <URI>elements/If.java
+          </URI>
+          <URI>elements/Iterate.java
+          </URI>
+          <URI>elements/LocalReference.java
+          </URI>
+          <URI>elements/SharedReference.java
+          </URI>
+          <URI>elements/With.java
+          </URI>
+        </resources>
+      </scm:Change>
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
+  
     <revision>0.4.13
     </revision>
     
