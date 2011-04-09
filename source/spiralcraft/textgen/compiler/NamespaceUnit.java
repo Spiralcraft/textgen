@@ -14,11 +14,6 @@
 //
 package spiralcraft.textgen.compiler;
 
-
-import spiralcraft.lang.BindException;
-import spiralcraft.lang.Focus;
-
-
 import spiralcraft.common.namespace.PrefixResolver;
 
 import spiralcraft.textgen.Element;
@@ -28,7 +23,6 @@ import spiralcraft.text.xml.Attribute;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-
 
 import spiralcraft.text.markup.MarkupException;
 
@@ -103,20 +97,8 @@ public class NamespaceUnit
   }
     
   @Override
-  public Element bind(Focus<?> focus,Element parentElement)
-    throws MarkupException
-  {
-    NamespaceElement element
-      =new NamespaceElement
-        (parentElement,getNamespaceResolver());
-    
-    try
-    { element.bind(focus,children);
-    }
-    catch (BindException x)
-    { throw new MarkupException(x.toString(),getPosition());
-    }
-    
-    return element;
+  public Element createElement()
+  { return new NamespaceElement(getNamespaceResolver());
   }
+
 }
