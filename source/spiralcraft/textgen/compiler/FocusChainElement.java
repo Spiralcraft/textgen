@@ -2,14 +2,13 @@ package spiralcraft.textgen.compiler;
 
 import java.io.IOException;
 import java.util.LinkedList;
-import java.util.List;
 
 import spiralcraft.common.Lifecycle;
 import spiralcraft.common.LifecycleException;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Contextual;
-import spiralcraft.lang.ThreadContextual;
+import spiralcraft.lang.Context;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
@@ -28,7 +27,7 @@ public class FocusChainElement
 
   private final Object object;
   private final Contextual fco;
-  private final ThreadContextual tfco;
+  private final Context tfco;
   
   public FocusChainElement(Object object)
   { 
@@ -40,8 +39,8 @@ public class FocusChainElement
     { fco=null;
     }
     
-    if (object instanceof ThreadContextual)
-    { tfco=(ThreadContextual) object;
+    if (object instanceof Context)
+    { tfco=(Context) object;
     }
     else
     { tfco=null;
@@ -55,19 +54,19 @@ public class FocusChainElement
 
 
   @Override
-  public void bind(Focus<?> focus,List<TglUnit> childUnits) 
+  public Focus<?> bind(Focus<?> context) 
     throws MarkupException, BindException 
   { 
     
-    
+    Focus<?> focus;
     if (fco!=null)
-    { focus=fco.bind(focus);
+    { focus=fco.bind(context);
     }
     else
-    { focus=focus.chain(getAssembly().getFocus().getSubject());
+    { focus=context.chain(getAssembly().getFocus().getSubject());
     }
     focus.addFacet(getAssembly().getFocus());
-    super.bind(focus,childUnits);
+    super.bind(focus);
     
     if (object instanceof Lifecycle)
     { 
@@ -78,6 +77,7 @@ public class FocusChainElement
       { throw new BindException("Error starting object "+object,x);
       }
     }
+    return focus;
   }
   
   @Override
