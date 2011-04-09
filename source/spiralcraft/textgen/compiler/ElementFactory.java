@@ -269,7 +269,6 @@ public class ElementFactory
       element.setCodePosition(position);
       element.setAssembly(assembly);
       assembly.getFocus().addAlias(focusURI);
-      element.setParent(parentElement);
       element.setFocusURI(focusURI);
       
       if (properties!=null)

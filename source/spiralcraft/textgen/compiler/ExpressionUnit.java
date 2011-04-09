@@ -26,8 +26,6 @@ import java.net.URI;
 
 import java.io.IOException;
 
-import java.util.List;
-
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
 
@@ -144,39 +142,24 @@ public class ExpressionUnit
     throws MarkupException
   { open=false;
   }
-
   
   @Override
-  public Element bind(Focus<?> focus,Element parentElement)
-    throws MarkupException
-  { 
-    Element element=new ExpressionElement(parentElement);
-    element.setCodePosition(this.getPosition());
-    try
-    { element.bind(focus,children);
-    }
-    catch (BindException x)
-    { throw new MarkupException(x.toString(),getPosition(),x);
-    }
-    return element;
+  public Element createElement()
+  { return new ExpressionElement();
   }
-
+  
 
   class ExpressionElement
     extends Element
   { 
     
     private Channel<?> _source;
-    
-    public ExpressionElement(Element parent)
-    { super(parent);
-    }
+
     
     @Override
-    public void bind(Focus<?> focus,List<TglUnit> children)
+    public Focus<?> bind(Focus<?> focus)
       throws BindException,MarkupException
     { 
-      super.bind(focus,children);
       try
       {
         _source=focus.bind(expression);
@@ -190,6 +173,8 @@ public class ExpressionUnit
           ,x
           );
       }
+      return super.bind(focus);
+
     }
     
     @Override

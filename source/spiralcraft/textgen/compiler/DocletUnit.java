@@ -17,14 +17,7 @@ package spiralcraft.textgen.compiler;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
 
-import spiralcraft.text.markup.MarkupException;
 import spiralcraft.text.markup.Unit;
-
-
-import spiralcraft.lang.Focus;
-import spiralcraft.lang.BindException;
-
-
 import java.io.IOException;
 
 import java.net.URI;
@@ -121,37 +114,21 @@ public class DocletUnit
   }
   
   @Override
-  public Element bind(Focus<?> focus,Element parentElement)
-    throws MarkupException
-  { 
-    Element element=new RootElement(parentElement);
-    element.setCodePosition(this.getPosition());
-    try
-    { element.bind(focus,children);
-    }
-    catch (BindException x)
-    { throw new MarkupException(x.toString(),getPosition());
-    }
-    
-    return element;
+  public Element createElement()
+  { return new RootElement();
   }
   
+    
   class RootElement
     extends Element
   {
-
-    
-    public RootElement(Element parentElement)
-    { super(parentElement);
-    }
     
     @Override
     public URI getContextURI()
     { return resource.getURI();
     }
     
-
-    
+   
     @Override
     public void render(EventContext context)
       throws IOException
