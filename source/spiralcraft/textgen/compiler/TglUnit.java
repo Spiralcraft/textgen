@@ -17,9 +17,11 @@ package spiralcraft.textgen.compiler;
 import java.io.PrintWriter;
 
 import spiralcraft.common.namespace.PrefixResolver;
+import spiralcraft.common.namespace.QName;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
+import spiralcraft.scaffold.Scaffold;
 import spiralcraft.log.ClassLog;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
@@ -42,6 +44,7 @@ import java.util.List;
  */
 public abstract class TglUnit
   extends Unit<TglUnit>
+  implements Scaffold<TglUnit,Element,MarkupException>
 {
   protected final ClassLog log
     =ClassLog.getInstance(getClass());
@@ -54,10 +57,17 @@ public abstract class TglUnit
 
   private TglPrefixResolver prefixResolver;
   
+  public static final URI DEFAULT_ELEMENT_PACKAGE
+    =URI.create("class:/spiralcraft/textgen/elements/");
+  
   public TglUnit(TglUnit parent)
   { super(parent);
   }
   
+  @Override
+  public TglUnit getParent()
+  { return parent;
+  }
   
   public boolean isExported()
   { return exported;
@@ -133,6 +143,43 @@ public abstract class TglUnit
   }
   
   /**
+   * A tag name in the form <code>&lt;%namespace:name ... %&gt;</code> 
+   * 
+   * @throws ParseException
+   */
+  protected QName resolvePrefixedName(String name,URI defaultPackage)
+    throws ParseException
+  { 
+        
+    int nspos=name.indexOf(':');
+    if (nspos>-1)
+    {  
+      PrefixResolver resolver
+        =getNamespaceResolver();
+      
+      URI elementPackage
+        = resolver!=null
+        ? resolver.resolvePrefix(name.substring(0,nspos))
+        : null
+        ;
+           
+      if (elementPackage==null)
+      { 
+        throw new ParseException
+          ("Namespace prefix '"+name.substring(0,nspos)+"' not found"
+          ,getPosition()
+          );
+      }
+      
+      return new QName(elementPackage,name.substring(nspos+1));
+    }
+    else
+    { 
+      return new QName(defaultPackage,name);
+    }
+  }  
+  
+  /**
    * Finds a unit that is an ancestor in the containership hierarchy within
    *   the scope of the current document.
    * 
@@ -176,13 +223,21 @@ public abstract class TglUnit
   }
     
   /**
-   * <P>Create a tree of Elements bound into an application context
+   * <p>Create a tree of Elements bound into an application context
    *   (the Assembly) which implements the functional behavior 
    *   specified by the TGL document.
+   * </p>
    */
-  public abstract Element bind(Focus<?> focus,Element parentElement)
-    throws MarkupException;
+  @Override
+  public Element bind(Focus<?> focus,Element parentElement)
+    throws MarkupException
+  { return bind(focus,parentElement,createElement());
+  }
 
+  protected Element createElement()
+  { return new DefaultElement();
+  }
+  
   /**
    * Extend this Unit by applying the specified set of attributes and using the supplied children as content
    *   instead of this Unit's own children.
@@ -216,15 +271,29 @@ public abstract class TglUnit
   
   protected Element defaultBind(Focus<?> focus,Element parentElement)
     throws MarkupException
-  { 
-    Element element=new DefaultElement(parentElement);
+  { return bind(focus,parentElement,new DefaultElement());
+  }
+  
+  
+  protected Element bind
+    (Focus<?> focus
+    ,Element parentElement
+    ,Element unboundElement
+    )
+    throws MarkupException
+  {
+    unboundElement.setParent(parentElement);
+    unboundElement.setScaffold(this);
     try
-    { element.bind(focus,children);
+    { unboundElement.bind(focus);
+    }
+    catch (RuntimeException x)
+    { throw new MarkupException(x.toString(),getPosition(),x);
     }
     catch (BindException x)
     { throw new MarkupException(x.toString(),getPosition(),x);
     }
-    return element;
+    return unboundElement;
   }
   
   protected boolean checkUnitAttribute(Attribute attrib)
@@ -397,9 +466,6 @@ public abstract class TglUnit
 class DefaultElement
   extends Element
 {
-  public DefaultElement(Element parent)
-  { super(parent);
-  }
   
   @Override
   public void render(EventContext context)
