@@ -82,12 +82,26 @@ public class ElementFactory
     { 
       for (int i=0;i<attributes.length;i++)
       { 
-        PropertySpecifier specifier
-          =new PropertySpecifier
+        
+        PropertySpecifier specifier;
+        String name=attributes[i].getName();
+        
+        if (name.startsWith("$"))
+        {
+          specifier=new PropertySpecifier
+            (assemblyClass
+              ,name.substring(1)
+            );
+          specifier.setExpression(attributes[i].getValue());
+        }
+        else
+        {
+          specifier=new PropertySpecifier
             (assemblyClass
               ,attributes[i].getName()
               ,attributes[i].getValue()
             );
+        }
         specifier.setPrefixResolver(prefixResolver);
         assemblyClass.addPropertySpecifier
           (specifier);

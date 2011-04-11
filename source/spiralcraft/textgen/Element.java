@@ -33,6 +33,7 @@ import spiralcraft.textgen.compiler.TglUnit;
 
 import spiralcraft.text.ParsePosition;
 import spiralcraft.text.markup.MarkupException;
+import spiralcraft.text.xml.Attribute;
 
 import java.net.URI;
 
@@ -324,7 +325,8 @@ public abstract class Element
     childUnits=expandChildren(focus,childUnits);
     if (skin!=null)
     {
-      Element skinElement=skin.bindContent(focus,this,childUnits);
+      Element skinElement
+        =skin.bindContent(new Attribute[0],focus,this,childUnits);
       children=new Element[1];
       children[0]=skinElement;
     }

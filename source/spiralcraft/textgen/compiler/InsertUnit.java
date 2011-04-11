@@ -89,7 +89,9 @@ public class InsertUnit
       // Form <%refname ...
       if (this.referencedName==null)
       {
-        this.referencedName=resolvePrefixedName(tagName,null).toString();
+        this.referencedName
+          =resolvePrefixedName(tagName,TglUnit.DEFAULT_ELEMENT_PACKAGE)
+            .toString();
         this.require=true;
       }
       

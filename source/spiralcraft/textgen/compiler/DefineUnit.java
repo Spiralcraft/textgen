@@ -17,7 +17,14 @@ package spiralcraft.textgen.compiler;
 import java.io.IOException;
 import java.util.List;
 
+import spiralcraft.common.namespace.QName;
+import spiralcraft.lang.BindException;
+import spiralcraft.lang.Channel;
+import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
+import spiralcraft.lang.Setter;
+import spiralcraft.lang.kit.ConstantChannel;
+import spiralcraft.lang.util.DictionaryBinding;
 import spiralcraft.text.ParseException;
 import spiralcraft.text.markup.MarkupException;
 
@@ -35,19 +42,23 @@ public class DefineUnit
 {
   
   private String publishedName;
-  private boolean imported;
+  private final boolean virtual;
   private String tagName;
   private boolean inDoclet;
+  private Expression<?> contextX;
   
   public DefineUnit
     (TglUnit parent
     ,TglCompiler<?> compiler
     ,String importName
     )
+    throws ParseException
   { 
     super(parent,compiler.getPosition());
-    publishedName=importName;
-    imported=true;
+    publishedName
+      =resolvePrefixedName
+        (importName,TglUnit.DEFAULT_ELEMENT_PACKAGE).toString();
+    virtual=true;
     debug=parent.debug;
     inDoclet=parent instanceof DocletUnit;
     
@@ -63,9 +74,12 @@ public class DefineUnit
     throws MarkupException,ParseException
   { 
     super(parent,compiler.getPosition());
+    this.virtual=false;
     this.tagName=tagName;
     if (tagName.startsWith("$"))
-    { publishedName=resolvePrefixedName(tagName.substring(1),null).toString();
+    { publishedName
+        =resolvePrefixedName
+          (tagName.substring(1),TglUnit.DEFAULT_ELEMENT_PACKAGE).toString();
     }
     allowsChildren=true;
     
@@ -87,7 +101,8 @@ public class DefineUnit
         {
           name=name.trim();
           define
-            (name
+            (resolvePrefixedName
+              (name,TglUnit.DEFAULT_ELEMENT_PACKAGE).toString()
             ,new DefineUnit
               (this
               ,compiler
@@ -96,6 +111,18 @@ public class DefineUnit
             );
         }
         
+      }
+      else if (attrib.getName().equals("x"))
+      { 
+        
+        try
+        { contextX=Expression.parse(attrib.getValue());
+        }
+        catch (spiralcraft.lang.ParseException x)
+        { 
+          throw new ParseException
+            ("Error parsing attribute 'x' context expression",getPosition(),x);
+        }
       }
       else if (super.checkUnitAttribute(attrib))
       {
@@ -117,12 +144,6 @@ public class DefineUnit
     
 
   }
-  
-  public boolean isImported()
-  { return imported;
-  }
-  
-
   
   public String getPublishedName()
   { return publishedName;
@@ -187,19 +208,23 @@ public class DefineUnit
    * @throws MarkupException
    */
   public Element bindContent
-    (Focus<?> focus,Element parentElement,List<TglUnit> overlay)
+    (Attribute[] attribs
+    ,Focus<?> focus
+    ,Element parentElement
+    ,List<TglUnit> overlay
+    )
     throws MarkupException
   {
     
     
-    
-    // If this is an imported define, the parentElement will be the parent
-    //   of the insert that referenced us, which is in the local set.
-    //   We can find the DefineElement that binds our block into the target
-    //   location and look up our import in its children. 
-    
-    if (imported)
+   
+    if (virtual)
     { 
+      // If this is an imported (virtual) define, it is a placeholder that will
+      //   resolve another Define from within the importing Element.
+      //
+      //  We can find the real DefineElement with the same name inside the 
+      //   container that references our parent container.
 
       if (!inDoclet)
       {
@@ -220,7 +245,7 @@ public class DefineUnit
             { 
               DefineUnit subst=(DefineUnit) child;
               if (subst.getPublishedName().equals(publishedName))
-              { return subst.bindContent(focus,parentElement,children);
+              { return subst.bindContent(attribs,focus,parentElement,children);
               }
             }
           }
@@ -232,6 +257,8 @@ public class DefineUnit
       }
       else
       {
+        // We're a virtual define at the top level of a tgl doclet
+        
         TglUnit includer=parent.getParent();
         if (includer!=null)
         {
@@ -246,7 +273,7 @@ public class DefineUnit
             { 
               DefineUnit subst=(DefineUnit) child;
               if (subst.getPublishedName().equals(publishedName))
-              { return subst.bindContent(focus,parentElement,children);
+              { return subst.bindContent(attribs,focus,parentElement,children);
               }
             }                  
           }
@@ -254,17 +281,106 @@ public class DefineUnit
       }
     }
 
-    if (imported && debug)
+    if (virtual && debug)
     {
       log.debug("Could not resolve imported '"+publishedName+"'");
     }
     
     DefineElement element=new DefineElement(this,overlay);
+    if (contextX!=null)
+    { focus=bindContext(focus,attribs);
+    }
+    else if (attribs!=null && attribs.length>0)
+    { throw new MarkupException("Unrecognized attribute "+attribs[0].getName(),getPosition());
+    }    
+    
     return bind(focus,parentElement,element);
   }
   
+  
+  @SuppressWarnings({ "unchecked", "rawtypes" })
+  private Focus<?> bindContext(Focus<?> focus,Attribute[] attribs)
+    throws MarkupException
+  {
+    Channel<?> context;
+    try
+    { context=new ConstantChannel(focus.bind(contextX));
+    }
+    catch (BindException x)
+    { 
+      throw new MarkupException
+        ("Error binding context expression for define",getPosition(),x);
+    }
+    Focus<?> contextFocus=focus.chain(context);
+    contextFocus.addAlias(new QName(publishedName).toURIPath());
+    focus=focus.chain(focus.getSubject());
+    focus.addFacet(contextFocus);
+    
+    if (attribs!=null)
+    {
+      for (Attribute attrib:attribs)
+      { 
+        String name=attrib.getName();
+        try
+        {
+          if (name.startsWith("$"))
+          { 
+            Channel source=focus.bind(Expression.create(attrib.getValue()));
+            if (!source.isConstant())
+            { 
+              throw new MarkupException
+                ("Attribute "+attrib.getName()
+                +" expression `"+attrib.getValue()+"` is not constant, and"
+                +" cannot be used for bind-time context"
+                ,getPosition()
+                );
+            }
+            
+            Setter setter
+              =new Setter
+                (source
+                ,contextFocus.bind(Expression.create(name.substring(1)))
+                );
+            if (!setter.set())
+            {
+              throw new MarkupException
+                ("Attribute "+attrib.getName()
+                +" could not be applied",getPosition()
+                );
+            }
+            
+          }
+          else
+          {
+            DictionaryBinding attribBinding
+              =new DictionaryBinding(attrib.getName());
+            attribBinding.bind(contextFocus);
+            attribBinding.set(attrib.getValue());
+          }
+        }
+        catch (BindException x)
+        {
+          throw new MarkupException
+            ("Error binding context expression for define",getPosition(),x);
+        }
+        catch (spiralcraft.lang.ParseException x)
+        {
+          throw new MarkupException
+            ("Error in attribute name",getPosition(),x);
+        }
+        
+      }
+    }
+    return focus;
+  }
+  
   @Override
-  public Element bindExtension(Attribute[] attribs,Focus<?> focus,Element parentElement,List<TglUnit> children)
+  public Element bindExtension
+    (Attribute[] attribs
+    ,Focus<?> focus
+    ,Element parentElement
+    ,List<TglUnit> children
+    )
     throws MarkupException
   { 
     
@@ -279,11 +395,7 @@ public class DefineUnit
     //   field definition is.
     //
     // Some expressions can be defined as textual substitutions? 
-    
-    if (attribs!=null && attribs.length>0)
-    { throw new MarkupException("Unrecognized attribute "+attribs[0].getName(),getPosition());
-    }
-    return bindContent(focus,parentElement,children);
+    return bindContent(attribs,focus,parentElement,children);
   }
   
   
