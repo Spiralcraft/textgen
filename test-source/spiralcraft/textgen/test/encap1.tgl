@@ -1,0 +1,25 @@
+<%$myIteration 
+  x='{groupX:=`address.city`,nameX:=`displayName`}'
+  %>
+  <%Iterate%>
+    <%Group%><%.x x="[myIteration].groupX"/%>
+
+      <%GroupHeader%>
+        -- Starting <%Out $x="[myIteration].groupX"/%>
+      <%/GroupHeader%>
+
+    id=[<%=id/%>]
+    <%=[myIteration].nameX.getText()/%>=<%Out $x="[myIteration].nameX"/%>
+    <%=[myIteration].groupX.getText()/%>=[<%Out $x="[myIteration].groupX"/%>]
+    
+      <%GroupFooter%>
+        -- Ending <%Out $x="[myIteration].groupX"/%>
+      <%/GroupFooter%>
+
+    <%/Group%>
+  <%/Iterate%>
+<%/$myIteration%>
+
+<%myIteration groupX="address.city" nameX="displayName"/%>
+
+<%myIteration groupX="address.city.toUpperCase()" nameX="displayName.toUpperCase()"/%>

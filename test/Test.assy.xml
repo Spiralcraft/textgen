@@ -160,6 +160,27 @@
               </testX>
           
             </test:Assertion>            
+            <test:Assertion>
+        
+              <name>Encapsulation 1
+              </name>
+          
+              <subjectX>
+                [*dtask:Fetch{[*query:Scan{[@example:Customer].type}]}].()
+                .[*tg:Render
+                  {templateURI
+                    :=[*jnet:URI
+                        {"class:/spiralcraft/textgen/test/encap1.tgl"
+                        }
+                      ]
+                  }
+                ]
+              </subjectX>
+          
+              <testX>true
+              </testX>
+          
+            </test:Assertion>        
           </scenarios>
         </task:Sequence>
       

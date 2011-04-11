@@ -20,6 +20,47 @@
         </revision>
 
         <notes>
+          <scm:Note>"Out" element to output of result of expression.
+          </scm:Note>
+        </notes>
+        <path>source/spiralcraft/textgen/elements/Out.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+        <revision>-dev1
+        </revision>
+
+        <notes>
+          <scm:Note>Support parameterized Inserts using attributes
+            and contextX property of Define.
+          </scm:Note>
+          <scm:Note>Support using bind-time expressions for attribute
+            values with "$" attribute prefix.
+          </scm:Note>
+        </notes>
+        <path>source/spiralcraft/textgen/
+        </path>
+        <resources>
+          <URI>Element.java
+          </URI>
+          <URI>compiler/DefineUnit.java
+          </URI>
+          <URI>compiler/ElementFactory.java
+          </URI>
+          <URI>compiler/InsertUnit.java
+          </URI>
+        </resources>
+        
+        
+      </scm:Change>
+
+      <scm:Change>
+        <revision>-dev1
+        </revision>
+
+        <notes>
           <scm:Note>FocusElement extensibility improvements to support
             recompute and frame change triggers
           </scm:Note>
