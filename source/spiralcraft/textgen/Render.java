@@ -17,6 +17,7 @@ package spiralcraft.textgen;
 import java.io.IOException;
 import java.net.URI;
 
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.AccessException;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
@@ -26,7 +27,6 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.lang.spi.AbstractChannel;
 import spiralcraft.lang.spi.ClosureFocus;
-import spiralcraft.text.ParseException;
 import spiralcraft.vfs.util.ByteArrayResource;
 
 /**
@@ -86,7 +86,7 @@ public class Render<T>
     catch (IOException x)
     { throw new BindException("Error loading template "+templateURI,x);
     }
-    catch (ParseException x)
+    catch (ContextualException x)
     { throw new BindException("Error loading template "+templateURI,x);
     }    
     return new RenderChannel();
