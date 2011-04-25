@@ -14,44 +14,46 @@
 //
 package spiralcraft.textgen.elements;
 
-import java.io.IOException;
-
 import spiralcraft.lang.BindException;
-import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.util.DictionaryBinding;
 
-import spiralcraft.text.xml.AttributeEncoder;
-import spiralcraft.text.xml.XmlEncoder;
 
-import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.ExpressionFocusElement;
-import spiralcraft.textgen.Renderer;
+import spiralcraft.textgen.kit.StandardElement;
+import spiralcraft.textgen.kit.TagRenderHandler;
 
 /**
- * <p>Encloses contents in an arbitrary XML tag along with bound attributes
+ * <p>Encloses contents in an arbitrary XML tag
  * </p>
  * 
  * @author mike
  */
-public class XML<T>
-  extends ExpressionFocusElement<T>
+public class XML
+  extends StandardElement
 {
   
   private String name;
-  private DictionaryBinding<?>[] attributeBindings;
-  private DictionaryBinding<?> contentBinding;
+  private TagRenderHandler renderer
+    =new TagRenderHandler()
+    {
+
+      @Override
+      protected String getName()
+      { return name;
+      }
+
+      @Override
+      protected boolean hasContent()
+      {
+        // TODO Auto-generated method stub
+        return hasChildren();
+      }
+    };
   
-  @SuppressWarnings("rawtypes") // We don't care
-  private Expression contentExpression;
-  
-  private AttributeEncoder attributeEncoder = new AttributeEncoder();
-  private XmlEncoder contentEncoder = new XmlEncoder();
-  private boolean hasContent;
-  
-  { setRenderer(new XMLRenderer());
+  { addHandler(renderer);
   }
-  
+
+
   /**
    * The tag name
    * 
@@ -67,111 +69,20 @@ public class XML<T>
    * @param bindings
    */
   public void setAttributeBindings(DictionaryBinding<?>[] bindings)
-  { this.attributeBindings=bindings; 
+  { this.renderer.setAttributeBindings(bindings); 
   }
   
-  /**
-   * <p>The expression to evaluate and XML encode which will be output between
-   *   the begin and end tags of the this XML Element. 
-   * </p>
-   * 
-   * @param bindings
-   */
-  public void setContentX(Expression<?> contentX)
-  { this.contentExpression=contentX; 
-  }
+
   
-  @SuppressWarnings({ "unchecked", "rawtypes" })
   @Override
   protected Focus<?> bindExports(Focus<?> focusChain) 
     throws BindException 
   { 
-    if (attributeBindings!=null)
-    { 
-      for (DictionaryBinding<?> binding : attributeBindings)
-      { binding.bind(focusChain);
-      }
-    }
-    if (contentExpression!=null)
-    { 
-      contentBinding=new DictionaryBinding();
-      contentBinding.setTarget(contentExpression);
-      hasContent=true;
-    }
+
     return focusChain;
   }
 
 
-  private void renderAttributes(Appendable writer)
-    throws IOException
-  { 
-    if (attributeBindings!=null)
-    { 
-      for (DictionaryBinding<?> binding:attributeBindings)
-      {
-        String value=binding.get();
-        if (value!=null)
-        { 
-          writer.append(" ");
-          writer.append(binding.getName());
-          writer.append(" = \"");
-          attributeEncoder.encode(binding.get(),writer);
-          writer.append("\"");
-        
-        }
-      }
-      
-    }
-    
-  }
-  
-  private void renderContent(EventContext context)
-    throws IOException
-  {
-    if (contentBinding!=null)
-    { contentEncoder.encode(contentBinding.get(),context.getOutput());
-    }
-      
-  }
-  
-  class XMLRenderer
-    implements Renderer
-  {
-    @Override
-    public void render(EventContext context,boolean postOrder) 
-      throws IOException
-    {
-      Appendable writer=context.getOutput();
-      
-      if (!postOrder)
-      { 
-        writer.append("<");
-        writer.append(name);
-    
-        renderAttributes(writer);
-    
-        if (hasContent)
-        { 
-          writer.append(">");
-          renderContent(context);
-        }
-        else
-        { writer.append("/>");
-        }
-      }
-      else
-      { 
-        if (hasContent)
-        {
-        }
-        writer.append("</");
-        writer.append(name);
-        writer.append(">");
-      }
-    }
-
-    
-  }
 
   
 }
