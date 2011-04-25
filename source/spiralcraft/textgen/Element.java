@@ -21,19 +21,22 @@ import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
 
 import spiralcraft.builder.Assembly;
+import spiralcraft.common.ContextualException;
 
 import java.io.IOException;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.LinkedList;
 
 import spiralcraft.textgen.compiler.DefineUnit;
 import spiralcraft.textgen.compiler.TglUnit;
+import spiralcraft.textgen.kit.StandardMessageHandlerChain;
 
 import spiralcraft.text.ParsePosition;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.text.xml.Attribute;
+
+import spiralcraft.app.Message;
+import spiralcraft.app.State;
 
 import java.net.URI;
 
@@ -75,6 +78,8 @@ import java.net.URI;
 public abstract class Element
 { 
 
+  private static final Message RENDER_MESSAGE=new RenderMessage();
+
   private Element[] children;
   
   private Element parent;
@@ -82,15 +87,34 @@ public abstract class Element
   
   private Assembly<?> assembly;
   private String id;
-  private ArrayList<MessageHandler> handlers;
+  private MessageHandlerChain handlerChain;
   protected boolean debug;
   private ParsePosition position;
   protected final ClassLog log=ClassLog.getInstance(getClass());
   protected DefineUnit skin;
   protected URI focusURI;
   
-  protected Context outerContext;
   protected Context innerContext;
+  
+  class DefaultHandler
+    implements MessageHandler
+  {
+
+    @Override
+    public Focus<?> bind(
+      Focus<?> focusChain)
+      throws BindException
+    { return focusChain;
+    }
+
+    @Override
+    public void handleMessage(
+      EventContext context,
+      Message message,
+      MessageHandlerChain next)
+    { relayMessage(context,message);
+    }
+  }
   
 //  public Element(Element parent,Scaffold<?,Element,?> scaffold)
 //  { 
@@ -173,10 +197,12 @@ public abstract class Element
   
   protected synchronized void addHandler(MessageHandler handler)
   { 
-    if (handlers==null)
-    { handlers=new ArrayList<MessageHandler>();
+    if (handlerChain==null)
+    { handlerChain=new StandardMessageHandlerChain(handler);
     }
-    handlers.add(handler);
+    else
+    { handlerChain.chain(handler);
+    }
   }
   
   protected Element getChild(int i)
@@ -285,10 +311,26 @@ public abstract class Element
 //  { bindChildren(focus,childUnits);
 //  }
   public Focus<?> bind(Focus<?> focus)
-    throws BindException,MarkupException
+    throws ContextualException
   { 
+    bindHandlers(focus);
     bindChildren(focus);
     return focus;
+  }
+  
+  protected final void bindHandlers(Focus<?> focus)
+    throws ContextualException
+  { 
+    if (handlerChain!=null)
+    { 
+      handlerChain.chain(createDefaultHandler());
+      handlerChain.bind(focus);
+    }
+    
+  }
+  
+  protected MessageHandler createDefaultHandler()
+  { return new DefaultHandler();
   }
   
   /**
@@ -301,7 +343,7 @@ public abstract class Element
    * @throws MarkupException
    */
   protected final void bindChildren(Focus<?> focus)
-    throws BindException,MarkupException
+    throws ContextualException
   { 
     bindChildren(focus,scaffold!=null?scaffold.getChildren():null);
   }
@@ -316,7 +358,7 @@ public abstract class Element
   protected final void bindChildren
     (Focus<?> focus,List<TglUnit> childUnits
     )
-    throws BindException,MarkupException
+    throws ContextualException
   {
     if (innerContext!=null)
     { focus=innerContext.bind(focus);
@@ -391,40 +433,17 @@ public abstract class Element
   public void message
     (EventContext context
     ,Message message
-    ,LinkedList<Integer> path
     )
   {    
-    if (outerContext!=null)
-    { outerContext.push();
+    if (handlerChain!=null)
+    { handlerChain.handleMessage(context,message);
     }
-    
-    try
-    {
-      if (handlers!=null)
-      {
-        for (MessageHandler handler: handlers)
-        { handler.handleMessage(context,message,false);
-        }
-      }
-    
-      relayMessage(context,message,path);
-
-      if (handlers!=null)
-      {
-        for (MessageHandler handler: handlers)
-        { handler.handleMessage(context,message,true);
-        }
-      }
+    else
+    { relayMessage(context,message);
     }
-    finally
-    { 
-      if (outerContext!=null)
-      { outerContext.pop();
-      }
-    }
-
   }
 
+  
   
   /**
    * <p>Relay a message to appropriate child elements as indicated by the
@@ -439,7 +458,6 @@ public abstract class Element
   protected final void relayMessage
     (EventContext context
     ,Message message
-    ,LinkedList<Integer> path
     )
   { 
     if (innerContext!=null)
@@ -447,15 +465,16 @@ public abstract class Element
     }
     try
     {
-      if (path!=null && !path.isEmpty())
-      { messageChild(path.removeFirst(),context,message,path);
+      Integer pathIndex=context.getNextRoute();
+      if (pathIndex!=null)
+      { messageChild(pathIndex,context,message);
       }
       else if (message.isMulticast())
       { 
         if (children!=null)
         { 
           for (int i=0;i<children.length;i++)
-          { messageChild(i,context,message,path);
+          { messageChild(i,context,message);
           }
         }
       }
@@ -492,29 +511,13 @@ public abstract class Element
     (int index
     ,EventContext context
     ,Message message
-    ,LinkedList<Integer> path
     )
-  { 
-    if (context.isStateful())
-    {
-      ElementState state=context.getState();
-      try
-      {
-        context.setState(ensureChildState(state,index));
-        children[index].message(context,message,path);
-      }
-      finally
-      { context.setState(state);
-      }
-    }
-    else
-    { children[index].message(context,message,path);
-    }
+  { context.relayMessage(children[index],index,message);
   }
   
-  private ElementState ensureChildState(ElementState parentState,int index)
+  private State ensureChildState(State parentState,int index)
   {
-    ElementState childState=parentState.getChild(index);
+    State childState=parentState.getChild(index);
     if (childState==null)
     { 
       childState=children[index].createState();
@@ -533,6 +536,16 @@ public abstract class Element
   public abstract void render(EventContext context)
     throws IOException;
   
+  protected void invokeRenderHandler(EventContext context)
+    throws IOException
+  {
+    if (handlerChain!=null)
+    { handlerChain.handleMessage(context,RENDER_MESSAGE);
+    }
+    else
+    { renderChildren(context);
+    }
+  }
   
   /**
    * <P>Call this method to render a child element.
@@ -569,7 +582,7 @@ public abstract class Element
   {
     if (context.isStateful())
     {
-      ElementState state=context.getState();
+      State state=context.getState();
       try
       {
         context.setState(ensureChildState(state,index));
