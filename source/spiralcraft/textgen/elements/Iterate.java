@@ -29,18 +29,17 @@ import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.IterationState;
 import spiralcraft.textgen.MementoState;
-import spiralcraft.textgen.Message;
+import spiralcraft.app.Message;
+import spiralcraft.common.ContextualException;
 
 import spiralcraft.textgen.InitializeMessage;
 
 
-import spiralcraft.text.markup.MarkupException;
 import spiralcraft.util.LookaroundIterator;
 
 import java.io.IOException;
 
 import java.util.Iterator;
-import java.util.LinkedList;
 
 /**
  * Iterate through an Iterable or an Array
@@ -127,7 +126,7 @@ public class Iterate
   
   @Override
   public Focus<?> bind(Focus<?> parentFocus)
-    throws BindException,MarkupException
+    throws ContextualException
   { 
     Channel<?> target=null;
     if (expression!=null)
@@ -233,7 +232,6 @@ public class Iterate
   private void messageInitializeContent
     (final EventContext genContext
     ,Message message
-    ,LinkedList<Integer> path
     ,IterationState state
     )
   {
@@ -266,7 +264,7 @@ public class Iterate
           valueChannel.push(val);
           lookaheadChannel.push(cursor.getCurrent());
           genContext.setState(state.ensureChild(i++,val));
-          super.message(genContext,message,path);
+          relayMessage(genContext,message);
         }
         finally
         { 
@@ -298,7 +296,6 @@ public class Iterate
   private void messageStatefulChildren
     (final EventContext genContext
     ,Message message
-    ,LinkedList<Integer> path
     ,IterationState state
     )
   {
@@ -331,7 +328,7 @@ public class Iterate
           lookaheadChannel.push
             (it.getCurrent()!=null?it.getCurrent().getValue():null);
           genContext.setState(childState);
-          super.message(genContext,message,path);
+          relayMessage(genContext,message);
         }
         finally
         { 
@@ -359,7 +356,6 @@ public class Iterate
   private void messageStatefulChild
     (final EventContext genContext
     ,Message message
-    ,LinkedList<Integer> path
     ,MementoState childState
     ,int index
     )
@@ -378,10 +374,12 @@ public class Iterate
       valueChannel.push(childState.getValue());
       lookaheadChannel.push(null);
       genContext.setState(childState);
-      super.message(genContext,message,path);
+      genContext.descend(index);
+      relayMessage(genContext,message);
     }
     finally
     { 
+      genContext.ascend();
       lookaheadChannel.pop();
       valueChannel.pop();
       lookbehindChannel.pop();
@@ -398,7 +396,6 @@ public class Iterate
   private void messageStateful
     (final EventContext genContext
     ,Message message
-    ,LinkedList<Integer> path
     )
   {
     IterationState state=(IterationState) genContext.getState();
@@ -408,7 +405,7 @@ public class Iterate
       if (message.getType()==InitializeMessage.TYPE)
       {
         if (initializeContent)
-        { messageInitializeContent(genContext,message,path,state);
+        { messageInitializeContent(genContext,message,state);
         }
       }
       else
@@ -421,8 +418,9 @@ public class Iterate
           refreshState(state);
         }
       
-        if (path==null || path.isEmpty())
-        { messageStatefulChildren(genContext,message,path,state);
+        Integer nextPath=genContext.getNextRoute();
+        if (nextPath==null)
+        { messageStatefulChildren(genContext,message,state);
         }
         else
         { 
@@ -430,10 +428,9 @@ public class Iterate
           { log.fine(toString()+": following path "+state.getChildCount());
           }
           // Follow path
-          int index=path.removeFirst();
-          MementoState childState=(MementoState) state.getChild(index);
+          MementoState childState=(MementoState) state.getChild(nextPath);
           if (childState!=null)
-          { messageStatefulChild(genContext,message,path,childState,index);
+          { messageStatefulChild(genContext,message,childState,nextPath);
           }
           
         }
@@ -448,11 +445,10 @@ public class Iterate
   public void message
     (final EventContext context
     ,Message message
-    ,LinkedList<Integer> path
     )
   {
     if (context.isStateful())
-    { messageStateful(context,message,path);
+    { messageStateful(context,message);
     }    
   }
   

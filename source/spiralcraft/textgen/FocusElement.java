@@ -15,16 +15,16 @@
 package spiralcraft.textgen;
 
 import java.io.IOException;
-import java.util.LinkedList;
+
+import spiralcraft.app.Message;
+import spiralcraft.common.ContextualException;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.spi.ThreadLocalChannel;
-import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.Message;
 
 /**
  * <p>Creates a new Focus in the Focus chain that provides the results of
@@ -52,7 +52,7 @@ public abstract class FocusElement<T>
   
   @Override
   public final Focus<?> bind(Focus<?> focus)
-    throws BindException,MarkupException
+    throws ContextualException
   { 
 
     Focus<?> parentFocus=bindImports(focus);
@@ -139,12 +139,11 @@ public abstract class FocusElement<T>
   public final void message
     (EventContext context
     ,Message message
-    ,LinkedList<Integer> path
     )
   {
     push(context,message);
     try
-    { super.message(context,message,path);
+    { super.message(context,message);
     }
     finally
     { pop();

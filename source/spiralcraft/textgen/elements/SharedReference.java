@@ -16,18 +16,17 @@ package spiralcraft.textgen.elements;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.LinkedList;
 
+import spiralcraft.common.ContextualException;
 import spiralcraft.data.DataException;
 import spiralcraft.data.Type;
 import spiralcraft.data.persist.AbstractXmlObject;
-import spiralcraft.lang.BindException;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
-import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.Message;
+
+import spiralcraft.app.Message;
 
 /**
  * <p>Exposes an object reference via the Focus chain, via the
@@ -61,7 +60,7 @@ public class SharedReference<Treferent>
   
   @Override
   public Focus<?> bind(Focus<?> focusChain)
-    throws BindException,MarkupException
+    throws ContextualException
   { 
     if (type==null && typeX!=null)
     { type=focusChain.bind(typeX).get();
@@ -124,12 +123,11 @@ public class SharedReference<Treferent>
   public void message
     (final EventContext context
     ,final Message message
-    ,final LinkedList<Integer> path
     )
   { 
     reference.push();
     try
-    { super.message(context,message,path);
+    { super.message(context,message);
     }
     finally
     { reference.pop();

@@ -1,13 +1,13 @@
 package spiralcraft.textgen.compiler;
 
 import java.io.IOException;
-import java.util.LinkedList;
 
 //import spiralcraft.log.ClassLogger;
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.ElementState;
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.Message;
+
+import spiralcraft.app.Message;
+import spiralcraft.app.State;
 
 /**
  * <p>The bound Element of the IncludeUnit which includes another resource.
@@ -27,8 +27,8 @@ public class IncludeElement
 //  private static final ClassLogger log
 //    =ClassLogger.getInstance(IncludeElement.class);
   
-  protected ThreadLocal<ElementState> threadLocalState
-    =new ThreadLocal<ElementState>();
+  protected ThreadLocal<State> threadLocalState
+    =new ThreadLocal<State>();
 
   
   @Override
@@ -50,17 +50,17 @@ public class IncludeElement
   public void message
     (EventContext context
     ,Message message
-    ,LinkedList<Integer> path
     )
   {
     threadLocalState.set(context.getState());
     try
     { 
-      if (path!=null && !path.isEmpty())
-      { messageChild(path.removeFirst(),context,message,path);
+      Integer pathIndex=context.getNextRoute();
+      if (pathIndex!=null)
+      { messageChild(pathIndex,context,message);
       }
       else if (message.isMulticast())
-      { messageChild(0,context,message,path);
+      { messageChild(0,context,message);
       }
     }
     finally
@@ -78,25 +78,26 @@ public class IncludeElement
   public void messageClosure
     (EventContext context
     ,Message message
-    ,LinkedList<Integer> path
     )
   {
 
-    ElementState deepState=null;
+    State deepState=null;
     try
     { 
       // Save the current state for later restoration and substitute
       //   the state of the actual parent (this IncludeElement's state)
       deepState=context.getState();
+      
       context.setState(threadLocalState.get());
       int childCount=getChildCount();
-      if (path!=null && !path.isEmpty())
-      { this.messageChild(path.removeFirst(),context,message,path);
+      Integer pathIndex=context.getNextRoute();
+      if (pathIndex!=null)
+      { this.messageChild(pathIndex,context,message);
       }
       else if (message.isMulticast())
       { 
         for (int i=1;i<childCount;i++)
-        { this.messageChild(i,context,message,path);
+        { this.messageChild(i,context,message);
         }
       }
     }
@@ -114,7 +115,7 @@ public class IncludeElement
     throws IOException
   {
 
-    ElementState deepState=null;
+    State deepState=null;
     try
     { 
       // Save the current state for later restoration and substitute

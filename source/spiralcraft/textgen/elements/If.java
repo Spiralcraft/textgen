@@ -24,14 +24,13 @@ import spiralcraft.textgen.Element;
 import spiralcraft.textgen.InitializeMessage;
 import spiralcraft.textgen.ValueState;
 
-import spiralcraft.textgen.Message;
+import spiralcraft.app.Message;
+import spiralcraft.common.ContextualException;
 
 
-import spiralcraft.text.markup.MarkupException;
 
 import java.io.IOException;
 
-import java.util.LinkedList;
 
 
 /**
@@ -80,7 +79,7 @@ public class If
   @Override
   @SuppressWarnings("unchecked") // Not using generic versions
   public Focus<?> bind(Focus<?> parentFocus)
-    throws BindException,MarkupException
+    throws ContextualException
   { 
     
     if (expression!=null)
@@ -124,11 +123,10 @@ public class If
   public void message
     (EventContext context
     ,Message message
-    ,LinkedList<Integer> path
     )
   {
     if (message.getType()!=InitializeMessage.TYPE
-       && (path==null || path.isEmpty())
+       && !context.isRelayingMessage()
        && filterMessages
        )
     {
@@ -159,14 +157,14 @@ public class If
       
 
       for (int i=start;i<end;i++)
-      { messageChild(i,context,message,path);
+      { messageChild(i,context,message);
       }
     }
     else
     { 
       // Initialize event broadcast and targeted events
       //   always get through
-      super.message(context,message,path);
+      super.message(context,message);
     }
     
   

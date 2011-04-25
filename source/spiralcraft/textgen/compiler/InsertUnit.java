@@ -17,7 +17,6 @@ package spiralcraft.textgen.compiler;
 import java.io.IOException;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import spiralcraft.lang.BindException;
@@ -28,7 +27,9 @@ import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.Message;
+
+import spiralcraft.app.Message;
+import spiralcraft.common.ContextualException;
 
 
 import spiralcraft.text.xml.Attribute;
@@ -123,13 +124,13 @@ public class InsertUnit
    * @return
    */
   public InsertElement bindContent(Focus<?> focus,Element parentElement)
-    throws MarkupException,BindException
+    throws ContextualException
   { return (InsertElement) bind(focus,parentElement,new InsertElement());
   }
   
   @Override
   public Element bind(Focus<?> focus,Element parentElement)
-    throws MarkupException
+    throws ContextualException
   {
     if (referencedName!=null)
     {
@@ -219,7 +220,7 @@ class InsertIncludeElement
   
   @Override
   public Focus<?> bind(Focus<?> focus)
-    throws BindException,MarkupException
+    throws ContextualException
   { 
     
     List<TglUnit> children=getScaffold().getChildren();
@@ -257,14 +258,13 @@ class InsertIncludeElement
   public void message
     (EventContext context
     ,Message message
-    ,LinkedList<Integer> path
     )
   {    
     if (ancestorInclude!=null)
-    { ancestorInclude.messageClosure(context,message,path);
+    { ancestorInclude.messageClosure(context,message);
     }
     else 
-    { super.message(context, message, path);
+    { super.message(context, message);
     }
 
 

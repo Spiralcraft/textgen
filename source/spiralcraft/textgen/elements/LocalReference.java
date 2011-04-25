@@ -16,8 +16,8 @@ package spiralcraft.textgen.elements;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.LinkedList;
 
+import spiralcraft.common.ContextualException;
 import spiralcraft.data.DataException;
 import spiralcraft.data.Type;
 import spiralcraft.data.persist.AbstractXmlObject;
@@ -27,11 +27,11 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.Context;
 import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.lang.spi.ThreadLocalChannel;
-import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.ElementState;
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.Message;
+
+import spiralcraft.app.Message;
 
 /**
  * <p>Exposes an object reference via the Focus chain, via the
@@ -92,7 +92,7 @@ public class LocalReference<Treferent>
   @Override
   @SuppressWarnings({"unchecked","rawtypes"}) // Not using generic versions
   public Focus<?> bind(Focus<?> parentFocus)
-    throws BindException,MarkupException
+    throws ContextualException
   { 
     
     if (type==null)
@@ -132,7 +132,6 @@ public class LocalReference<Treferent>
   public void message
     (EventContext context
     ,Message message
-    ,LinkedList<Integer> path
     )
   {
     ReferenceState<Treferent> state
@@ -156,13 +155,13 @@ public class LocalReference<Treferent>
       
       channel.push(reference.get());
     }
-    catch (BindException x)
+    catch (ContextualException x)
     { throw new RuntimeException("Error creating XML Object reference",x);
     }
     
     
     try
-    { super.message(context,message,path);
+    { super.message(context,message);
     }
     finally
     { channel.pop();
@@ -192,7 +191,7 @@ public class LocalReference<Treferent>
       
       channel.push(reference.get());
     }
-    catch (BindException x)
+    catch (ContextualException x)
     { throw new RuntimeException("Error creating XML Object reference",x);
     }
     
@@ -222,7 +221,7 @@ class ReferenceState<T>
   
   public synchronized AbstractXmlObject<T,?> getReference
     (URI typeURI,URI instanceURI)
-    throws BindException
+    throws ContextualException
   { 
     if (reference==null)
     { 
