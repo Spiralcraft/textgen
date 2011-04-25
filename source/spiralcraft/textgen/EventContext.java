@@ -14,6 +14,10 @@
 //
 package spiralcraft.textgen;
 
+import java.util.LinkedList;
+
+import spiralcraft.app.Message;
+import spiralcraft.app.State;
 import spiralcraft.sax.XmlWriter;
 
 import org.xml.sax.ContentHandler;
@@ -32,10 +36,11 @@ public class EventContext
   private final EventContext parent;
   private final Appendable output;
   private ContentHandler contentHandler;
-  private ElementState elementState;
+  private State elementState;
   private final boolean stateful;
   private String logPrefix;
   private StateFrame currentFrame;
+  private LinkedList<Integer> messagePath;
   
   /**
    * <p>Create a GenerationContext that does not refer to any ancestors,
@@ -105,7 +110,7 @@ public class EventContext
    * @return The state of the current Element, set by this Element's parent
    *   via setState()
    */
-  public ElementState getState()
+  public State getState()
   { return elementState;
   }
 
@@ -115,9 +120,120 @@ public class EventContext
    * 
    * @param state
    */
-  public void setState(ElementState state)
+  public void setState(State state)
   { elementState=state;
   }
+  
+  public void dispatch
+    (Message message
+    ,Element root
+    ,LinkedList<Integer> messagePath
+    )
+  { dispatch(message,root,elementState,messagePath);
+  }
+  
+  public void dispatch
+    (Message message
+    ,Element root
+    ,State state
+    ,LinkedList<Integer> messagePath
+    )
+  {
+    State lastState=this.elementState;
+    LinkedList<Integer> lastMessagePath=messagePath;
+    try
+    {
+      this.elementState=state;
+      this.messagePath=messagePath;
+      root.message(this,message);
+    }
+    finally
+    { 
+      messagePath=lastMessagePath;
+      this.elementState=lastState;
+    }
+  }
+  
+  public Integer getNextRoute()
+  {
+    if (messagePath==null || messagePath.isEmpty())
+    { return null;
+    }
+    else
+    { return messagePath.getFirst();
+    }
+  }
+  /**
+   * Indicate whether the current message path still has unreached elements
+   * 
+   * @return
+   */
+  public boolean isRelayingMessage()
+  { return messagePath!=null && !messagePath.isEmpty();
+  }
+  
+  
+  public final void descend(int index)
+  { 
+    if (messagePath!=null && !messagePath.isEmpty())
+    { 
+      Integer element=messagePath.removeFirst();
+      if (element!=index)
+      { 
+        throw new RuntimeException
+          ("Route violation: "+index+" != next segment "+element);
+      };
+    }
+    if (this.elementState!=null)
+    { this.elementState=this.elementState.getChild(index);
+    }
+  }
+  
+  public final void ascend()
+  { 
+    if (this.elementState!=null)
+    { this.elementState=this.elementState.getParent();
+    }
+  }  
+  
+  
+  /**
+   * Relay a message to a child component
+   * 
+   * @param childComponent
+   * @param childIndex
+   * @param message
+   */
+  public void relayMessage
+    (Element childComponent,int childIndex,Message message)
+  {
+    if (isStateful() && elementState!=null)
+    {
+      
+      State childState=elementState.getChild(childIndex);
+      if (childState==null)
+      { 
+        childState=childComponent.createState();
+        elementState.setChild(childIndex,childState);    
+      }
+      
+      final State lastState=this.elementState;
+      
+      descend(childIndex);
+      try
+      { childComponent.message(this,message);
+      }
+      finally
+      {
+        ascend();
+        this.elementState=lastState;
+      }
+    }
+    else
+    { childComponent.message(this,message);
+    }
+  }  
+  
   
   /**
    * <p>A stateful rendering or messaging allows for direct
