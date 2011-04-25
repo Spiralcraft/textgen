@@ -14,27 +14,25 @@
 //
 package spiralcraft.textgen;
 
-
 import spiralcraft.app.Message;
-import spiralcraft.lang.Contextual;
 
-public interface MessageHandler
-  extends Contextual
+/**
+ * Instructs Elements to render output to the writer in the EventContext 
+ * 
+ * @author mike
+ */
+public class RenderMessage
+    extends Message
 {
-  /**
-   * <p>Handle the Message. This will be called twice- once before children are
-   *   messaged and once afterwards.
-   * </p>
-   * 
-   * @param context The EventContext that holds the Element's state
-   * @param message The message
-   * @param postOrder Whether this call is before or after the message has
-   *                    propagated to children 
-   */
-  void handleMessage
-    (EventContext context
-    ,Message message
-    ,MessageHandlerChain next
-    );
+  public static final Type TYPE=new Type();
+  
+  { multicast=true;
+  }
+  
+  @Override
+  public Type getType()
+  { return TYPE;
+  }
+  
   
 }

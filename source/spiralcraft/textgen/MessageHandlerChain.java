@@ -1,5 +1,5 @@
 //
-// Copyright (c) 1998,2005 Michael Toth
+// Copyright (c) 2011 Michael Toth
 // Spiralcraft Inc., All Rights Reserved
 //
 // This package is part of the Spiralcraft project and is licensed under
@@ -14,22 +14,15 @@
 //
 package spiralcraft.textgen;
 
-/**
- * A directive sent down an Element tree to manipulate the state of a
- *   textgen document before it is rendered.
- * 
- * @author mike
- */
-public abstract class Message
+
+import spiralcraft.app.Message;
+import spiralcraft.lang.Contextual;
+
+public interface MessageHandlerChain
+  extends Contextual
 {
-  protected boolean multicast;
+
+  void handleMessage(EventContext context,Message message);
   
-  public boolean isMulticast()
-  { return multicast;
-  } 
-  
-  public abstract MessageType getType();
-  
-  public static class MessageType
-  { }
+  void chain(MessageHandler handler);
 }

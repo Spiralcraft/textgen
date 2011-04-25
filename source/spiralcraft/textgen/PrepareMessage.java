@@ -14,6 +14,8 @@
 //
 package spiralcraft.textgen;
 
+import spiralcraft.app.Message;
+
 /**
  * Instructs Elements to prepare to render by adapting to the state of the
  *   data model. 
@@ -23,13 +25,13 @@ package spiralcraft.textgen;
 public class PrepareMessage
     extends Message
 {
-  public static final MessageType TYPE=new MessageType();
+  public static final Type TYPE=new Type();
   
   { multicast=true;
   }
   
   @Override
-  public MessageType getType()
+  public Type getType()
   { return TYPE;
   }
   

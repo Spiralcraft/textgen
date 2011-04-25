@@ -14,6 +14,8 @@
 //
 package spiralcraft.textgen;
 
+import spiralcraft.app.State;
+
 /**
  * <p>Represents the state of an Element in association with a specific 
  *   context, such as a user or a particular source of data, for the purpose
@@ -78,10 +80,11 @@ package spiralcraft.textgen;
  *
  */
 public class ElementState
+  implements State
 {
 
-  private ElementState parent;
-  private final ElementState[] children;
+  private State parent;
+  private final State[] children;
   private int[] path;
   private volatile StateFrame currentFrame;
   
@@ -96,6 +99,18 @@ public class ElementState
   }
   
   
+  @Override
+  public void link(State parent,int[] path)
+  {
+    if (this.parent!=null)
+    { 
+      throw new IllegalStateException
+        ("Already linked: cannot change parent state");
+    }
+    this.parent=parent;
+    this.path=path;
+  }
+  
   void setParent(ElementState parent)
   { this.parent=parent;
   }
@@ -108,6 +123,7 @@ public class ElementState
    * 
    * @return The path from the root of the ElementState tree 
    */
+  @Override
   public int[] getPath()
   { return path;
   }
@@ -120,11 +136,13 @@ public class ElementState
   { return path[path.length-1];
   }
   
-  public ElementState getParent()
+  @Override
+  public State getParent()
   { return parent;
   }
   
-  public ElementState getChild(int index)
+  @Override
+  public State getChild(int index)
   { 
     if (children==null)
     { throw new IndexOutOfBoundsException("This ElementState has no children");
@@ -142,7 +160,8 @@ public class ElementState
   { }
     
   
-  public void setChild(int index,ElementState child)
+  @Override
+  public void setChild(int index,State child)
   { 
     children[index]=child;
     if (child!=null)
@@ -155,11 +174,7 @@ public class ElementState
       int[] childPath=new int[path.length+1];
       System.arraycopy(path,0,childPath,0,path.length);
       childPath[childPath.length-1]=index;
-      child.setPath(childPath);      
-
-      child.setParent(this);
-      
-      child.resolve();
+      child.link(this,childPath);
     }
   }
   
@@ -182,13 +197,14 @@ public class ElementState
    *   none was found
    */
   @SuppressWarnings("unchecked") // Downcast from runtime check
-  public <X> X findElementState(Class<X> clazz)
+  @Override
+  public <X> X findState(Class<X> clazz)
   {
     if (clazz.isAssignableFrom(getClass()))
     { return (X) this;
     }
     else if (parent!=null)
-    { return parent.<X>findElementState(clazz);
+    { return parent.<X>findState(clazz);
     }
     else
     { return null;
@@ -205,7 +221,8 @@ public class ElementState
    *   parent should be returned.
    * @return The ancestor state.
    */
-  public ElementState getAncestor(int distance)
+  @Override
+  public State getAncestor(int distance)
   { 
     if (distance==0)
     { return this;
@@ -216,6 +233,11 @@ public class ElementState
     else
     { return null;
     }
+  }
+  
+  @Override
+  public String getComponentId()
+  { return null;
   }
     
 }
