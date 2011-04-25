@@ -2,11 +2,10 @@ package spiralcraft.textgen.elements;
 
 import java.io.IOException;
 
-import spiralcraft.lang.BindException;
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Binding;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
-import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
 
@@ -34,7 +33,7 @@ public class Out<T>
   
   @Override
   public Focus<?> bind(Focus<?> focus)
-    throws BindException,MarkupException
+    throws ContextualException
   { 
     x.bind(focus);
     return super.bind(focus);

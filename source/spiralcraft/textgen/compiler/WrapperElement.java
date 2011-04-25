@@ -2,13 +2,12 @@ package spiralcraft.textgen.compiler;
 
 import java.io.IOException;
 
-import spiralcraft.lang.BindException;
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Contextual;
 
 import spiralcraft.text.Renderer;
 import spiralcraft.text.Wrapper;
-import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
@@ -36,9 +35,8 @@ public class WrapperElement
   
   @Override
   public Focus<?> bind(Focus<?> focus) 
-    throws MarkupException, BindException 
-  { 
-    
+    throws ContextualException
+  {
     if (wrapper instanceof Contextual)
     { 
       Contextual fco=(Contextual) wrapper;

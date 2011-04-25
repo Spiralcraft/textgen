@@ -14,6 +14,7 @@
 //
 package spiralcraft.textgen.elements;
 
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.Expression;
@@ -23,9 +24,6 @@ import spiralcraft.log.ClassLog;
 
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Element;
-
-
-import spiralcraft.text.markup.MarkupException;
 
 import java.io.IOException;
 
@@ -60,7 +58,7 @@ public class Group
   @Override
   @SuppressWarnings({ "unchecked", "rawtypes" }) // Not using generic versions
   public Focus<?> bind(Focus<?> parentFocus)
-    throws BindException,MarkupException
+    throws ContextualException
   { 
     if (expression==null)
     {

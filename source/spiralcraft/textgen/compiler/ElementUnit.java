@@ -18,6 +18,7 @@ package spiralcraft.textgen.compiler;
 import java.net.URI;
 
 import spiralcraft.builder.AssemblyClass;
+import spiralcraft.common.ContextualException;
 import spiralcraft.common.namespace.NamespaceContext;
 import spiralcraft.common.namespace.QName;
 import spiralcraft.common.namespace.StandardPrefixResolver;
@@ -120,7 +121,7 @@ public class ElementUnit
   
   @Override
   public Element bind(Focus<?> focus,Element parentElement)
-    throws MarkupException
+    throws ContextualException
   { 
     NamespaceContext.push(getNamespaceResolver());
     try

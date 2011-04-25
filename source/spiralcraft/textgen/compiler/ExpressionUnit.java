@@ -14,6 +14,7 @@
 //
 package spiralcraft.textgen.compiler;
 
+import spiralcraft.common.ContextualException;
 import spiralcraft.common.namespace.NamespaceContext;
 import spiralcraft.lang.Expression;
 
@@ -158,7 +159,7 @@ public class ExpressionUnit
     
     @Override
     public Focus<?> bind(Focus<?> focus)
-      throws BindException,MarkupException
+      throws ContextualException
     { 
       try
       {

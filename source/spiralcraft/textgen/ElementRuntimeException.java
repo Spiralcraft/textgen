@@ -11,7 +11,7 @@ public class ElementRuntimeException
   private ArrayList<String> detail
     =new ArrayList<String>();
 
-  public ElementRuntimeException(Element e,RuntimeException x)
+  public ElementRuntimeException(Element e,Exception x)
   { 
     super("Uncaught exception: ",x);
     addDetail(e);

@@ -18,11 +18,10 @@ import java.text.SimpleDateFormat;
 
 import java.util.TimeZone;
 
-import spiralcraft.lang.BindException;
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
-import spiralcraft.text.markup.MarkupException;
 
 /**
  * <p>Formats a date
@@ -71,7 +70,7 @@ public class DateFormat
   
   @Override
   public Focus<?> bind(Focus<?> parentFocus)
-    throws BindException,MarkupException
+    throws ContextualException
   { 
     if (timeZoneExpression!=null)
     { timeZone=parentFocus.bind(timeZoneExpression);

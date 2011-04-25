@@ -2,13 +2,12 @@ package spiralcraft.textgen.compiler;
 
 import java.io.IOException;
 
-import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
 
+import spiralcraft.common.ContextualException;
 import spiralcraft.common.namespace.PrefixResolver;
 
-import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
 
 import spiralcraft.log.ClassLog;
@@ -35,7 +34,7 @@ public class NamespaceElement
 
   @Override
   public Focus<?> bind(Focus<?> focus)
-    throws BindException,MarkupException
+    throws ContextualException
   { 
     
     focus=focus.chain(resolver);

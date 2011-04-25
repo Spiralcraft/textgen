@@ -17,12 +17,11 @@ package spiralcraft.textgen.elements;
 import java.io.IOException;
 import java.net.URI;
 
-import spiralcraft.lang.BindException;
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.spi.SimpleChannel;
-import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
 
@@ -63,7 +62,7 @@ public class Constant<Tresult>
   
   @Override
   public final Focus<?> bind(Focus<?> focus)
-    throws BindException,MarkupException
+    throws ContextualException
   { 
     Channel<Tresult> temp=focus.bind(x);
     focus

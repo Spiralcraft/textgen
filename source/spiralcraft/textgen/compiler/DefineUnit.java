@@ -17,6 +17,7 @@ package spiralcraft.textgen.compiler;
 import java.io.IOException;
 import java.util.List;
 
+import spiralcraft.common.ContextualException;
 import spiralcraft.common.namespace.QName;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
@@ -213,7 +214,7 @@ public class DefineUnit
     ,Element parentElement
     ,List<TglUnit> overlay
     )
-    throws MarkupException
+    throws ContextualException
   {
     
     
@@ -381,7 +382,7 @@ public class DefineUnit
     ,Element parentElement
     ,List<TglUnit> children
     )
-    throws MarkupException
+    throws ContextualException
   { 
     
     // The attributes are 'values' for the formal parameters

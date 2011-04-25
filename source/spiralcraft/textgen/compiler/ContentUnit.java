@@ -16,9 +16,8 @@ package spiralcraft.textgen.compiler;
 
 import java.io.IOException;
 
-import spiralcraft.lang.BindException;
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Focus;
-import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
 
@@ -56,7 +55,7 @@ public class ContentUnit
     
     @Override
     public Focus<?> bind(Focus<?> focus)
-      throws BindException,MarkupException
+      throws ContextualException
     { 
       elementContent=ContentUnit.this.content;
       

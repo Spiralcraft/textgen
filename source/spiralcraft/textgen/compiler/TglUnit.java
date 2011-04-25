@@ -16,6 +16,7 @@ package spiralcraft.textgen.compiler;
 
 import java.io.PrintWriter;
 
+import spiralcraft.common.ContextualException;
 import spiralcraft.common.namespace.PrefixResolver;
 import spiralcraft.common.namespace.QName;
 
@@ -44,7 +45,7 @@ import java.util.List;
  */
 public abstract class TglUnit
   extends Unit<TglUnit>
-  implements Scaffold<TglUnit,Element,MarkupException>
+  implements Scaffold<TglUnit,Element,ContextualException>
 {
   protected final ClassLog log
     =ClassLog.getInstance(getClass());
@@ -230,7 +231,7 @@ public abstract class TglUnit
    */
   @Override
   public Element bind(Focus<?> focus,Element parentElement)
-    throws MarkupException
+    throws ContextualException
   { return bind(focus,parentElement,createElement());
   }
 
@@ -250,7 +251,7 @@ public abstract class TglUnit
    * @throws MarkupException
    */
   public Element bindExtension(Attribute[] attribs,Focus<?> focus,Element parentElement,List<TglUnit> children)
-    throws MarkupException
+    throws ContextualException
   { 
     if (attribs!=null && attribs.length>0)
     { throw new MarkupException("Unrecognized attribute "+attribs[0].getName(),getPosition());
@@ -270,7 +271,7 @@ public abstract class TglUnit
   }  
   
   protected Element defaultBind(Focus<?> focus,Element parentElement)
-    throws MarkupException
+    throws ContextualException
   { return bind(focus,parentElement,new DefaultElement());
   }
   
@@ -280,7 +281,7 @@ public abstract class TglUnit
     ,Element parentElement
     ,Element unboundElement
     )
-    throws MarkupException
+    throws ContextualException
   {
     unboundElement.setParent(parentElement);
     unboundElement.setScaffold(this);

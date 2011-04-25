@@ -17,14 +17,13 @@ package spiralcraft.textgen.elements;
 import java.io.IOException;
 import java.util.Date;
 
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.AccessException;
-import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.lang.spi.AbstractChannel;
-import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
 
@@ -59,7 +58,7 @@ public abstract class Format<T extends java.text.Format>
   
   @Override
   public Focus<?> bind(Focus<?> parentFocus)
-    throws BindException,MarkupException
+    throws ContextualException
   { 
     
     if (expression!=null)
