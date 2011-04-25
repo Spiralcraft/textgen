@@ -19,10 +19,10 @@ import java.io.StringWriter;
 import java.net.URI;
 
 
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Focus;
 import spiralcraft.log.ClassLog;
 
-import spiralcraft.text.ParseException;
 import spiralcraft.text.Renderer;
 
 import spiralcraft.textgen.compiler.DocletUnit;
@@ -92,7 +92,7 @@ public class Generator
         element=unit.bind(focus,null);
         exception=null;
       }
-      catch (ParseException x)
+      catch (ContextualException x)
       { 
         element=null;
         exception=x;

@@ -20,8 +20,8 @@ import spiralcraft.textgen.compiler.TglUnit;
 import spiralcraft.textgen.EventContext;
 
 import spiralcraft.text.ParseException;
-import spiralcraft.text.markup.MarkupException;
 
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.reflect.BeanFocus;
 import spiralcraft.lang.BindException;
 
@@ -77,23 +77,14 @@ public class MetaTranslator
     try
     { return new MetaResource(resource,translatedURI);
     }
-    catch (BindException x)
+    catch (ContextualException x)
     { 
       throw new IllegalArgumentException
-        ("Error binding template "+templateURI
-        +" to "+resource.toString()
+        ("Error in template "+templateURI
+        +" for "+resource.toString()
         +": "+x
         );
     }
-    catch (ParseException x)
-    { 
-      throw new IllegalArgumentException
-        ("Error parsing template "+templateURI
-        +" to "+resource.toString()
-        +": "+x
-        );
-    }
-
   }
   
   public class MetaResource
@@ -113,7 +104,7 @@ public class MetaTranslator
      * @throws ParseException
      */
     public MetaResource(Resource resource,URI translatedURI)
-      throws BindException,ParseException
+      throws ContextualException
     { 
       super(translatedURI);
       System.err.println("MetaResource: "+translatedURI);
@@ -143,7 +134,7 @@ public class MetaTranslator
     }
     
     private void bind()
-      throws MarkupException
+      throws ContextualException
     { element=tglUnit.bind(focus,null);
     }
     
@@ -160,7 +151,7 @@ public class MetaTranslator
         templateLastModified=time;
       }
 
-      catch (ParseException x)
+      catch (ContextualException x)
       { 
         throw new IOException
           ("Error parsing template "+templateURI
