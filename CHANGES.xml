@@ -16,6 +16,134 @@
             
     <detail>
       <scm:Change>
+        <release>-dev2
+        </release>
+        
+        <notes>
+          <scm:Note>Added basic XML tag/element rendering functionality
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen
+        </path>
+        
+        <resources>
+          <URI>elements/XML.java
+          </URI>
+          <URI>elements/XMLEncode.java
+          </URI>
+          <URI>kit/TagRenderHandler.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+        <release>-dev2
+        </release>
+        
+        <notes>
+          <scm:Note>Refactor API to move closer to spiralcraft.app model
+          </scm:Note>
+          <scm:Note>message() no longer has a "path" parameter now that
+            the EventContext (dispatcher) tracks it.
+          </scm:Note>
+          <scm:Note>Message and ElementState now implement spiralcraft.app
+            counterparts.
+          </scm:Note>          
+          <scm:Note>Core Refactor: widen lang.Contextual to throw 
+            ContextualException instead of BindException.
+          </scm:Note>
+          <scm:Note>Scaffold for TglUnit now throws ContextualException
+          </scm:Note>
+          <scm:Note>Core refactor: package spiralcraft.app.spi moved to
+            spiralcraft.app.kit
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen
+        </path>
+        
+        <resources>
+          <URI>Element.java
+          </URI>
+          <URI>ElementState.java
+          </URI>
+          <URI>Message.java
+          </URI>
+          <URI>MessageHandler.java
+          </URI>
+          <URI>MessageHandlerChain.java
+          </URI>
+          <URI>ElementRuntimeException.java
+          </URI>
+          <URI>EventContext.java
+          </URI>
+          <URI>FocusElement.java
+          </URI>
+          <URI>Generator.java
+          </URI>
+          <URI>InitializeMessage.java
+          </URI>
+          <URI>PrepareMessage.java
+          </URI>
+          <URI>Render.java
+          </URI>
+          <URI>RenderMessage.java
+          </URI>
+          <URI>ResourceUnit.java
+          </URI>
+          <URI>compiler/ContentUnit.java
+          </URI>
+          <URI>compiler/DefineUnit.java
+          </URI>
+          <URI>compiler/ElementUnit.java
+          </URI>
+          <URI>compiler/ExpressionUnit.java
+          </URI>
+          <URI>compiler/NamespaceElement.java
+          </URI>
+          <URI>compiler/RendererElement.java
+          </URI>
+          <URI>compiler/WrapperElement.java
+          </URI>
+          <URI>compiler/TglUnit.java
+          </URI>
+          <URI>compiler/FocusChainElement.java
+          </URI>
+          <URI>compiler/IncludeElement.java
+          </URI>
+          <URI>compiler/InsertUnit.java
+          </URI>
+          <URI>elements/Constant.java
+          </URI>
+          <URI>elements/DateFormat.java
+          </URI>
+          <URI>elements/Format.java
+          </URI>
+          <URI>elements/Group.java
+          </URI>
+          <URI>elements/Out.java
+          </URI>
+          <URI>elements/If.java
+          </URI>
+          <URI>elements/Iterate.java
+          </URI>
+          <URI>elements/LocalReference.java
+          </URI>
+          <URI>elements/SharedReference.java
+          </URI>
+          <URI>kit/AbstractMessageHandler.java
+          </URI>
+          <URI>kit/StandardElement.java
+          </URI>
+          <URI>kit/StandardMessageHandlerChain.java
+          </URI>
+          <URI>util/MetaTranslator.java
+          </URI>
+        </resources>
+      </scm:Change>
+      
+      <scm:Change>
         <revision>-dev1
         </revision>
 
