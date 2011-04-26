@@ -14,7 +14,6 @@
 //
 package spiralcraft.textgen.elements;
 
-import java.io.IOException;
 import java.net.URI;
 
 import spiralcraft.common.ContextualException;
@@ -168,41 +167,6 @@ public class LocalReference<Treferent>
     }
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { 
-    ReferenceState<Treferent> state
-      =(ReferenceState<Treferent>) context.getState();
-    
-    try
-    { 
-      AbstractXmlObject<Treferent,?> reference;
-      if (state!=null && !stateless)
-      { reference=state.getReference(type.getURI(),instanceURI);
-      }
-      else
-      { 
-        reference
-          =AbstractXmlObject.<Treferent>activate
-            (type.getURI(),instanceURI,this.context);
-      }
-      
-      channel.push(reference.get());
-    }
-    catch (ContextualException x)
-    { throw new RuntimeException("Error creating XML Object reference",x);
-    }
-    
-    try
-    { renderChildren(context);
-    }
-    finally
-    { channel.pop();
-    }
-
-  }
   
   @Override
   public ReferenceState<Treferent> createState()

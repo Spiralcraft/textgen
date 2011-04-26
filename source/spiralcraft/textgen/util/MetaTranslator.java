@@ -14,6 +14,7 @@ import spiralcraft.vfs.Translator;
 import spiralcraft.vfs.spi.AbstractResource;
 
 import spiralcraft.textgen.Element;
+import spiralcraft.textgen.RenderMessage;
 import spiralcraft.textgen.compiler.TglCompiler;
 import spiralcraft.textgen.compiler.DocletUnit;
 import spiralcraft.textgen.compiler.TglUnit;
@@ -181,7 +182,7 @@ public class MetaTranslator
       ByteArrayOutputStream out = new ByteArrayOutputStream();
       OutputStreamWriter writer=new OutputStreamWriter(out);
       EventContext context=new EventContext(writer,false,null);
-      element.render(context);
+      context.dispatch(RenderMessage.INSTANCE,element,null);
       writer.flush();
       out.close();
       

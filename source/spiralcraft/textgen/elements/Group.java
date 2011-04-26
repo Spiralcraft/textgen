@@ -22,10 +22,8 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.Channel;
 import spiralcraft.log.ClassLog;
 
-import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Element;
 
-import java.io.IOException;
 
 
 /**
@@ -122,11 +120,6 @@ public class Group
       || (parentGroup!=null && parentGroup.isEnding())
       || iterate.isLast();
   }
-  
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { renderChildren(context);
-  }
+
   
 }

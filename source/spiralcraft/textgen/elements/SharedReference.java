@@ -14,7 +14,6 @@
 //
 package spiralcraft.textgen.elements;
 
-import java.io.IOException;
 import java.net.URI;
 
 import spiralcraft.common.ContextualException;
@@ -128,19 +127,6 @@ public class SharedReference<Treferent>
     reference.push();
     try
     { super.message(context,message);
-    }
-    finally
-    { reference.pop();
-    }
-  }
-  
-  @Override
-  public void render(final EventContext context)
-    throws IOException
-  { 
-    reference.push();
-    try
-    { renderChildren(context);
     }
     finally
     { reference.pop();

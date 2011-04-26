@@ -14,7 +14,6 @@
 //
 package spiralcraft.textgen;
 
-import java.io.IOException;
 
 import spiralcraft.app.Message;
 import spiralcraft.common.ContextualException;
@@ -23,8 +22,10 @@ import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.spi.ThreadLocalChannel;
+import spiralcraft.text.Renderer;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
+import spiralcraft.textgen.kit.RenderHandler;
 
 /**
  * <p>Creates a new Focus in the Focus chain that provides the results of
@@ -55,6 +56,10 @@ public abstract class FocusElement<T>
     throws ContextualException
   { 
 
+    if (renderer!=null)
+    { addHandler(new RenderHandler(renderer));
+    }
+    
     Focus<?> parentFocus=bindImports(focus);
     
     Channel<T> target=bindSource(parentFocus);
@@ -130,6 +135,7 @@ public abstract class FocusElement<T>
    */
   protected abstract T computeExportValue(ValueState<T> state);
   
+
   protected final void setRenderer(Renderer renderer)
   { this.renderer=renderer;
   }
@@ -150,26 +156,6 @@ public abstract class FocusElement<T>
     }
   }
 
-  @Override
-  public final void render(EventContext context)
-    throws IOException
-  { 
-    push(context,null);
-    
-    try
-    { 
-      if (renderer!=null)
-      { renderer.render(context,false);
-      }
-      renderChildren(context);
-      if (renderer!=null)
-      { renderer.render(context,true);
-      }
-    }
-    finally
-    { pop();
-    }
-  }
   
   @SuppressWarnings({ "unchecked", "unused" })
   private final void invalidateState(EventContext context)

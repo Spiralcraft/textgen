@@ -20,7 +20,7 @@ import spiralcraft.lang.util.DictionaryBinding;
 
 
 import spiralcraft.textgen.kit.StandardElement;
-import spiralcraft.textgen.kit.TagRenderHandler;
+import spiralcraft.textgen.kit.TagHandler;
 
 /**
  * <p>Encloses contents in an arbitrary XML tag
@@ -33,8 +33,8 @@ public class XML
 {
   
   private String name;
-  private TagRenderHandler renderer
-    =new TagRenderHandler()
+  private TagHandler renderer
+    =new TagHandler()
     {
 
       @Override

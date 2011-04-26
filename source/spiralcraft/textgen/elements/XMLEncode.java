@@ -16,6 +16,7 @@ package spiralcraft.textgen.elements;
 
 import java.io.IOException;
 
+import spiralcraft.app.Message;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
@@ -26,7 +27,9 @@ import spiralcraft.text.xml.XmlEncoder;
 
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.ExpressionFocusElement;
-import spiralcraft.textgen.Renderer;
+import spiralcraft.textgen.MessageHandlerChain;
+import spiralcraft.textgen.RenderMessage;
+import spiralcraft.textgen.kit.AbstractMessageHandler;
 
 /**
  * <p>Encodes the contents as XML, nested in a tag with the specified name
@@ -49,7 +52,7 @@ public class XMLEncode<T>
   private XmlEncoder contentEncoder = new XmlEncoder();
   private boolean hasContent;
   
-  { setRenderer(new XMLRenderer());
+  { addHandler(new XMLRenderHandler());
   }
   
   /**
@@ -134,22 +137,25 @@ public class XMLEncode<T>
       
   }
   
-  class XMLRenderer
-    implements Renderer
+  class XMLRenderHandler
+    extends AbstractMessageHandler
   {
+    { type=RenderMessage.TYPE;
+    }
+    
     @Override
-    public void render(EventContext context,boolean postOrder) 
-      throws IOException
+    public void doHandler
+      (EventContext context,Message message,MessageHandlerChain next) 
     {
-      Appendable writer=context.getOutput();
-      
-      if (!postOrder)
-      { 
+      try
+      {
+        Appendable writer=context.getOutput();
+          
         writer.append("<");
         writer.append(name);
-    
+        
         renderAttributes(writer);
-    
+        
         if (hasContent)
         { 
           writer.append(">");
@@ -158,15 +164,18 @@ public class XMLEncode<T>
         else
         { writer.append("/>");
         }
-      }
-      else
-      { 
+          
+        next.handleMessage(context,message);
+    
         if (hasContent)
         {
+          writer.append("</");
+          writer.append(name);
+          writer.append(">");
         }
-        writer.append("</");
-        writer.append(name);
-        writer.append(">");
+      }
+      catch (IOException x)
+      { throw new RuntimeException("Error rendering XML",x);
       }
     }
 

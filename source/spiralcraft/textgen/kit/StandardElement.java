@@ -14,7 +14,6 @@
 //
 package spiralcraft.textgen.kit;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,11 +24,7 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.ElementRuntimeException;
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.MessageHandler;
-import spiralcraft.textgen.MessageHandlerChain;
-import spiralcraft.textgen.RenderMessage;
 
 import spiralcraft.app.Message;
 import spiralcraft.common.ContextualException;
@@ -60,37 +55,6 @@ public class StandardElement
   protected Focus<?> selfFocus;
   protected boolean exportSelf;
   
-  class DefaultHandler
-    implements MessageHandler
-  {
-
-    @Override
-    public Focus<?> bind(
-      Focus<?> focusChain)
-      throws BindException
-    { return focusChain;
-    }
-
-    @Override
-    public void handleMessage(
-      EventContext context,
-      Message message,
-      MessageHandlerChain next)
-    { 
-      if (message.getType()==RenderMessage.TYPE)
-      { 
-        try
-        { renderChildren(context);
-        }
-        catch (IOException x)
-        { throw new ElementRuntimeException(StandardElement.this,x);
-        }
-      }
-      else
-      { relayMessage(context,message);
-      }
-    }
-  }
   
   @Override
   public final Focus<?> bind(
@@ -214,23 +178,5 @@ public class StandardElement
     }
   }
 
-  @Override
-  public final void render(EventContext context) 
-    throws IOException
-  {
-    if (outerContext!=null)
-    { outerContext.push();
-    }
-  
-    try
-    { invokeRenderHandler(context);
-    }
-    finally
-    { 
-      if (outerContext!=null)
-      { outerContext.pop();
-      }
-    }
-  }
 
 }

@@ -25,7 +25,6 @@ import spiralcraft.lang.Focus;
 import spiralcraft.scaffold.Scaffold;
 import spiralcraft.log.ClassLog;
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.EventContext;
 
 
 import spiralcraft.text.ParseException;
@@ -209,14 +208,7 @@ public abstract class TglUnit
     { ret=defines.get(name);
     }
     return ret;
-      
-//    // Local takes precedence 
-//    // (deprecated- parent precedence facilitates inheritance)
-//    DefineUnit ret=defines!=null?defines.get(name):null;
-//    if (ret==null && parent!=null)
-//    { return parent.findDefinition(name);
-//    }
-//    return ret;
+
   }
   
   public boolean allowsChildren()
@@ -467,10 +459,5 @@ public abstract class TglUnit
 class DefaultElement
   extends Element
 {
-  
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { renderChildren(context);
-  }
+
 }

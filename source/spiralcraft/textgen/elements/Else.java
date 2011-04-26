@@ -14,7 +14,6 @@
 //
 package spiralcraft.textgen.elements;
 
-import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Element;
 
 /**
@@ -28,8 +27,5 @@ import spiralcraft.textgen.Element;
 public class Else
   extends Element
 {
-  @Override
-  public void render(EventContext context)
-  {
-  }
+
 }

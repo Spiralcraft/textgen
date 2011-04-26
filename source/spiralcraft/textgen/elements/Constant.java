@@ -14,7 +14,6 @@
 //
 package spiralcraft.textgen.elements;
 
-import java.io.IOException;
 import java.net.URI;
 
 import spiralcraft.common.ContextualException;
@@ -23,7 +22,6 @@ import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.EventContext;
 
 /**
  * <p>Computes a value at bind time and publishes the result
@@ -53,12 +51,7 @@ public class Constant<Tresult>
   public void setAlias(URI alias)
   { this.alias=alias;
   }
-    
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { renderChildren(context);
-  }
+
   
   @Override
   public final Focus<?> bind(Focus<?> focus)

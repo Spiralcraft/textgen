@@ -25,6 +25,7 @@ public class RenderMessage
     extends Message
 {
   public static final Type TYPE=new Type();
+  public static final RenderMessage INSTANCE=new RenderMessage();
   
   { multicast=true;
   }

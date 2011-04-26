@@ -13,7 +13,7 @@ import spiralcraft.textgen.RenderMessage;
 
 import spiralcraft.app.Message;
 
-public abstract class TagRenderHandler
+public abstract class TagHandler
   implements MessageHandler
 { 
   protected abstract String getName();
@@ -26,6 +26,11 @@ public abstract class TagRenderHandler
   
   public void setAttributeBindings(DictionaryBinding<?>[] attributeBindings)
   { this.attributeBindings=attributeBindings;
+  }
+  
+  @Override
+  public Message.Type getType()
+  { return RenderMessage.TYPE;
   }
   
   @Override
@@ -78,6 +83,9 @@ public abstract class TagRenderHandler
           writer.append(tagName);
           writer.append(">");
         } 
+        else
+        { next.handleMessage(context,message);
+        }
       }
       catch (IOException x)
       { throw new RuntimeException("Error rendering tag ",x);

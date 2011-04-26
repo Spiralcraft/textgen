@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
+import spiralcraft.textgen.kit.RenderHandler;
 
 
 import spiralcraft.text.markup.MarkupException;
@@ -156,6 +157,30 @@ public class ExpressionUnit
     
     private Channel<?> _source;
 
+    { addHandler
+      (new RenderHandler()
+        {
+          @Override
+          protected void render(EventContext dispatcher)
+            throws IOException
+          {
+            Object value;
+            try
+            { value=_source.get();
+            }
+            catch (NullPointerException x)
+            { 
+              x.printStackTrace();
+              value=null;
+            }
+              
+            if (value!=null)
+            { dispatcher.getOutput().append(value.toString());
+            }          
+          }
+        }
+      );
+    }    
     
     @Override
     public Focus<?> bind(Focus<?> focus)
@@ -178,23 +203,5 @@ public class ExpressionUnit
 
     }
     
-    @Override
-    public void render(EventContext context)
-      throws IOException
-    { 
-      Object value;
-      try
-      { value=_source.get();
-      }
-      catch (NullPointerException x)
-      { 
-        x.printStackTrace();
-        value=null;
-      }
-        
-      if (value!=null)
-      { context.getOutput().append(value.toString());
-      }
-    }
   }
 }

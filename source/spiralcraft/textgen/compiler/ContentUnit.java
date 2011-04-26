@@ -20,6 +20,7 @@ import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Focus;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
+import spiralcraft.textgen.kit.RenderHandler;
 
 
 /**
@@ -51,7 +52,20 @@ public class ContentUnit
   {
     private CharSequence elementContent;
     
-
+    { addHandler
+        (new RenderHandler() 
+          {
+            @Override
+            protected void render(EventContext context)
+              throws IOException
+            { 
+              if (elementContent!=null)
+              { context.getOutput().append(elementContent.toString());
+              }              
+            }
+          } 
+        );
+    }
     
     @Override
     public Focus<?> bind(Focus<?> focus)
@@ -67,13 +81,5 @@ public class ContentUnit
       return super.bind(focus);
     }
     
-    @Override
-    public void render(EventContext context)
-      throws IOException
-    { 
-      if (elementContent!=null)
-      { context.getOutput().append(elementContent.toString());
-      }
-    }
   }
 }

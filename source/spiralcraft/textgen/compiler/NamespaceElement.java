@@ -1,9 +1,7 @@
 package spiralcraft.textgen.compiler;
 
-import java.io.IOException;
 
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.EventContext;
 
 import spiralcraft.common.ContextualException;
 import spiralcraft.common.namespace.PrefixResolver;
@@ -24,12 +22,6 @@ public class NamespaceElement
   { this.resolver=resolver;
   }
 
-  
-  @Override
-  public void render(EventContext context) throws IOException
-  { 
-    renderChildren(context);
-  }
   
 
   @Override

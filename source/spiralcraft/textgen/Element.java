@@ -23,7 +23,6 @@ import spiralcraft.log.Level;
 import spiralcraft.builder.Assembly;
 import spiralcraft.common.ContextualException;
 
-import java.io.IOException;
 
 import java.util.List;
 
@@ -36,8 +35,6 @@ import spiralcraft.text.markup.MarkupException;
 import spiralcraft.text.xml.Attribute;
 
 import spiralcraft.app.Message;
-import spiralcraft.app.State;
-
 import java.net.URI;
 
 
@@ -78,8 +75,6 @@ import java.net.URI;
 public abstract class Element
 { 
 
-  private static final Message RENDER_MESSAGE=new RenderMessage();
-
   private Element[] children;
   
   private Element parent;
@@ -99,7 +94,11 @@ public abstract class Element
   class DefaultHandler
     implements MessageHandler
   {
-
+    @Override
+    public Message.Type getType()
+    { return null;
+    }
+    
     @Override
     public Focus<?> bind(
       Focus<?> focusChain)
@@ -435,7 +434,7 @@ public abstract class Element
     ,Message message
     )
   {    
-    if (handlerChain!=null)
+    if (!context.isRelayingMessage() && handlerChain!=null)
     { handlerChain.handleMessage(context,message);
     }
     else
@@ -515,105 +514,6 @@ public abstract class Element
   { context.relayMessage(children[index],index,message);
   }
   
-  private State ensureChildState(State parentState,int index)
-  {
-    State childState=parentState.getChild(index);
-    if (childState==null)
-    { 
-      childState=children[index].createState();
-      parentState.setChild(index,childState);
-    }
-    return childState;
-  }
-  
-  /**
-   * <p>Recursively perform processing and write output. The implementation
-   *   of this method should call renderChild() for each child tree that
-   *   should be rendered.
-   * </p>
-   * 
-   */
-  public abstract void render(EventContext context)
-    throws IOException;
-  
-  protected void invokeRenderHandler(EventContext context)
-    throws IOException
-  {
-    if (handlerChain!=null)
-    { handlerChain.handleMessage(context,RENDER_MESSAGE);
-    }
-    else
-    { renderChildren(context);
-    }
-  }
-  
-  /**
-   * <P>Call this method to render a child element.
-   * </P>
-   * 
-   * <P>This method ensures that the child Element's state is available in the
-   *   eventContext, and ensures that this Element's state is restored to
-   *   the eventContext upon return
-   * </P>
-   * 
-   * @param context
-   * @param index
-   * @throws IOException
-   */
-  protected final void renderChild(EventContext context,int index)
-    throws IOException
-  { 
-    if (innerContext!=null)
-    { innerContext.push();
-    }
-    try
-    { renderChildInContext(context,index);
-    }
-    finally
-    { 
-      if (innerContext!=null)
-      { innerContext.pop();
-      }
-    }
-  }
-  
-  private final void renderChildInContext(EventContext context,int index)
-    throws IOException
-  {
-    if (context.isStateful())
-    {
-      State state=context.getState();
-      try
-      {
-        context.setState(ensureChildState(state,index));
-        children[index].render(context);
-      }
-      finally
-      { context.setState(state);
-      }
-    }
-    else
-    { children[index].render(context);
-    }
-  }
-  
-  /**
-   * Convenience method to render all of this Element's children
-   * 
-   * @param context
-   * @throws IOException
-   */
-  protected final void renderChildren(EventContext context)
-    throws IOException
-  {
-    if (children!=null)
-    { 
-      for (int i=0;i<children.length;i++)
-      { renderChildInContext(context,i);
-      }
-    }
-  }
-
   /**
    * <p>Create a new ElementState object for this Element. 
    * </p>

@@ -37,7 +37,6 @@ import spiralcraft.textgen.InitializeMessage;
 
 import spiralcraft.util.LookaroundIterator;
 
-import java.io.IOException;
 
 import java.util.Iterator;
 
@@ -373,7 +372,7 @@ public class Iterate
       lookbehindChannel.push(null);
       valueChannel.push(childState.getValue());
       lookaheadChannel.push(null);
-      genContext.setState(childState);
+//      genContext.setState(childState);
       genContext.descend(index);
       relayMessage(genContext,message);
     }
@@ -441,23 +440,7 @@ public class Iterate
     }
   }
   
-  @Override
-  public void message
-    (final EventContext context
-    ,Message message
-    )
-  {
-    if (context.isStateful())
-    { messageStateful(context,message);
-    }    
-  }
-  
-      
-  private void renderRegenerate
-    (final EventContext genContext
-    ,IterationState state
-    )
-    throws IOException
+  private void messageStateless(EventContext context,Message message)
   {
     Iteration oldIter=iterationLocal.get();
     Iteration iter=new Iteration();
@@ -465,7 +448,7 @@ public class Iterate
 
     try
     {
-      // Efficient case- run the iteration while we render
+      // Efficient case- run the iteration
 
       if (debug)
       { log.fine(toString()+": iterating on render");
@@ -486,10 +469,7 @@ public class Iterate
           lookbehindChannel.push(lastVal);
           valueChannel.push(val);
           lookaheadChannel.push(cursor.getCurrent());
-          if (genContext.isStateful())
-          { genContext.setState(state.ensureChild(i,val));
-          }
-          renderChildren(genContext);
+          relayMessage(context,message);
         }
         finally
         { 
@@ -498,9 +478,6 @@ public class Iterate
           lookbehindChannel.pop();
         }
         i++;
-      }
-      if (state!=null)
-      { state.trim(i);
       }
       if (debug)
       { log.fine(toString()+": iterated "+i+" elements");
@@ -516,83 +493,28 @@ public class Iterate
       { iterationLocal.remove();
       }
     }        
-  }
-
-  private void renderRetraverse
-    (final EventContext genContext
-    ,IterationState state
-    )
-    throws IOException
-  {
-    Iteration oldIter=iterationLocal.get();
-    Iteration iter=new Iteration();
-    iterationLocal.set(iter);
-
-    try
-    {
-      if (debug)
-      { 
-        log.fine(toString()+": retraversing on render ("
-            +state.getChildCount()+" elements)");
-      }
-      
-      // Follow pre-rendered iteration
-      LookaroundIterator<MementoState> it
-        =new LookaroundIterator<MementoState>(state.iterator());
-      while (it.hasNext())
-      {
-        Object lastVal=it.getPrevious()!=null?it.getPrevious().getValue():null;
-        MementoState childState=it.next();
-        iter.hasNext=it.hasNext();
-        try
-        {
-          lookbehindChannel.push(lastVal);
-          valueChannel.push(childState.getValue());
-          lookaheadChannel.push
-            (it.getCurrent()!=null?it.getCurrent().getValue():null);
-          genContext.setState(childState);
-          renderChildren(genContext);
-        }
-        finally
-        { 
-          lookaheadChannel.pop();
-          valueChannel.pop();
-          lookbehindChannel.pop();
-        }
-        iter.index++;
-      }
-    }
-    finally
-    {
-      if (oldIter!=null)
-      { iterationLocal.set(oldIter);
-      }
-      else
-      { iterationLocal.remove();
-      }
-    }
     
-  }
+    
+  }  
   
   @Override
-  public void render(final EventContext genContext)
-    throws IOException
-  { 
-    IterationState state=(IterationState) genContext.getState();
-    try
-    {
-    
-      if (state==null || state.frameChanged(genContext.getCurrentFrame()))
-      { renderRegenerate(genContext,state);
-      }
-      else
-      { renderRetraverse(genContext,state);
-      }
-    }
-    finally
-    { genContext.setState(state);
+  public void message
+    (final EventContext context
+    ,Message message
+    )
+  {
+    if (context.isStateful())
+    { messageStateful(context,message);
+    }    
+    else
+    { messageStateless(context,message);
     }
   }
+  
+  
+
+  
+      
   
   /**
    * <p>Find the distance from the calling element's state in the state

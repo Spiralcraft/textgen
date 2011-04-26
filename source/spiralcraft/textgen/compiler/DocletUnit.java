@@ -15,7 +15,6 @@
 package spiralcraft.textgen.compiler;
 
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.EventContext;
 
 import spiralcraft.text.markup.Unit;
 import java.io.IOException;
@@ -127,15 +126,6 @@ public class DocletUnit
     public URI getContextURI()
     { return resource.getURI();
     }
-    
-   
-    @Override
-    public void render(EventContext context)
-      throws IOException
-    { renderChildren(context);
-    }
-    
-  
   }
   
 }

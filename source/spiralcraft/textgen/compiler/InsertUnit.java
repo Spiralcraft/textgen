@@ -14,7 +14,6 @@
 //
 package spiralcraft.textgen.compiler;
 
-import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -195,11 +194,7 @@ class InsertElement
   extends Element
 {
   
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { renderChildren(context);
-  }
+
 }
 
 
@@ -270,17 +265,5 @@ class InsertIncludeElement
 
   }
   
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { 
-    if (ancestorInclude!=null)
-    { ancestorInclude.renderClosure(context);
-    }
-    else 
-    { renderChildren(context);
-    }
-    
-  }
 
 }

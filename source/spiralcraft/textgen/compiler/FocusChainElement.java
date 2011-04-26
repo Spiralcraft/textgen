@@ -1,6 +1,5 @@
 package spiralcraft.textgen.compiler;
 
-import java.io.IOException;
 
 import spiralcraft.common.ContextualException;
 import spiralcraft.common.Lifecycle;
@@ -102,25 +101,6 @@ public class FocusChainElement
     }
     
     
-  }
-  
-  @Override
-  public void render(final EventContext context)
-    throws IOException
-  { 
-    if (tfco==null)
-    { renderChildren(context);
-    }
-    else
-    {
-      tfco.push();
-      try
-      { renderChildren(context);
-      }
-      finally
-      { tfco.pop();
-      }
-    }
   }
 
 }

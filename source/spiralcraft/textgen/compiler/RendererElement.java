@@ -1,7 +1,5 @@
 package spiralcraft.textgen.compiler;
 
-import java.io.IOException;
-
 
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Focus;
@@ -10,7 +8,7 @@ import spiralcraft.lang.Contextual;
 import spiralcraft.text.Renderer;
 
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.EventContext;
+import spiralcraft.textgen.kit.RenderHandler;
 
 /**
  * <p>Holds a reference to Renderer for externally defined output. 
@@ -37,6 +35,7 @@ public class RendererElement
   public Focus<?> bind(Focus<?> focus) 
     throws ContextualException
   { 
+    addHandler(new RenderHandler(renderer));
     
     if (renderer instanceof Contextual)
     { 
@@ -47,14 +46,6 @@ public class RendererElement
     focus=focus.chain(getAssembly().getFocus().getSubject());
     return super.bind(focus);
   }
-  
-  
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { 
-    renderer.render(context.getOutput());
-    renderChildren(context);
-  }
+
   
 }

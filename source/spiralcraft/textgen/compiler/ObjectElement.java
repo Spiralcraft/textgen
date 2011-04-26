@@ -1,9 +1,6 @@
 package spiralcraft.textgen.compiler;
 
-import java.io.IOException;
-
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.EventContext;
 
 /**
  * <p>Holds a reference to single POJO used for a parameter value 
@@ -25,8 +22,5 @@ public class ObjectElement
   public Object getObject()
   { return object;
   }
-  
-  @Override
-  public void render(EventContext context) throws IOException
-  { }
+
 }

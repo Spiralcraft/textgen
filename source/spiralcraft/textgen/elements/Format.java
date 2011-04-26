@@ -17,6 +17,7 @@ package spiralcraft.textgen.elements;
 import java.io.IOException;
 import java.util.Date;
 
+import spiralcraft.app.Message;
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.AccessException;
 import spiralcraft.lang.Channel;
@@ -26,6 +27,9 @@ import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.lang.spi.AbstractChannel;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
+import spiralcraft.textgen.MessageHandlerChain;
+import spiralcraft.textgen.RenderMessage;
+import spiralcraft.textgen.kit.AbstractMessageHandler;
 
 /**
  * <p>Formats a date
@@ -45,6 +49,41 @@ public abstract class Format<T extends java.text.Format>
   private final ThreadLocal<T> formatLocal
     =new ThreadLocal<T>();
   
+  {addHandler(new AbstractMessageHandler()
+      { 
+        { type=RenderMessage.TYPE;
+        }
+
+        @Override
+        protected void doHandler(
+          EventContext dispatcher,
+          Message message,
+          MessageHandlerChain next)
+        {
+          Object val=target.get();
+          if (val!=null)
+          {
+            T format=formatLocal.get();
+            if (format==null)
+            { 
+              format=createFormat();
+              formatLocal.set(format);
+            }
+            updateFormat(format);
+            try
+            { dispatcher.getOutput().append(format.format(val));
+            }
+            catch (IOException e)
+            { throw new RuntimeException(e);
+            }
+          }
+          next.handleMessage(dispatcher,message);
+          
+        }
+        
+      }
+    );
+  }
   
   public void setX(Expression<?> expression)
   { this.expression=expression;
@@ -90,21 +129,4 @@ public abstract class Format<T extends java.text.Format>
   }
   
 
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { 
-    Object val=target.get();
-    if (val!=null)
-    {
-      T format=formatLocal.get();
-      if (format==null)
-      { 
-        format=createFormat();
-        formatLocal.set(format);
-      }
-      updateFormat(format);
-      context.getOutput().append(format.format(val));
-    }
-  }
 }

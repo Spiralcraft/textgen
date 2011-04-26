@@ -14,7 +14,6 @@
 //
 package spiralcraft.textgen.compiler;
 
-import java.io.IOException;
 import java.util.List;
 
 import spiralcraft.common.ContextualException;
@@ -30,7 +29,6 @@ import spiralcraft.text.ParseException;
 import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.EventContext;
 
 
 import spiralcraft.text.xml.Attribute;
@@ -425,12 +423,6 @@ class DefineElement
   
   public boolean isFromUnit(DefineUnit unit)
   { return this.unit==unit;
-  }
-  
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { renderChildren(context);
   }
 
 }

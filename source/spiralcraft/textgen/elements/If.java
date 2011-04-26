@@ -28,11 +28,6 @@ import spiralcraft.app.Message;
 import spiralcraft.common.ContextualException;
 
 
-
-import java.io.IOException;
-
-
-
 /**
  * <p>Logical element renders contents if the condition (X) is true. If the
  *   condition is false, and an "Else" element is a direct child, the contents
@@ -192,47 +187,6 @@ public class If
     return val;
   }
   
-  /**
-   * <P>Renders the tag. A positive result is displayed only if the bound
-   *   expression returns true. A null value is interpreted as false.
-   * </P>
-   */
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { 
-    
-    
-    
-    Boolean val=currentValue(context);
-    
-    boolean passed=val!=null && val;
-    
-    int childCount=getChildCount();
-
-    int start;
-    int end;
-    if (passed)
-    { 
-      if (debug)
-      { log.fine("Condition is true");
-      }
-      start=0;
-      end=elsePos>-1?elsePos:childCount;
-    }
-    else
-    { 
-      if (debug)
-      { log.fine("Condition is false");
-      }
-      start=elsePos>-1?elsePos+1:childCount;
-      end=childCount;
-    }
-    for (int i=start;i<end;i++)
-    { renderChild(context,i);
-    }
-      
-  }
   
   @Override
   public ValueState<Boolean> createState()
