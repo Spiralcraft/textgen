@@ -378,7 +378,6 @@ public class Element
     bindChildren(focus,scaffold!=null?scaffold.getChildren():null);
   }
   
-  @Override
   public Component[] getChildren()
   { return children;
   }
