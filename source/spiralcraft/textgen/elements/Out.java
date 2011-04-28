@@ -2,12 +2,13 @@ package spiralcraft.textgen.elements;
 
 import java.io.IOException;
 
+import spiralcraft.app.Dispatcher;
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Binding;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.EventContext;
+import spiralcraft.textgen.OutputContext;
 import spiralcraft.textgen.kit.RenderHandler;
 
 /**
@@ -27,7 +28,7 @@ public class Out<T>
       {
         
         @Override
-        protected void render(EventContext dispatcher)
+        protected void render(Dispatcher dispatcher)
           throws IOException
         {
           T value;
@@ -41,7 +42,7 @@ public class Out<T>
           }
             
           if (value!=null)
-          { dispatcher.getOutput().append(value.toString());
+          { OutputContext.get().append(value.toString());
           }          
         }
       }

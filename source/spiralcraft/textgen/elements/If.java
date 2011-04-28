@@ -19,11 +19,11 @@ import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Channel;
 
-import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.InitializeMessage;
 import spiralcraft.textgen.ValueState;
 
+import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
 import spiralcraft.common.ContextualException;
 
@@ -116,12 +116,12 @@ public class If
   
   @Override
   public void message
-    (EventContext context
+    (Dispatcher context
     ,Message message
     )
   {
     if (message.getType()!=InitializeMessage.TYPE
-       && !context.isRelayingMessage()
+       && context.isTarget()
        && filterMessages
        )
     {
@@ -165,7 +165,7 @@ public class If
   
   }
   @SuppressWarnings("unchecked")
-  protected Boolean currentValue(EventContext context)
+  protected Boolean currentValue(Dispatcher context)
   {
     Boolean val;
     
@@ -175,7 +175,7 @@ public class If
     else
     {
       ValueState<Boolean> state=(ValueState<Boolean>) context.getState();
-      if (state.frameChanged(context.getCurrentFrame()) || !state.isValid())
+      if (state.frameChanged(context.getFrame()) || !state.isValid())
       { 
         val=target.get();
         state.setValue(val);

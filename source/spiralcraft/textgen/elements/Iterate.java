@@ -25,10 +25,10 @@ import spiralcraft.lang.IterationDecorator;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.log.ClassLog;
 
-import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.IterationState;
 import spiralcraft.textgen.MementoState;
+import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
 import spiralcraft.common.ContextualException;
 
@@ -229,7 +229,7 @@ public class Iterate
   
   
   private void messageInitializeContent
-    (final EventContext genContext
+    (final Dispatcher genContext
     ,Message message
     ,IterationState state
     )
@@ -262,11 +262,13 @@ public class Iterate
           lookbehindChannel.push(lastVal);
           valueChannel.push(val);
           lookaheadChannel.push(cursor.getCurrent());
-          genContext.setState(state.ensureChild(i++,val));
+          state.ensureChild(i,val);
+          genContext.descend(i);
           relayMessage(genContext,message);
         }
         finally
         { 
+          genContext.ascend();
           lookaheadChannel.pop();
           valueChannel.pop();
           lookbehindChannel.pop();
@@ -293,7 +295,7 @@ public class Iterate
   }
   
   private void messageStatefulChildren
-    (final EventContext genContext
+    (final Dispatcher genContext
     ,Message message
     ,IterationState state
     )
@@ -326,11 +328,12 @@ public class Iterate
           valueChannel.push(childState.getValue());
           lookaheadChannel.push
             (it.getCurrent()!=null?it.getCurrent().getValue():null);
-          genContext.setState(childState);
+          genContext.descend(iter.index);
           relayMessage(genContext,message);
         }
         finally
         { 
+          genContext.ascend();
           lookaheadChannel.pop();
           valueChannel.pop();
           lookbehindChannel.pop();
@@ -353,7 +356,7 @@ public class Iterate
   }
   
   private void messageStatefulChild
-    (final EventContext genContext
+    (final Dispatcher genContext
     ,Message message
     ,MementoState childState
     ,int index
@@ -393,7 +396,7 @@ public class Iterate
   }
   
   private void messageStateful
-    (final EventContext genContext
+    (final Dispatcher genContext
     ,Message message
     )
   {
@@ -409,7 +412,7 @@ public class Iterate
       }
       else
       {
-        if (state.frameChanged(genContext.getCurrentFrame()))
+        if (state.frameChanged(genContext.getFrame()))
         { 
           if (debug)
           { log.fine(toString()+" refreshing on Frame change");
@@ -436,11 +439,15 @@ public class Iterate
       }
     }
     finally
-    { genContext.setState(state);
+    { 
+      if (genContext.getState()!=state)
+      { throw new IllegalStateException
+          ("Expected "+state+" found "+genContext.getState());
+      }
     }
   }
   
-  private void messageStateless(EventContext context,Message message)
+  private void messageStateless(Dispatcher context,Message message)
   {
     Iteration oldIter=iterationLocal.get();
     Iteration iter=new Iteration();
@@ -499,7 +506,7 @@ public class Iterate
   
   @Override
   public void message
-    (final EventContext context
+    (final Dispatcher context
     ,Message message
     )
   {

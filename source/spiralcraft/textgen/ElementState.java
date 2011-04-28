@@ -15,6 +15,7 @@
 package spiralcraft.textgen;
 
 import spiralcraft.app.State;
+import spiralcraft.app.StateFrame;
 
 /**
  * <p>Represents the state of an Element in association with a specific 

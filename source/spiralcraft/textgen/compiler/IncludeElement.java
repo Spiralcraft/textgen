@@ -4,8 +4,8 @@ import java.io.IOException;
 
 //import spiralcraft.log.ClassLogger;
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.EventContext;
 
+import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
 import spiralcraft.app.State;
 
@@ -33,10 +33,11 @@ public class IncludeElement
   
   @Override
   public void message
-    (EventContext context
+    (Dispatcher context
     ,Message message
     )
   {
+    State state=context.getState();
     threadLocalState.set(context.getState());
     try
     { 
@@ -50,8 +51,12 @@ public class IncludeElement
     }
     finally
     { 
-      context.setState(threadLocalState.get());
       threadLocalState.remove();
+      if (context.getState()!=state)
+      { 
+        throw new IllegalStateException
+          ("Found "+context.getState()+" expected "+state);
+      }
     }
   }
 
@@ -61,33 +66,56 @@ public class IncludeElement
    * @throws IOException
    */
   public void messageClosure
-    (EventContext context
+    (Dispatcher context
     ,Message message
     )
   {
 
-    State deepState=null;
+    State deepState=context.getState();
     try
     { 
-      // Save the current state for later restoration and substitute
-      //   the state of the actual parent (this IncludeElement's state)
-      deepState=context.getState();
       
-      context.setState(threadLocalState.get());
       int childCount=getChildCount();
       Integer pathIndex=context.getNextRoute();
       if (pathIndex!=null)
-      { this.messageChild(pathIndex,context,message);
+      { 
+        if (pathIndex<getChildCount())
+        { 
+          context.relayMessage
+            (getChild(pathIndex)
+            ,threadLocalState.get()
+            ,pathIndex
+            ,message
+            );
+        }
+        else
+        {
+          log.warning
+          (getLogPrefix(context)
+          +"Route error: "+pathIndex+">="+getChildCount()
+          );
+        }
       }
       else if (message.isMulticast())
       { 
         for (int i=1;i<childCount;i++)
-        { this.messageChild(i,context,message);
+        { 
+          context.relayMessage
+            (getChild(i)
+            ,threadLocalState.get()
+            ,i
+            ,message
+            );
         }
       }
     }
     finally
-    { context.setState(deepState);
+    { 
+      if (context.getState()!=deepState)
+      { 
+        throw new IllegalStateException
+          ("Found "+context.getState()+" expected "+deepState);
+      }
     }
   }
 

@@ -16,6 +16,7 @@ package spiralcraft.textgen.compiler;
 
 import java.util.List;
 
+import spiralcraft.app.Parent;
 import spiralcraft.common.ContextualException;
 import spiralcraft.common.namespace.QName;
 import spiralcraft.lang.BindException;
@@ -171,19 +172,19 @@ public class DefineUnit
    * @param child
    * @return
    */
-  public DefineElement findBoundElement(Element child)
+  public DefineElement findBoundElement(Parent parent)
   {
     DefineElement ret=null;
-    while (child!=null)
+    while (parent!=null)
     {
-      ret=child.findElement(DefineElement.class);
+      ret=parent.findComponent(DefineElement.class);
       if (ret==null)
-      { throw new IllegalStateException("No DefineElement is parent of "+child);
+      { throw new IllegalStateException("No DefineElement is parent of "+parent);
       }
       if (ret.isFromUnit(this))
       { break;
       }
-      child=ret.getParent();
+      parent=ret.getParent();
       ret=null;
     }
     return ret;

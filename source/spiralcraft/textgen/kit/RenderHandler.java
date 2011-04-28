@@ -18,8 +18,9 @@ import java.io.IOException;
 
 import spiralcraft.app.Message;
 import spiralcraft.text.Renderer;
-import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.MessageHandlerChain;
+import spiralcraft.app.Dispatcher;
+import spiralcraft.app.MessageHandlerChain;
+import spiralcraft.textgen.OutputContext;
 import spiralcraft.textgen.RenderMessage;
 
 /**
@@ -46,7 +47,7 @@ public class RenderHandler
 
   @Override
   protected void doHandler(
-    EventContext dispatcher,
+    Dispatcher dispatcher,
     Message message,
     MessageHandlerChain next)
   {
@@ -59,11 +60,11 @@ public class RenderHandler
     next.handleMessage(dispatcher,message);
   }
   
-  protected void render(EventContext dispatcher)
+  protected void render(Dispatcher dispatcher)
     throws IOException
   { 
     if (renderer!=null)
-    { renderer.render(dispatcher.getOutput());
+    { renderer.render( OutputContext.get() );
     }
     else
     { throw new IllegalStateException

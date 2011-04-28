@@ -24,8 +24,8 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.EventContext;
 
+import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
 import spiralcraft.common.ContextualException;
 
@@ -159,7 +159,7 @@ public class StandardElement
   
   @Override
   public final void message
-    (EventContext context
+    (Dispatcher context
     ,Message message
     )
   {    

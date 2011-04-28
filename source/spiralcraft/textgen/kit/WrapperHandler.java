@@ -16,11 +16,12 @@ package spiralcraft.textgen.kit;
 
 import java.io.IOException;
 
+import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
 import spiralcraft.text.Renderer;
 import spiralcraft.text.Wrapper;
-import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.MessageHandlerChain;
+import spiralcraft.textgen.OutputContext;
+import spiralcraft.app.MessageHandlerChain;
 import spiralcraft.textgen.RenderMessage;
 
 /**
@@ -43,14 +44,14 @@ public class WrapperHandler
 
   @Override
   protected void doHandler(
-    final EventContext dispatcher,
+    final Dispatcher dispatcher,
     final Message message,
     final MessageHandlerChain next)
   {
     try
     { 
       wrapper.render
-      (dispatcher.getOutput()
+      (OutputContext.get()
       ,new Renderer()
       {
         @Override

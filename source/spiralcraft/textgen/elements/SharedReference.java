@@ -23,8 +23,8 @@ import spiralcraft.data.persist.AbstractXmlObject;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.EventContext;
 
+import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
 
 /**
@@ -120,7 +120,7 @@ public class SharedReference<Treferent>
 
   @Override
   public void message
-    (final EventContext context
+    (final Dispatcher context
     ,final Message message
     )
   { 

@@ -15,9 +15,9 @@
 package spiralcraft.textgen.kit;
 
 import spiralcraft.lang.Focus;
-import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.MessageHandler;
-import spiralcraft.textgen.MessageHandlerChain;
+import spiralcraft.app.Dispatcher;
+import spiralcraft.app.MessageHandler;
+import spiralcraft.app.MessageHandlerChain;
 
 
 import spiralcraft.app.Message;
@@ -26,7 +26,7 @@ import spiralcraft.common.ContextualException;
 public class StandardMessageHandlerChain
   implements MessageHandlerChain
 {
-
+ 
   private MessageHandler nextHandler;
   private MessageHandlerChain nextChain;
   
@@ -35,7 +35,7 @@ public class StandardMessageHandlerChain
   }
   
   @Override
-  public void handleMessage(EventContext context,Message message)
+  public void handleMessage(Dispatcher context,Message message)
   { 
     if (nextHandler!=null)
     { nextHandler.handleMessage(context,message,nextChain);

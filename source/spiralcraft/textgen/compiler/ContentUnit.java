@@ -16,10 +16,11 @@ package spiralcraft.textgen.compiler;
 
 import java.io.IOException;
 
+import spiralcraft.app.Dispatcher;
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Focus;
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.EventContext;
+import spiralcraft.textgen.OutputContext;
 import spiralcraft.textgen.kit.RenderHandler;
 
 
@@ -56,11 +57,11 @@ public class ContentUnit
         (new RenderHandler() 
           {
             @Override
-            protected void render(EventContext context)
+            protected void render(Dispatcher context)
               throws IOException
             { 
               if (elementContent!=null)
-              { context.getOutput().append(elementContent.toString());
+              { OutputContext.get().append(elementContent.toString());
               }              
             }
           } 

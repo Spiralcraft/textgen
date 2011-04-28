@@ -16,8 +16,13 @@ package spiralcraft.textgen;
 
 import java.util.LinkedList;
 
+import spiralcraft.app.Component;
+import spiralcraft.app.Dispatcher;
+import spiralcraft.app.Event;
 import spiralcraft.app.Message;
 import spiralcraft.app.State;
+import spiralcraft.app.StateFrame;
+
 import spiralcraft.sax.XmlWriter;
 
 import org.xml.sax.ContentHandler;
@@ -31,14 +36,18 @@ import org.xml.sax.ContentHandler;
  * @author mike
  */
 public class EventContext
+  implements Dispatcher
 {
+  
+  
+  
+  
   @SuppressWarnings("unused")
   private final EventContext parent;
   private final Appendable output;
   private ContentHandler contentHandler;
-  private State elementState;
+  private State state;
   private final boolean stateful;
-  private String logPrefix;
   private StateFrame currentFrame;
   private LinkedList<Integer> messagePath;
   
@@ -74,7 +83,7 @@ public class EventContext
     this.parent=parent;
     this.output=output;
     this.stateful=parent.isStateful();
-    currentFrame=parent.getCurrentFrame();
+    currentFrame=parent.getFrame();
   }
   
   /**
@@ -110,8 +119,14 @@ public class EventContext
    * @return The state of the current Element, set by this Element's parent
    *   via setState()
    */
+  @Override
   public State getState()
-  { return elementState;
+  { return state;
+  }
+  
+  @Override
+  public void handleEvent(Event event)
+  {
   }
 
   /**
@@ -121,7 +136,7 @@ public class EventContext
    * @param state
    */
   public void setState(State state)
-  { elementState=state;
+  { this.state=state;
   }
   
   public void dispatch
@@ -129,31 +144,34 @@ public class EventContext
     ,Element root
     ,LinkedList<Integer> messagePath
     )
-  { dispatch(message,root,elementState,messagePath);
+  { dispatch(message,root,state,messagePath);
   }
   
   public void dispatch
     (Message message
     ,Element root
-    ,State state
+    ,State startingState
     ,LinkedList<Integer> messagePath
     )
   {
-    State lastState=this.elementState;
+    State lastState=this.state;
     LinkedList<Integer> lastMessagePath=messagePath;
+    OutputContext.push(output);
     try
     {
-      this.elementState=state;
+      this.state=startingState;
       this.messagePath=messagePath;
       root.message(this,message);
     }
     finally
     { 
+      OutputContext.pop();
       messagePath=lastMessagePath;
-      this.elementState=lastState;
+      this.state=lastState;
     }
   }
   
+  @Override
   public Integer getNextRoute()
   {
     if (messagePath==null || messagePath.isEmpty())
@@ -163,16 +181,20 @@ public class EventContext
     { return messagePath.getFirst();
     }
   }
+  
   /**
-   * Indicate whether the current message path still has unreached elements
+   * Indicate whether the current component is within the set of targets
+   *   for the current message, i.e. there are no more route segments to
+   *   process
    * 
    * @return
    */
-  public boolean isRelayingMessage()
-  { return messagePath!=null && !messagePath.isEmpty();
+  @Override
+  public boolean isTarget()
+  { return messagePath==null || messagePath.isEmpty();
   }
   
-  
+  @Override
   public final void descend(int index)
   { 
     if (messagePath!=null && !messagePath.isEmpty())
@@ -184,15 +206,16 @@ public class EventContext
           ("Route violation: "+index+" != next segment "+element);
       };
     }
-    if (this.elementState!=null)
-    { this.elementState=this.elementState.getChild(index);
+    if (this.state!=null)
+    { this.state=this.state.getChild(index);
     }
   }
   
+  @Override
   public final void ascend()
   { 
-    if (this.elementState!=null)
-    { this.elementState=this.elementState.getParent();
+    if (this.state!=null)
+    { this.state=this.state.getParent();
     }
   }  
   
@@ -204,20 +227,21 @@ public class EventContext
    * @param childIndex
    * @param message
    */
+  @Override
   public void relayMessage
-    (Element childComponent,int childIndex,Message message)
+    (Component childComponent,int childIndex,Message message)
   {
-    if (isStateful() && elementState!=null)
+    if (isStateful() && state!=null)
     {
       
-      State childState=elementState.getChild(childIndex);
+      State childState=state.getChild(childIndex);
       if (childState==null)
       { 
         childState=childComponent.createState();
-        elementState.setChild(childIndex,childState);    
+        state.setChild(childIndex,childState);    
       }
       
-      final State lastState=this.elementState;
+      final State lastState=this.state;
       
       descend(childIndex);
       try
@@ -226,7 +250,7 @@ public class EventContext
       finally
       {
         ascend();
-        this.elementState=lastState;
+        this.state=lastState;
       }
     }
     else
@@ -234,6 +258,24 @@ public class EventContext
     }
   }  
   
+  @Override
+  public void relayMessage
+    (Component childComponent
+    ,State newParentState
+    ,int childIndex
+    ,Message message
+    )
+  {  
+    final State lastState=this.state;
+    this.state=newParentState;
+    try
+    { relayMessage(childComponent,childIndex,message);
+    }
+    finally
+    { this.state=lastState;
+    } 
+    
+  }
   
   /**
    * <p>A stateful rendering or messaging allows for direct
@@ -243,21 +285,19 @@ public class EventContext
    * @return Whether ElementStates should be created and maintained for
    *   components.
    */
+  @Override
   public boolean isStateful()
   { return stateful;
   }
   
-  public String getLogPrefix()
-  { return logPrefix;
-  }
-  
-  public StateFrame getCurrentFrame()
+  @Override
+  public StateFrame getFrame()
   { return currentFrame;
   }
+
   
-  protected void setLogPrefix(String logPrefix)
-  { this.logPrefix=logPrefix;
+  @Override
+  public String getContextInfo()
+  { return null;
   }
-  
-  
 }

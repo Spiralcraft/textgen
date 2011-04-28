@@ -22,6 +22,8 @@ import spiralcraft.log.Level;
 
 import spiralcraft.builder.Assembly;
 import spiralcraft.common.ContextualException;
+import spiralcraft.common.LifecycleException;
+import spiralcraft.common.Lifecycler;
 
 
 import java.util.List;
@@ -34,7 +36,15 @@ import spiralcraft.text.ParsePosition;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.text.xml.Attribute;
 
+import spiralcraft.app.Component;
+import spiralcraft.app.Dispatcher;
+import spiralcraft.app.Event;
 import spiralcraft.app.Message;
+import spiralcraft.app.MessageHandler;
+import spiralcraft.app.MessageHandlerChain;
+import spiralcraft.app.Parent;
+
+
 import java.net.URI;
 
 
@@ -72,12 +82,13 @@ import java.net.URI;
  *   expressions by binding them to the Focus provided by its parent element.
  * </p> 
  */
-public abstract class Element
+public class Element
+  implements Component,Parent
 { 
 
-  private Element[] children;
+  private Component[] children;
   
-  private Element parent;
+  private Parent parent;
   private TglUnit scaffold;
   
   private Assembly<?> assembly;
@@ -85,7 +96,10 @@ public abstract class Element
   private MessageHandlerChain handlerChain;
   protected boolean debug;
   private ParsePosition position;
+  
   protected final ClassLog log=ClassLog.getInstance(getClass());
+  protected Level logLevel=Level.INFO;
+  
   protected DefineUnit skin;
   protected URI focusURI;
   
@@ -108,7 +122,7 @@ public abstract class Element
 
     @Override
     public void handleMessage(
-      EventContext context,
+      Dispatcher context,
       Message message,
       MessageHandlerChain next)
     { relayMessage(context,message);
@@ -147,7 +161,7 @@ public abstract class Element
    * 
    * @param x
    */
-  protected void logHandledException(EventContext context,Throwable x)
+  protected void logHandledException(Dispatcher context,Throwable x)
   { log.log(Level.INFO,getLogPrefix(context)+": Caught handled exception ",x);
   }
 
@@ -158,9 +172,9 @@ public abstract class Element
    * @return Any contextual information derived from the EventContext, or ""
    *   (default)
    */
-  protected String getLogPrefix(EventContext context)
+  protected String getLogPrefix(Dispatcher context)
   { 
-    String logPrefix=context.getLogPrefix();
+    String logPrefix=context.getContextInfo();
     return logPrefix!=null?logPrefix:"";
   }
   
@@ -187,13 +201,32 @@ public abstract class Element
   }
   
   public void setDebug(boolean debug)
-  { this.debug=debug;
+  { 
+    this.debug=debug;
+    if (debug)
+    { this.logLevel=Level.FINE;
+    }
+    else
+    { this.logLevel=Level.INFO;
+    }
   }
   
   public boolean isDebug()
   { return debug;
   }
-  
+
+  @Override
+  public void setLogLevel(Level logLevel)
+  { 
+    this.logLevel=logLevel;
+    if (logLevel.isDebug())
+    { this.debug=true;
+    }
+    else
+    { this.debug=false;
+    }
+  }
+
   protected synchronized void addHandler(MessageHandler handler)
   { 
     if (handlerChain==null)
@@ -204,7 +237,7 @@ public abstract class Element
     }
   }
   
-  protected Element getChild(int i)
+  protected Component getChild(int i)
   { 
     if (children==null)
     { return null;
@@ -232,7 +265,7 @@ public abstract class Element
   public URI getContextURI()
   {
     if (parent!=null)
-    { return parent.getContextURI();
+    { return ((Element) parent).getContextURI();
     }
     return null;
   }
@@ -262,7 +295,7 @@ public abstract class Element
    * </p>
    * 
    */
-  public void setParent(Element parent)
+  public void setParent(Parent parent)
   { 
     if (this.parent!=null)
     { throw new IllegalStateException("Parent already specified");
@@ -288,7 +321,8 @@ public abstract class Element
   { return scaffold;
   }
   
-  public Element getParent()
+  @Override
+  public Parent getParent()
   { return parent;
   }
   
@@ -305,10 +339,7 @@ public abstract class Element
    * @throws BindException 
    * @throws MarkupException
    */
-//  public void bind(Focus<?> focus,List<TglUnit> childUnits)
-//    throws BindException,MarkupException
-//  { bindChildren(focus,childUnits);
-//  }
+  @Override
   public Focus<?> bind(Focus<?> focus)
     throws ContextualException
   { 
@@ -345,6 +376,11 @@ public abstract class Element
     throws ContextualException
   { 
     bindChildren(focus,scaffold!=null?scaffold.getChildren():null);
+  }
+  
+  @Override
+  public Component[] getChildren()
+  { return children;
   }
   
   /**
@@ -429,16 +465,17 @@ public abstract class Element
    * </p>
    * 
    */
+  @Override
   public void message
-    (EventContext context
+    (Dispatcher dispatcher
     ,Message message
     )
   {    
-    if (!context.isRelayingMessage() && handlerChain!=null)
-    { handlerChain.handleMessage(context,message);
+    if (dispatcher.isTarget() && handlerChain!=null)
+    { handlerChain.handleMessage(dispatcher,message);
     }
     else
-    { relayMessage(context,message);
+    { relayMessage(dispatcher,message);
     }
   }
 
@@ -455,7 +492,7 @@ public abstract class Element
    *   message
    */
   protected final void relayMessage
-    (EventContext context
+    (Dispatcher context
     ,Message message
     )
   { 
@@ -496,22 +533,28 @@ public abstract class Element
   }
   
   /**
-   * Call this method to message a child element.
-   * 
-   * <P>This method ensures that the child Element's state is available in the
-   *   eventContext, and ensures that this Element's state is restored to
-   *   the eventContext upon return
-   * </P>
+   * Call this method to message a child element. This just calls 
+   *   Dispatcher.relayMessage() to the specified child
    * 
    * @param context
    * @param index
    */
   protected final void messageChild
     (int index
-    ,EventContext context
+    ,Dispatcher context
     ,Message message
     )
-  { context.relayMessage(children[index],index,message);
+  { 
+    if (index<children.length)
+    { context.relayMessage(children[index],index,message);
+    }
+    else
+    { 
+      log.warning
+        (getLogPrefix(context)
+        +"Message route "+index+" not found: Only "+children.length+" children"
+        );
+    }
   }
   
   /**
@@ -520,6 +563,7 @@ public abstract class Element
    * 
    * @return An ElementState object for this Element 
    */
+  @Override
   public ElementState createState()
   { return new ElementState(children!=null?children.length:0);
   }
@@ -533,13 +577,15 @@ public abstract class Element
    *   none was found
    */
   @SuppressWarnings("unchecked") // Downcast from runtime check
-  public <X> X findElement(Class<X> clazz)
+  @Override
+  public <X> X findComponent(Class<X> clazz)
   {
     if (clazz.isAssignableFrom(getClass()))
     { return (X) this;
     }
     else if (parent!=null)
-    { return parent.<X>findElement(clazz);
+    { 
+      return ((Element) parent).<X>findComponent(clazz);
     }
     else
     { return null;
@@ -556,7 +602,8 @@ public abstract class Element
    *   none was found
    */
   @SuppressWarnings("unchecked") // Downcast from runtime check
-  public <X> X findElement(Class<X> clazz,Class<?> stop)
+  @Override
+  public <X> X findComponent(Class<X> clazz,Class<?> stop)
   {
     if (stop.isAssignableFrom(getClass()))
     { return null;
@@ -565,7 +612,7 @@ public abstract class Element
     { return (X) this;
     }
     else if (parent!=null)
-    { return parent.<X>findElement(clazz,stop);
+    { return ((Element) parent).<X>findComponent(clazz,stop);
     }
     else
     { return null;
@@ -587,6 +634,7 @@ public abstract class Element
    * @return The state distance, where 1 indicates an immediate parent and 0
    *   indicates that this Element matches the requested Class.
    */
+  @Override
   public int getStateDistance(Class<?> clazz)
   {
     if (clazz.isAssignableFrom(getClass()))
@@ -596,7 +644,7 @@ public abstract class Element
     { 
       int parentDist=parent.getStateDistance(clazz);
       if (parentDist>-1)
-      { return parentDist+1;
+      { return parentDist+getStateDepth();
       }
       else
       { return -1;
@@ -605,6 +653,11 @@ public abstract class Element
     else
     { return -1;
     }
+  }
+  
+  @Override
+  public int getStateDepth()
+  { return 1;
   }
   
   public int getChildCount()
@@ -617,4 +670,30 @@ public abstract class Element
     }
   }
   
+  @Override
+  public void start()
+    throws LifecycleException
+  { Lifecycler.start(children);
+  }
+  
+  @Override
+  public void stop()
+    throws LifecycleException
+  { Lifecycler.stop(children);
+  }
+  
+  @Override
+  public void handleEvent(Dispatcher dispatcher,Event event)
+  { dispatcher.handleEvent(event);
+  }
+  
+  @Override
+  public Parent asParent()
+  { return this;
+  }
+  
+  @Override
+  public Component asComponent()
+  { return this;
+  }
 }

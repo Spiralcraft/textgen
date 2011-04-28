@@ -28,8 +28,8 @@ import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.ElementState;
-import spiralcraft.textgen.EventContext;
 
+import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
 
 /**
@@ -129,7 +129,7 @@ public class LocalReference<Treferent>
   @SuppressWarnings("unchecked")
   @Override
   public void message
-    (EventContext context
+    (Dispatcher context
     ,Message message
     )
   {

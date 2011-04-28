@@ -6,9 +6,10 @@ import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.util.DictionaryBinding;
 import spiralcraft.text.xml.AttributeEncoder;
-import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.MessageHandler;
-import spiralcraft.textgen.MessageHandlerChain;
+import spiralcraft.textgen.OutputContext;
+import spiralcraft.app.Dispatcher;
+import spiralcraft.app.MessageHandler;
+import spiralcraft.app.MessageHandlerChain;
 import spiralcraft.textgen.RenderMessage;
 
 import spiralcraft.app.Message;
@@ -49,7 +50,7 @@ public abstract class TagHandler
   
   @Override
   public void handleMessage(
-    EventContext context,
+    Dispatcher context,
     Message message,
     MessageHandlerChain next)
   {
@@ -58,7 +59,7 @@ public abstract class TagHandler
     {
       try
       {
-        Appendable writer=context.getOutput();
+        Appendable writer=OutputContext.get();
         
         String tagName=getName();
         

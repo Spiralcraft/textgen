@@ -15,16 +15,21 @@
 package spiralcraft.textgen;
 
 
+import java.net.URI;
+
+import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
 import spiralcraft.common.ContextualException;
+import spiralcraft.common.namespace.PrefixedName;
+import spiralcraft.common.namespace.UnresolvedPrefixException;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
+import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.text.Renderer;
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.kit.RenderHandler;
 
 /**
@@ -44,12 +49,26 @@ import spiralcraft.textgen.kit.RenderHandler;
  *
  * @param <T>
  */
+@SuppressWarnings("unused")
 public abstract class FocusElement<T>
   extends Element
 {
   private ThreadLocalChannel<T> channel;
   private Renderer renderer;
   private boolean computeOnInitialize;
+  private URI alias;
+  
+  /**
+   * An unique URI under which this value will be published into the
+   *   focus chain. 
+   * 
+   * @param alias
+   * @throws UnresolvedPrefixException 
+   */
+  public void setAlias(PrefixedName alias) 
+    throws UnresolvedPrefixException
+  { this.alias=alias.resolve().toURIPath();
+  }  
   
   @Override
   public final Focus<?> bind(Focus<?> focus)
@@ -67,6 +86,7 @@ public abstract class FocusElement<T>
     
     focus=parentFocus.chain(channel);
     focus.addFacet(getAssembly().getFocus());
+    focus.addAlias(alias);
     
     focus=bindExports(focus);
     if (focus==null)
@@ -143,7 +163,7 @@ public abstract class FocusElement<T>
 
   @Override
   public final void message
-    (EventContext context
+    (Dispatcher context
     ,Message message
     )
   {
@@ -157,8 +177,8 @@ public abstract class FocusElement<T>
   }
 
   
-  @SuppressWarnings({ "unchecked", "unused" })
-  private final void invalidateState(EventContext context)
+  @SuppressWarnings({ "unchecked" })
+  private final void invalidateState(Dispatcher context)
   { 
     ValueState<T> state=(ValueState<T>) context.getState();
     if (state!=null)
@@ -170,7 +190,7 @@ public abstract class FocusElement<T>
    * Call this to put the value into the thread context
    */
   @SuppressWarnings("unchecked")
-  private final void push(EventContext context,Message message)
+  private final void push(Dispatcher context,Message message)
   { 
     boolean frameChanged;
     if (!context.isStateful())
@@ -195,7 +215,7 @@ public abstract class FocusElement<T>
     else
     {
       ValueState<T> state=(ValueState<T>) context.getState();
-      frameChanged=state.frameChanged(context.getCurrentFrame());
+      frameChanged=state.frameChanged(context.getFrame());
       if (frameChanged || !state.isValid())
       { state.setValue(computeExportValue(state));
       }
@@ -211,14 +231,14 @@ public abstract class FocusElement<T>
    * Called after the focus value is recomputed and published into the
    *   context.
    */
-  protected void onRecompute(EventContext context)
+  protected void onRecompute(Dispatcher context)
   {
   }
   
   /**
    * Called when the state frame changed
    */
-  protected void onFrameChange(EventContext context)
+  protected void onFrameChange(Dispatcher context)
   {
   }
   

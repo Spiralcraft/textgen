@@ -17,6 +17,7 @@ package spiralcraft.textgen.elements;
 import java.io.IOException;
 import java.util.Date;
 
+import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.AccessException;
@@ -26,8 +27,8 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.lang.spi.AbstractChannel;
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.MessageHandlerChain;
+import spiralcraft.textgen.OutputContext;
+import spiralcraft.app.MessageHandlerChain;
 import spiralcraft.textgen.RenderMessage;
 import spiralcraft.textgen.kit.AbstractMessageHandler;
 
@@ -56,7 +57,7 @@ public abstract class Format<T extends java.text.Format>
 
         @Override
         protected void doHandler(
-          EventContext dispatcher,
+          Dispatcher dispatcher,
           Message message,
           MessageHandlerChain next)
         {
@@ -71,7 +72,7 @@ public abstract class Format<T extends java.text.Format>
             }
             updateFormat(format);
             try
-            { dispatcher.getOutput().append(format.format(val));
+            { OutputContext.get().append(format.format(val));
             }
             catch (IOException e)
             { throw new RuntimeException(e);

@@ -25,8 +25,8 @@ import spiralcraft.text.ParseException;
 import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.EventContext;
 
+import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
 import spiralcraft.common.ContextualException;
 
@@ -237,10 +237,10 @@ class InsertIncludeElement
       //   document.
     
       Element containingDocument
-        =findElement(DocletUnit.RootElement.class);
+        =findComponent(DocletUnit.RootElement.class);
     
       if (containingDocument!=null)
-      { ancestorInclude=containingDocument.findElement(IncludeElement.class);
+      { ancestorInclude=containingDocument.findComponent(IncludeElement.class);
       }
     
     }
@@ -251,7 +251,7 @@ class InsertIncludeElement
   
   @Override
   public void message
-    (EventContext context
+    (Dispatcher context
     ,Message message
     )
   {    

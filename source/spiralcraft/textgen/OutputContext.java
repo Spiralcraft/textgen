@@ -14,15 +14,32 @@
 //
 package spiralcraft.textgen;
 
+import spiralcraft.util.thread.ThreadLocalStack;
 
-import spiralcraft.app.Message;
-import spiralcraft.lang.Contextual;
-
-public interface MessageHandlerChain
-  extends Contextual
+/**
+ * A reference to the Appendable used by textgen components to render
+ *   output.
+ * 
+ * @author mike
+ *
+ */
+public class OutputContext
 {
 
-  void handleMessage(EventContext context,Message message);
+
+  public static final ThreadLocalStack<Appendable> APPENDER_LOCAL
+    =new ThreadLocalStack<Appendable>();
   
-  void chain(MessageHandler handler);
+  public static final void push(Appendable appendable)
+  { APPENDER_LOCAL.push(appendable);
+  }
+  
+  public static final void pop()
+  { APPENDER_LOCAL.pop();
+  }
+  
+  public static final Appendable get()
+  { return APPENDER_LOCAL.get();
+  }
+  
 }

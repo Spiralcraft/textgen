@@ -16,6 +16,7 @@ package spiralcraft.textgen.elements;
 
 import java.io.IOException;
 
+import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Expression;
@@ -25,9 +26,9 @@ import spiralcraft.lang.util.DictionaryBinding;
 import spiralcraft.text.xml.AttributeEncoder;
 import spiralcraft.text.xml.XmlEncoder;
 
-import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.ExpressionFocusElement;
-import spiralcraft.textgen.MessageHandlerChain;
+import spiralcraft.textgen.OutputContext;
+import spiralcraft.app.MessageHandlerChain;
 import spiralcraft.textgen.RenderMessage;
 import spiralcraft.textgen.kit.AbstractMessageHandler;
 
@@ -128,11 +129,11 @@ public class XMLEncode<T>
     
   }
   
-  private void renderContent(EventContext context)
+  private void renderContent()
     throws IOException
   {
     if (contentBinding!=null)
-    { contentEncoder.encode(contentBinding.get(),context.getOutput());
+    { contentEncoder.encode(contentBinding.get(),OutputContext.get());
     }
       
   }
@@ -145,11 +146,11 @@ public class XMLEncode<T>
     
     @Override
     public void doHandler
-      (EventContext context,Message message,MessageHandlerChain next) 
+      (Dispatcher context,Message message,MessageHandlerChain next) 
     {
       try
       {
-        Appendable writer=context.getOutput();
+        Appendable writer=OutputContext.get();
           
         writer.append("<");
         writer.append(name);
@@ -159,7 +160,7 @@ public class XMLEncode<T>
         if (hasContent)
         { 
           writer.append(">");
-          renderContent(context);
+          renderContent();
         }
         else
         { writer.append("/>");

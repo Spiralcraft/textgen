@@ -64,14 +64,14 @@ public class Group
         ("Group element must be assigned an expression in the 'x' property ");
       
     }
-    iterate=findElement(Iterate.class);
+    iterate=findComponent(Iterate.class);
     if (iterate==null)
     { 
       throw new BindException
         ("Group element must be contained in Iterate element");
     }    
     
-    parentGroup=getParent().findElement(Group.class,Iterate.class);
+    parentGroup=getParent().findComponent(Group.class,Iterate.class);
     
     
     current=iterate.getFocus().bind(expression);

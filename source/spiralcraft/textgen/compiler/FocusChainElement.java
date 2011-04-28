@@ -9,8 +9,8 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.Contextual;
 import spiralcraft.lang.Context;
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.EventContext;
 
+import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
 
 /**
@@ -81,7 +81,7 @@ public class FocusChainElement
   
   @Override
   public void message
-    (final EventContext context
+    (final Dispatcher context
     ,final Message message
     )
   { 

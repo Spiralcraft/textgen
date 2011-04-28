@@ -17,9 +17,9 @@ package spiralcraft.textgen.kit;
 import spiralcraft.app.Message;
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Focus;
-import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.MessageHandler;
-import spiralcraft.textgen.MessageHandlerChain;
+import spiralcraft.app.Dispatcher;
+import spiralcraft.app.MessageHandler;
+import spiralcraft.app.MessageHandlerChain;
 
 /**
  * A MessageHandler with a no-op bind() implementation to use for simple
@@ -42,7 +42,7 @@ public abstract class AbstractMessageHandler
 
   @Override
   public final void handleMessage
-    (EventContext dispatcher,Message message,MessageHandlerChain next)
+    (Dispatcher dispatcher,Message message,MessageHandlerChain next)
   {
     if (shouldHandleMessage(dispatcher,message))
     { doHandler(dispatcher,message,next);
@@ -54,13 +54,13 @@ public abstract class AbstractMessageHandler
   
   protected abstract void
     doHandler
-      (EventContext dispatcher
+      (Dispatcher dispatcher
       ,Message message
       ,MessageHandlerChain next
       );
   
   
-  protected boolean shouldHandleMessage(EventContext dispatcher,Message message)
+  protected boolean shouldHandleMessage(Dispatcher dispatcher,Message message)
   { return (type==null || type==message.getType());
   }
   

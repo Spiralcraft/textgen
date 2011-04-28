@@ -14,6 +14,7 @@
 //
 package spiralcraft.textgen.compiler;
 
+import spiralcraft.app.Dispatcher;
 import spiralcraft.common.ContextualException;
 import spiralcraft.common.namespace.NamespaceContext;
 import spiralcraft.lang.Expression;
@@ -28,7 +29,7 @@ import java.net.URI;
 import java.io.IOException;
 
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.EventContext;
+import spiralcraft.textgen.OutputContext;
 import spiralcraft.textgen.kit.RenderHandler;
 
 
@@ -161,7 +162,7 @@ public class ExpressionUnit
       (new RenderHandler()
         {
           @Override
-          protected void render(EventContext dispatcher)
+          protected void render(Dispatcher dispatcher)
             throws IOException
           {
             Object value;
@@ -175,7 +176,7 @@ public class ExpressionUnit
             }
               
             if (value!=null)
-            { dispatcher.getOutput().append(value.toString());
+            { OutputContext.get().append(value.toString());
             }          
           }
         }
