@@ -17,6 +17,7 @@ package spiralcraft.textgen.test;
 
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Element;
+import spiralcraft.textgen.RenderMessage;
 
 import spiralcraft.textgen.compiler.TglCompiler;
 import spiralcraft.textgen.compiler.DocletUnit;
@@ -86,7 +87,7 @@ public class TupleTest
 
     Writer writer=new OutputStreamWriter(System.out);
     EventContext context=new EventContext(writer,false,null);
-    element.render(context);
+    context.dispatch(RenderMessage.INSTANCE,element,null);
     writer.flush();
     
   }
@@ -120,7 +121,7 @@ public class TupleTest
 
     Writer writer=new OutputStreamWriter(System.out);
     EventContext context=new EventContext(writer,false,null);
-    element.render(context);
+    context.dispatch(RenderMessage.INSTANCE,element,null);
     writer.flush();
 
   }

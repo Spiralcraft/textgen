@@ -44,6 +44,14 @@
         <notes>
           <scm:Note>Refactor API to move closer to spiralcraft.app model
           </scm:Note>
+          <scm:Note>Element now implements spiralcraft.app.Component, and
+            EventContext now implements spiralcraft.app.Dispatcher
+          </scm:Note>
+          <scm:Note>Replace EventContext.getOutput() with OutputContext
+            ThreadLocal
+          </scm:Note>
+          <scm:Note>Replace Element.render() method with RenderMessage
+          </scm:Note>
           <scm:Note>message() no longer has a "path" parameter now that
             the EventContext (dispatcher) tracks it.
           </scm:Note>
@@ -88,13 +96,19 @@
           </URI>
           <URI>Render.java
           </URI>
+          <URI>Renderer.java
+          </URI>
           <URI>RenderMessage.java
           </URI>
           <URI>ResourceUnit.java
           </URI>
+          <URI>OutputContext.java
+          </URI>
           <URI>compiler/ContentUnit.java
           </URI>
           <URI>compiler/DefineUnit.java
+          </URI>
+          <URI>compiler/DocletUnit.java
           </URI>
           <URI>compiler/ElementUnit.java
           </URI>
@@ -114,7 +128,15 @@
           </URI>
           <URI>compiler/InsertUnit.java
           </URI>
+          <URI>compiler/NullElement.java
+          </URI>
+          <URI>compiler/ObjectElement.java
+          </URI>
+          <URI>compiler/PropertyElement.java
+          </URI>
           <URI>elements/Constant.java
+          </URI>
+          <URI>elements/Else.java
           </URI>
           <URI>elements/DateFormat.java
           </URI>
@@ -132,9 +154,21 @@
           </URI>
           <URI>elements/SharedReference.java
           </URI>
+          <URI>elements/XML.java
+          </URI>
+          <URI>elements/XMLEncode.java
+          </URI>
           <URI>kit/AbstractMessageHandler.java
           </URI>
+          <URI>kit/RenderHandler.java
+          </URI>
           <URI>kit/StandardElement.java
+          </URI>
+          <URI>kit/TagHandler.java
+          </URI>
+          <URI>kit/TagRenderHandler.java
+          </URI>
+          <URI>kit/WrapperHandler.java
           </URI>
           <URI>kit/StandardMessageHandlerChain.java
           </URI>

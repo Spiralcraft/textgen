@@ -17,6 +17,7 @@ package spiralcraft.textgen.test;
 
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
+import spiralcraft.textgen.RenderMessage;
 
 import spiralcraft.textgen.compiler.TglCompiler;
 import spiralcraft.textgen.compiler.DocletUnit;
@@ -69,7 +70,7 @@ public class GeneratorTest
 
     Writer writer=new OutputStreamWriter(exContext.out());
     EventContext context=new EventContext(writer,false,null);
-    element.render(context);
+    context.dispatch(RenderMessage.INSTANCE,element,null);
     writer.flush();
 
 //    if (false)
