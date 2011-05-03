@@ -86,7 +86,9 @@ public abstract class FocusElement<T>
     
     focus=parentFocus.chain(channel);
     focus.addFacet(getAssembly().getFocus());
-    focus.addAlias(alias);
+    if (alias!=null)
+    { focus.addAlias(alias);
+    }
     
     focus=bindExports(focus);
     if (focus==null)
