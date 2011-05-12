@@ -207,7 +207,11 @@ public class EventContext
       };
     }
     if (this.state!=null)
-    { this.state=this.state.getChild(index);
+    { 
+      this.state=this.state.getChild(index);
+      if (this.state==null)
+      { throw new IllegalStateException("Child state must exist");
+      }
     }
   }
   
@@ -268,6 +272,13 @@ public class EventContext
   {  
     final State lastState=this.state;
     this.state=newParentState;
+    
+    if (lastState!=null && newParentState==null)
+    { 
+      throw new IllegalArgumentException
+        ("newParentState cannot be null");
+    }
+    
     try
     { relayMessage(childComponent,childIndex,message);
     }
