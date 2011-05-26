@@ -18,6 +18,9 @@ import java.io.IOException;
 
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
+import spiralcraft.app.kit.AbstractMessageHandler;
+import spiralcraft.app.MessageHandlerChain;
+
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
@@ -28,9 +31,7 @@ import spiralcraft.text.xml.XmlEncoder;
 
 import spiralcraft.textgen.ExpressionFocusElement;
 import spiralcraft.textgen.OutputContext;
-import spiralcraft.app.MessageHandlerChain;
 import spiralcraft.textgen.RenderMessage;
-import spiralcraft.textgen.kit.AbstractMessageHandler;
 
 /**
  * <p>Encodes the contents as XML, nested in a tag with the specified name

@@ -16,10 +16,13 @@ package spiralcraft.textgen.kit;
 
 import java.io.IOException;
 
-import spiralcraft.app.Message;
 import spiralcraft.text.Renderer;
+
+import spiralcraft.app.Message;
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.MessageHandlerChain;
+import spiralcraft.app.kit.AbstractMessageHandler;
+
 import spiralcraft.textgen.OutputContext;
 import spiralcraft.textgen.RenderMessage;
 

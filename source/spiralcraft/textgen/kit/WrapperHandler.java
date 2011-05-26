@@ -22,6 +22,8 @@ import spiralcraft.text.Renderer;
 import spiralcraft.text.Wrapper;
 import spiralcraft.textgen.OutputContext;
 import spiralcraft.app.MessageHandlerChain;
+import spiralcraft.app.kit.AbstractMessageHandler;
+
 import spiralcraft.textgen.RenderMessage;
 
 /**
