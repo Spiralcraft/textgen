@@ -92,6 +92,8 @@ public abstract class FocusElement<T>
     Channel<T> target=bindSource(parentFocus);
     channel=new ThreadLocalChannel<T>(target.getReflector());
     
+    bindHandlers(parentFocus);
+    
     focus=parentFocus.chain(channel);
     focus.addFacet(getAssembly().getFocus());
     if (alias!=null)
