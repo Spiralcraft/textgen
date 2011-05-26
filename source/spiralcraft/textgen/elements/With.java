@@ -14,9 +14,7 @@
 //
 package spiralcraft.textgen.elements;
 
-import spiralcraft.lang.BindException;
 import spiralcraft.lang.Binding;
-import spiralcraft.lang.Focus;
 import spiralcraft.lang.util.ChannelBuffer;
 import spiralcraft.textgen.ExpressionFocusElement;
 import spiralcraft.textgen.ValueState;
@@ -59,7 +57,10 @@ public class With<T>
    * @param holdWhileX
    */
   public void setHoldWhileX(Binding<Boolean> holdWhileX)
-  { this.holdWhileX=holdWhileX;
+  { 
+    removeParentContextual(this.holdWhileX);
+    this.holdWhileX=holdWhileX;
+    addParentContextual(this.holdWhileX);
   }
   
   /**
@@ -77,23 +78,11 @@ public class With<T>
    * @param triggerKeyX
    */
   public void setTriggerKeyX(Binding<Object> triggerKeyX)
-  { this.triggerKeyX=triggerKeyX;
+  { 
+    removeParentContextual(this.triggerKeyX);
+    this.triggerKeyX=triggerKeyX;
+    addParentContextual(this.triggerKeyX);
   } 
-  
-  @Override
-  public Focus<?> bindImports(Focus<?> chain)
-    throws BindException
-  {
-    if (holdWhileX!=null)
-    { holdWhileX.bind(chain);
-    }
-    
-    if (triggerKeyX!=null)
-    { triggerKeyX.bind(chain);
-    }
-    
-    return chain;
-  }
   
   /**
    * Called when the Stateful value should be recomputed
