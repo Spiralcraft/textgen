@@ -16,6 +16,86 @@
             
     <detail>
       <scm:Change>
+        <release>-dev3
+        </release>
+        
+        <notes>
+          <scm:Note>MessageHandler implementations 
+            have moved to spiralcraft.app.kit
+          </scm:Note>
+          <scm:Note>StateFrame change detection moved into the core
+            spiralcraft.app.State api and the Dispatcher
+          </scm:Note>
+          <scm:Note>OnFrame element evaluates an expression on StateFrame change
+          </scm:Note>
+          <scm:Note>"Out" element supports a StringConverter and is based
+            on spiralcraft.lang.util.ExpressionRenderer
+          </scm:Note>
+          <scm:Note>StandardElement has addXXXContextual/removeXXXContextual
+            internal methods similar to spiralcraft.app.kit.AbstractComponent
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen/
+        </path>
+        
+        <resources>
+          <URI>Element.java
+          </URI>
+          <URI>ElementState.java
+          </URI>
+          <URI>EventContext.java
+          </URI>
+          <URI>FocusElement.java
+          </URI>
+          <URI>elements/Format.java
+          </URI>
+          <URI>elements/If.java
+          </URI>
+          <URI>elements/Iterate.java
+          </URI>
+          <URI>elements/Out.java
+          </URI>
+          <URI>elements/XMLEncode.java
+          </URI>
+          <URI>kit/AbstractMessageHandler.java
+          </URI>
+          <URI>kit/RenderHandler.java
+          </URI>
+          <URI>kit/StandardElement.java
+          </URI>
+          <URI>kit/StandardMessageHandlerChain.java
+          </URI>
+          <URI>kit/WrapperHandler.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+        <release>-dev2
+        </release>
+        
+        <notes>
+          <scm:Note>Added basic XML tag/element rendering functionality
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen
+        </path>
+        
+        <resources>
+          <URI>elements/XML.java
+          </URI>
+          <URI>elements/XMLEncode.java
+          </URI>
+          <URI>kit/TagRenderHandler.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+    <detail>
+      <scm:Change>
         <release>-dev2
         </release>
         
