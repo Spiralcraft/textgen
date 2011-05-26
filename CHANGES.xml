@@ -13,8 +13,27 @@
     <date>
     </date>
     
-            
     <detail>
+      <scm:Change>
+        <release>-dev4
+        </release>
+        
+        <notes>
+          <scm:Note>Make sure Element re-throws ContextualException during
+            bind to include source code context.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen/
+        </path>
+        
+        <resources>
+          <URI>Element.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
       <scm:Change>
         <release>-dev3
         </release>
