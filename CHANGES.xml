@@ -94,7 +94,6 @@
         </resources>
       </scm:Change>
 
-    <detail>
       <scm:Change>
         <release>-dev2
         </release>
