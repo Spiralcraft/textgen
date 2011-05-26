@@ -101,7 +101,7 @@ public class StandardElement
     throws ContextualException
   {
       
-    bindSelf(focusChain);
+    bindSelfFocus(focusChain);
 
     Focus<?> context=focusChain;
     

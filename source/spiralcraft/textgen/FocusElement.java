@@ -86,7 +86,7 @@ public abstract class FocusElement<T>
     { addHandler(new RenderHandler(renderer));
     }
     bindParentContextuals(focus);
-    bindSelf(focus);
+    bindSelfFocus(focus);
     Focus<?> parentFocus=bindImports(focus);
     
     Channel<T> target=bindSource(parentFocus);

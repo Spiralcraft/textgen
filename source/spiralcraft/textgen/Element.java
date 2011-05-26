@@ -477,7 +477,7 @@ public class Element
   { 
     bindParentContextuals(focus);
     
-    bindSelf(focus);
+    bindSelfFocus(focus);
     
     bindHandlers(focus);
     
@@ -488,7 +488,7 @@ public class Element
   }
   
   
-  protected Focus<?> bindSelf(Focus<?> focus) 
+  protected Focus<?> bindSelfFocus(Focus<?> focus) 
     throws ContextualException
   { 
     selfFocus=focus.chain
