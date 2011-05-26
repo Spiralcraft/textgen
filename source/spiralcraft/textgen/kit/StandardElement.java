@@ -89,6 +89,101 @@ public class StandardElement
   { return bound;
   }
   
+  /**
+   * <p>Add a Contextual to be bound to this Control's parent's context.
+   * </p>
+   * 
+   * <p>The Focus returned by the Contextual will not be used by this
+   *   component.
+   * </p>
+   * 
+   * @param contextual
+   */
+  protected void addParentContextual(Contextual contextual)
+  { 
+    if (this.parentContextuals==null)
+    { this.parentContextuals=new LinkedList<Contextual>();
+    }
+    this.parentContextuals.add(contextual);
+  }
+
+  /**
+   * <p>Remove a Contextual from the list of Contextuals to be bound
+   * </p>
+   * 
+   * @param contextual
+   */
+  protected void removeParentContextual(Contextual contextual)
+  {
+    if (this.parentContextuals!=null)
+    { this.parentContextuals.remove(contextual);
+    }
+  }
+  
+  /**
+   * <p>Add a Contextual to be bound to this Control's target's context 
+   * </p>
+   * 
+   * <p>The Focus returned by the Contextual will not be used by this
+   *   component.
+   * </p>
+   *
+   * @param contextual
+   */
+  protected void addExportContextual(Contextual contextual)
+  { 
+    if (this.exportContextuals==null)
+    { this.exportContextuals=new LinkedList<Contextual>();
+    }
+    this.exportContextuals.add(contextual);
+  }
+
+  /**
+   * <p>Remove a Contextual from the list of Contextuals to be bound
+   * </p>
+   * 
+   * @param contextual
+   */
+  protected void removeExportContextual(Contextual contextual)
+  {
+    if (this.exportContextuals!=null)
+    { this.exportContextuals.remove(contextual);
+    }
+  }
+  
+  /**
+   * <p>Add a Contextual to be bound to this Control's own context 
+   * </p>
+   * 
+   * <p>The Focus returned by the Contextual will not be used by this
+   *   component.
+   * </p>
+   * 
+   * @param contextual
+   */
+  protected void addSelfContextual(Contextual contextual)
+  { 
+    if (this.selfContextuals==null)
+    { this.selfContextuals=new LinkedList<Contextual>();
+    }
+    this.selfContextuals.add(contextual);
+  }
+  
+  
+  /**
+   * </p>Remove a Contextual from the list of Contextuals to be bound
+   * <p>
+   * 
+   * @param contextual
+   */
+  protected void removeSelfContextual(Contextual contextual)
+  {
+    if (this.selfContextuals!=null)
+    { this.selfContextuals.remove(contextual);
+    }
+  }
+  
+  
   protected final void bindContextuals
     (Focus<?> focus,List<Contextual> contextuals)
     throws ContextualException
