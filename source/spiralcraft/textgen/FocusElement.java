@@ -22,6 +22,7 @@ import java.util.List;
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
 import spiralcraft.common.ContextualException;
+import spiralcraft.common.namespace.ContextualName;
 import spiralcraft.common.namespace.PrefixedName;
 import spiralcraft.common.namespace.UnresolvedPrefixException;
 
@@ -72,9 +73,9 @@ public abstract class FocusElement<T>
    * @param alias
    * @throws UnresolvedPrefixException 
    */
-  public void setAlias(PrefixedName alias) 
+  public void setAlias(ContextualName alias) 
     throws UnresolvedPrefixException
-  { this.alias=alias.resolve().toURIPath();
+  { this.alias=alias.getQName().toURIPath();
   }  
   
   @Override
