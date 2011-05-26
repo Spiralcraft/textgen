@@ -14,14 +14,10 @@
 //
 package spiralcraft.textgen.kit;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.ChainableContext;
 import spiralcraft.lang.Contextual;
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
 
@@ -47,10 +43,6 @@ public class StandardElement
   
   private boolean bound;
   protected ChainableContext outerContext;
-  
-  private LinkedList<Contextual> parentContextuals;
-  private LinkedList<Contextual> exportContextuals;
-  private LinkedList<Contextual> selfContextuals;  
 
   protected Focus<?> selfFocus;
   protected boolean exportSelf;
@@ -63,7 +55,7 @@ public class StandardElement
   { 
     bound=true;
 
-    bindContextuals(focusChain,parentContextuals);
+    bindParentContextuals(focusChain);
     
     Contextual self=new Contextual()
     {
@@ -89,112 +81,7 @@ public class StandardElement
   { return bound;
   }
   
-  /**
-   * <p>Add a Contextual to be bound to this Control's parent's context.
-   * </p>
-   * 
-   * <p>The Focus returned by the Contextual will not be used by this
-   *   component.
-   * </p>
-   * 
-   * @param contextual
-   */
-  protected void addParentContextual(Contextual contextual)
-  { 
-    if (this.parentContextuals==null)
-    { this.parentContextuals=new LinkedList<Contextual>();
-    }
-    this.parentContextuals.add(contextual);
-  }
 
-  /**
-   * <p>Remove a Contextual from the list of Contextuals to be bound
-   * </p>
-   * 
-   * @param contextual
-   */
-  protected void removeParentContextual(Contextual contextual)
-  {
-    if (this.parentContextuals!=null)
-    { this.parentContextuals.remove(contextual);
-    }
-  }
-  
-  /**
-   * <p>Add a Contextual to be bound to this Control's target's context 
-   * </p>
-   * 
-   * <p>The Focus returned by the Contextual will not be used by this
-   *   component.
-   * </p>
-   *
-   * @param contextual
-   */
-  protected void addExportContextual(Contextual contextual)
-  { 
-    if (this.exportContextuals==null)
-    { this.exportContextuals=new LinkedList<Contextual>();
-    }
-    this.exportContextuals.add(contextual);
-  }
-
-  /**
-   * <p>Remove a Contextual from the list of Contextuals to be bound
-   * </p>
-   * 
-   * @param contextual
-   */
-  protected void removeExportContextual(Contextual contextual)
-  {
-    if (this.exportContextuals!=null)
-    { this.exportContextuals.remove(contextual);
-    }
-  }
-  
-  /**
-   * <p>Add a Contextual to be bound to this Control's own context 
-   * </p>
-   * 
-   * <p>The Focus returned by the Contextual will not be used by this
-   *   component.
-   * </p>
-   * 
-   * @param contextual
-   */
-  protected void addSelfContextual(Contextual contextual)
-  { 
-    if (this.selfContextuals==null)
-    { this.selfContextuals=new LinkedList<Contextual>();
-    }
-    this.selfContextuals.add(contextual);
-  }
-  
-  
-  /**
-   * </p>Remove a Contextual from the list of Contextuals to be bound
-   * <p>
-   * 
-   * @param contextual
-   */
-  protected void removeSelfContextual(Contextual contextual)
-  {
-    if (this.selfContextuals!=null)
-    { this.selfContextuals.remove(contextual);
-    }
-  }
-  
-  
-  protected final void bindContextuals
-    (Focus<?> focus,List<Contextual> contextuals)
-    throws ContextualException
-  { 
-    if (contextuals!=null)
-    {
-      for (Contextual contextual:contextuals)
-      { contextual.bind(focus);
-      }
-    }
-  }  
   
   protected Focus<?> bindImports(Focus<?> focusChain)
       throws BindException
@@ -214,14 +101,10 @@ public class StandardElement
     throws ContextualException
   {
       
-    Focus<?> context=focusChain;
-    if (selfFocus==null)
-    { 
-      selfFocus=focusChain.chain
-        (new SimpleChannel<StandardElement>(StandardElement.this,true));
-      bindContextuals(selfFocus,selfContextuals);
-    }
+    bindSelf(focusChain);
 
+    Focus<?> context=focusChain;
+    
     focusChain=bindImports(focusChain);
     
     bindHandlers(focusChain);
@@ -237,7 +120,8 @@ public class StandardElement
       { focusChain.addFacet(selfFocus);
       }
     }
-    bindContextuals(focusChain,exportContextuals);
+    
+    bindExportContextuals(focusChain);
 
     try
     { bindChildren(focusChain);
