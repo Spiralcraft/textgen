@@ -14,6 +14,10 @@
 //
 package spiralcraft.textgen.elements;
 
+import spiralcraft.lang.Binding;
+import spiralcraft.lang.util.ChannelBuffer;
+import spiralcraft.textgen.ValueState;
+
 
 
 /**
@@ -34,7 +38,57 @@ public class Session<T>
   extends With<T>
 {
   
+  protected Binding<Void> onStartX;
+  
   { defaultRecompute=false;
+  }
+  
+  public void setOnStart(Binding<Void> onStart)
+  { 
+    removeParentContextual(this.onStartX);
+    this.onStartX=onStart;
+    addParentContextual(this.onStartX);
+  }
+
+  @Override
+  public SessionState<T> createState()
+  { return new SessionState<T>(this,new ChannelBuffer<Object>(triggerKeyX));
+  } 
+
+  /**
+   * Called when the Stateful value should be recomputed
+   * 
+   */
+  @Override  
+  protected T computeExportValue(ValueState<T> state)
+  { 
+    if ( !((SessionState<T>) state).seen() && onStartX!=null)
+    { onStartX.get();
+    }
+    return super.computeExportValue(state); 
+  }
+
+}
+
+class SessionState<T>
+  extends WithState<T>
+{
+  private boolean seen;
+  
+  public SessionState(Session<T> control,ChannelBuffer<Object> trigger)
+  { super(control,trigger);
+  }
+
+  public boolean seen()
+  { 
+    if (!seen)
+    { 
+      seen=true;
+      return false;
+    }
+    else
+    { return true;
+    }
   }
 }
 
