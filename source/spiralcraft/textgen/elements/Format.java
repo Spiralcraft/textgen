@@ -30,7 +30,7 @@ import spiralcraft.textgen.Element;
 import spiralcraft.textgen.OutputContext;
 import spiralcraft.app.MessageHandlerChain;
 import spiralcraft.textgen.RenderMessage;
-import spiralcraft.textgen.kit.AbstractMessageHandler;
+import spiralcraft.app.kit.AbstractMessageHandler;
 
 /**
  * <p>Formats a date

@@ -30,7 +30,6 @@ import java.util.List;
 
 import spiralcraft.textgen.compiler.DefineUnit;
 import spiralcraft.textgen.compiler.TglUnit;
-import spiralcraft.textgen.kit.StandardMessageHandlerChain;
 
 import spiralcraft.text.ParsePosition;
 import spiralcraft.text.markup.MarkupException;
@@ -43,6 +42,8 @@ import spiralcraft.app.Message;
 import spiralcraft.app.MessageHandler;
 import spiralcraft.app.MessageHandlerChain;
 import spiralcraft.app.Parent;
+
+import spiralcraft.app.kit.StandardMessageHandlerChain;
 
 
 import java.net.URI;
