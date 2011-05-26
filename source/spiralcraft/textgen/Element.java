@@ -475,16 +475,23 @@ public class Element
   public Focus<?> bind(Focus<?> focus)
     throws ContextualException
   { 
-    bindParentContextuals(focus);
+    try
+    {
+      bindParentContextuals(focus);
     
-    bindSelfFocus(focus);
+      bindSelfFocus(focus);
     
-    bindHandlers(focus);
+      bindHandlers(focus);
     
-    bindExportContextuals(focus);
+      bindExportContextuals(focus);
     
-    bindChildren(focus);
-    return focus;
+      bindChildren(focus);
+      return focus;
+    }
+    catch (ContextualException x)
+    { throw new ContextualException("Bind error",this.getErrorContext(),x);
+    }
+    
   }
   
   
