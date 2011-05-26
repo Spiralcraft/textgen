@@ -15,8 +15,10 @@
 package spiralcraft.textgen;
 
 import spiralcraft.lang.Context;
+import spiralcraft.lang.Contextual;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
 
@@ -26,6 +28,7 @@ import spiralcraft.common.LifecycleException;
 import spiralcraft.common.Lifecycler;
 
 
+import java.util.LinkedList;
 import java.util.List;
 
 import spiralcraft.textgen.compiler.DefineUnit;
@@ -105,6 +108,12 @@ public class Element
   protected URI focusURI;
   
   protected Context innerContext;
+
+  private LinkedList<Contextual> parentContextuals;
+  private LinkedList<Contextual> exportContextuals;
+  private LinkedList<Contextual> selfContextuals;  
+  
+  private Focus<?> selfFocus;
   
   class DefaultHandler
     implements MessageHandler
@@ -155,6 +164,128 @@ public class Element
   public void setSkin(DefineUnit skin)
   { this.skin=skin;
   }
+  
+  /**
+   * <p>Add a Contextual to be bound to this Control's parent's context.
+   * </p>
+   * 
+   * <p>The Focus returned by the Contextual will not be used by this
+   *   component.
+   * </p>
+   * 
+   * @param contextual
+   */
+  protected final void addParentContextual(Contextual contextual)
+  { 
+    if (this.parentContextuals==null)
+    { this.parentContextuals=new LinkedList<Contextual>();
+    }
+    this.parentContextuals.add(contextual);
+  }
+
+  /**
+   * <p>Remove a Contextual from the list of Contextuals to be bound
+   * </p>
+   * 
+   * @param contextual
+   */
+  protected final void removeParentContextual(Contextual contextual)
+  {
+    if (this.parentContextuals!=null)
+    { this.parentContextuals.remove(contextual);
+    }
+  }
+  
+  protected final void bindParentContextuals(Focus<?> focus)
+    throws ContextualException
+  { bindContextuals(focus,parentContextuals);
+  }
+  
+  /**
+   * <p>Add a Contextual to be bound to this Control's target's context 
+   * </p>
+   * 
+   * <p>The Focus returned by the Contextual will not be used by this
+   *   component.
+   * </p>
+   *
+   * @param contextual
+   */
+  protected void addExportContextual(Contextual contextual)
+  { 
+    if (this.exportContextuals==null)
+    { this.exportContextuals=new LinkedList<Contextual>();
+    }
+    this.exportContextuals.add(contextual);
+  }
+
+  /**
+   * <p>Remove a Contextual from the list of Contextuals to be bound
+   * </p>
+   * 
+   * @param contextual
+   */
+  protected void removeExportContextual(Contextual contextual)
+  {
+    if (this.exportContextuals!=null)
+    { this.exportContextuals.remove(contextual);
+    }
+  }
+
+  protected final void bindExportContextuals(Focus<?> focus)
+      throws ContextualException
+  { bindContextuals(focus,exportContextuals);
+  }
+
+  /**
+   * <p>Add a Contextual to be bound to this Control's own context 
+   * </p>
+   * 
+   * <p>The Focus returned by the Contextual will not be used by this
+   *   component.
+   * </p>
+   * 
+   * @param contextual
+   */
+  protected void addSelfContextual(Contextual contextual)
+  { 
+    if (this.selfContextuals==null)
+    { this.selfContextuals=new LinkedList<Contextual>();
+    }
+    this.selfContextuals.add(contextual);
+  }
+  
+  
+  /**
+   * </p>Remove a Contextual from the list of Contextuals to be bound
+   * <p>
+   * 
+   * @param contextual
+   */
+  protected void removeSelfContextual(Contextual contextual)
+  {
+    if (this.selfContextuals!=null)
+    { this.selfContextuals.remove(contextual);
+    }
+  }
+  
+  protected final void bindSelfContextuals(Focus<?> focus)
+      throws ContextualException
+  { bindContextuals(focus,selfContextuals);
+  }
+
+  
+  protected final void bindContextuals
+    (Focus<?> focus,List<Contextual> contextuals)
+    throws ContextualException
+  { 
+    if (contextuals!=null)
+    {
+      for (Contextual contextual:contextuals)
+      { contextual.bind(focus);
+      }
+    }
+  }  
   
   /**
    * <p>Called to log an otherwise handled exception consumed during processing
@@ -344,9 +475,26 @@ public class Element
   public Focus<?> bind(Focus<?> focus)
     throws ContextualException
   { 
+    bindParentContextuals(focus);
+    
+    bindSelf(focus);
+    
     bindHandlers(focus);
+    
+    bindExportContextuals(focus);
+    
     bindChildren(focus);
     return focus;
+  }
+  
+  
+  protected Focus<?> bindSelf(Focus<?> focus) 
+    throws ContextualException
+  { 
+    selfFocus=focus.chain
+      (new SimpleChannel<Element>(Element.this,true));
+    bindSelfContextuals(selfFocus);
+    return selfFocus;
   }
   
   protected final void bindHandlers(Focus<?> focus)
