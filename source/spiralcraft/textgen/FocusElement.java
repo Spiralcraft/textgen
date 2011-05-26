@@ -16,6 +16,8 @@ package spiralcraft.textgen;
 
 
 import java.net.URI;
+import java.util.LinkedList;
+import java.util.List;
 
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
@@ -25,6 +27,7 @@ import spiralcraft.common.namespace.UnresolvedPrefixException;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
+import spiralcraft.lang.Contextual;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.spi.ThreadLocalChannel;
@@ -58,6 +61,10 @@ public abstract class FocusElement<T>
   private boolean computeOnInitialize;
   private URI alias;
   
+  private LinkedList<Contextual> parentContextuals;
+  private LinkedList<Contextual> exportContextuals;
+  private LinkedList<Contextual> selfContextuals;    
+  
   /**
    * An unique URI under which this value will be published into the
    *   focus chain. 
@@ -78,7 +85,8 @@ public abstract class FocusElement<T>
     if (renderer!=null)
     { addHandler(new RenderHandler(renderer));
     }
-    
+    bindParentContextuals(focus);
+    bindSelf(focus);
     Focus<?> parentFocus=bindImports(focus);
     
     Channel<T> target=bindSource(parentFocus);
@@ -94,8 +102,10 @@ public abstract class FocusElement<T>
     if (focus==null)
     { throw new BindException(getErrorContext()+": Focus cannot be null");
     }
+    bindExportContextuals(focus);
     
-    return super.bind(focus);
+    bindChildren(focus);
+    return focus;
   }
   
   /**
@@ -163,6 +173,7 @@ public abstract class FocusElement<T>
   }
   
 
+  
   @Override
   public final void message
     (Dispatcher context
