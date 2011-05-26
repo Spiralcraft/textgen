@@ -412,7 +412,7 @@ public class Iterate
       }
       else
       {
-        if (state.frameChanged(genContext.getFrame()))
+        if (state.isNewFrame())
         { 
           if (debug)
           { log.fine(toString()+" refreshing on Frame change");

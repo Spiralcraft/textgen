@@ -157,6 +157,9 @@ public class EventContext
     State lastState=this.state;
     LinkedList<Integer> lastMessagePath=messagePath;
     OutputContext.push(output);
+    if (startingState!=null)
+    { startingState.enterFrame(currentFrame);
+    }
     try
     {
       this.state=startingState;
@@ -165,6 +168,9 @@ public class EventContext
     }
     finally
     { 
+      if (startingState!=null)
+      { startingState.exitFrame();
+      }
       OutputContext.pop();
       messagePath=lastMessagePath;
       this.state=lastState;
@@ -212,6 +218,7 @@ public class EventContext
       if (this.state==null)
       { throw new IllegalStateException("Child state must exist");
       }
+      this.state.enterFrame(currentFrame);
     }
   }
   
@@ -219,7 +226,9 @@ public class EventContext
   public final void ascend()
   { 
     if (this.state!=null)
-    { this.state=this.state.getParent();
+    { 
+      this.state.exitFrame();
+      this.state=this.state.getParent();
     }
   }  
   

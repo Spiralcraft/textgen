@@ -175,7 +175,7 @@ public class If
     else
     {
       ValueState<Boolean> state=(ValueState<Boolean>) context.getState();
-      if (state.frameChanged(context.getFrame()) || !state.isValid())
+      if (state.isNewFrame() || !state.isValid())
       { 
         val=target.get();
         state.setValue(val);

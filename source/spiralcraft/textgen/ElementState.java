@@ -87,7 +87,8 @@ public class ElementState
   private State parent;
   private final State[] children;
   private int[] path;
-  private volatile StateFrame currentFrame;
+  private volatile StateFrame lastFrame;
+  private volatile boolean frameChanged;
   
   protected ElementState()
   { children=null;
@@ -178,17 +179,7 @@ public class ElementState
       child.link(this,childPath);
     }
   }
-  
-  public final boolean frameChanged(StateFrame frame)
-  {
-    if (currentFrame!=frame)
-    { 
-      currentFrame=frame;
-      return true;
-    }
-    return false;
-  }
-  
+
   /**
    * Find an ElementState among this ElementState's ancestors/containers
    * 
@@ -241,6 +232,24 @@ public class ElementState
   { return null;
   }
     
+  @Override
+  public void enterFrame(StateFrame frame)
+  {
+    if (lastFrame!=frame)
+    { lastFrame=frame;
+    }
+    frameChanged=true;
+  }
+  
+  @Override
+  public void exitFrame()
+  { frameChanged=false;
+  }
+    
+  @Override
+  public boolean isNewFrame()
+  { return frameChanged;
+  }
 }
 
 

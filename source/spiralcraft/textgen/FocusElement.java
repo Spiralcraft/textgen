@@ -217,7 +217,7 @@ public abstract class FocusElement<T>
     else
     {
       ValueState<T> state=(ValueState<T>) context.getState();
-      frameChanged=state.frameChanged(context.getFrame());
+      frameChanged=state.isNewFrame();
       if (frameChanged || !state.isValid())
       { state.setValue(computeExportValue(state));
       }
