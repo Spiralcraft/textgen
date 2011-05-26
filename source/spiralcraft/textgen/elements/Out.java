@@ -1,15 +1,12 @@
 package spiralcraft.textgen.elements;
 
-import java.io.IOException;
-
-import spiralcraft.app.Dispatcher;
 import spiralcraft.common.ContextualException;
-import spiralcraft.lang.Binding;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
+import spiralcraft.lang.util.ExpressionRenderer;
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.OutputContext;
 import spiralcraft.textgen.kit.RenderHandler;
+import spiralcraft.util.string.StringConverter;
 
 /**
  * <p>Output the result of an expression
@@ -21,32 +18,10 @@ import spiralcraft.textgen.kit.RenderHandler;
 public class Out<T>
   extends Element
 { 
+  private ExpressionRenderer<T> renderer
+    =new ExpressionRenderer<T>();
   
-  private Binding<T> x;
-  
-  { addHandler(new RenderHandler()
-      {
-        
-        @Override
-        protected void render(Dispatcher dispatcher)
-          throws IOException
-        {
-          T value;
-          try
-          { value=x.get();
-          }
-          catch (NullPointerException x)
-          { 
-            x.printStackTrace();
-            value=null;
-          }
-            
-          if (value!=null)
-          { OutputContext.get().append(value.toString());
-          }          
-        }
-      }
-    );
+  { addHandler(new RenderHandler(renderer));
   }
 
   /**
@@ -55,14 +30,22 @@ public class Out<T>
    * @param x
    */
   public void setX(Expression<T> x)
-  { this.x=new Binding<T>(x);
+  { this.renderer.setX(x);
+  }
+  
+  /**
+   * The converter which translates this expression to text
+   * @param converter
+   */
+  public void setConverter(StringConverter<T> converter)
+  { this.renderer.setConverter(converter);
   }
   
   @Override
   public Focus<?> bind(Focus<?> focus)
     throws ContextualException
   { 
-    x.bind(focus);
+    renderer.bind(focus);
     return super.bind(focus);
   
   }
