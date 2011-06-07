@@ -307,7 +307,7 @@ public class Element
   protected String getLogPrefix(Dispatcher context)
   { 
     String logPrefix=context.getContextInfo();
-    return logPrefix!=null?logPrefix:"";
+    return (logPrefix!=null?logPrefix:"")+" "+getCodePosition();
   }
   
   protected String getErrorContext()
