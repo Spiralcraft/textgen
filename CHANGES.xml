@@ -15,6 +15,26 @@
     
     <detail>
       <scm:Change>
+        <release>-rc1
+        </release>
+        
+        <notes>
+          <scm:Note>Include source code location in log messages from
+            Elements. 
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen/
+        </path>
+        
+        <resources>
+          <URI>Element.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
         <release>-dev4
         </release>
         
