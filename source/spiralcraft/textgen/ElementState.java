@@ -102,6 +102,11 @@ public class ElementState
   
   
   @Override
+  public String toString()
+  { return super.toString()+" frame="+lastFrame+(frameChanged?"*":"");
+  }
+  
+  @Override
   public void link(State parent,int[] path)
   {
     if (this.parent!=null)
@@ -236,9 +241,10 @@ public class ElementState
   public void enterFrame(StateFrame frame)
   {
     if (lastFrame!=frame)
-    { lastFrame=frame;
+    { 
+      lastFrame=frame;
+      frameChanged=true;
     }
-    frameChanged=true;
   }
   
   @Override
