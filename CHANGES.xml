@@ -4,6 +4,36 @@
   
   <scm:Change>
   
+    <revision>0.4.15
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>
+    </date>
+    
+    <detail>
+      <scm:Change>
+        <release>-dev1
+        </release>
+        
+        <notes>
+          <scm:Note>Add a toString() method to ElementState
+          </scm:Note>
+          <scm:Note>ElementState always indicated that the frame changed
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen/ElementState.java
+        </path>
+        
+      </scm:Change>
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
+  
     <revision>0.4.14
     </revision>
     
