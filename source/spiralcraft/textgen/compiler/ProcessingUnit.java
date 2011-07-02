@@ -14,7 +14,6 @@
 //
 package spiralcraft.textgen.compiler;
 
-import spiralcraft.text.ParsePosition;
 
 
 /**
@@ -31,10 +30,9 @@ public abstract class ProcessingUnit
 
   protected boolean open=true;
   
-  public ProcessingUnit(TglUnit parent,ParsePosition position)
-  { 
-    super(parent);
-    setPosition(position.clone());
+  public ProcessingUnit
+    (TglUnit parent,TglCompiler<?> compiler)
+  { super(parent,compiler);
   }
 
   @Override

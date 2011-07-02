@@ -36,7 +36,7 @@ public class CommentUnit
     )
     throws MarkupException
   { 
-    super(parent,compiler.getPosition());
+    super(parent,compiler);
     
     if (attribs!=null && attribs.length>0)
     {
@@ -54,7 +54,7 @@ public class CommentUnit
   )
   throws MarkupException
   { 
-    super(parent,compiler.getPosition());
+    super(parent,compiler);
     shorthand=true;
   }
 

@@ -32,9 +32,9 @@ public class ContentUnit
 {
   private final CharSequence content;
   
-  public ContentUnit(TglUnit parent,CharSequence content)
+  public ContentUnit(TglUnit parent,CharSequence content,TglCompiler<?> compiler)
   { 
-    super(parent);
+    super(parent,compiler);
     
     this.content=content;
   }

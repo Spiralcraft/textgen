@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 
 import spiralcraft.text.ParseException;
-import spiralcraft.text.ParsePosition;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.text.xml.Attribute;
 import spiralcraft.text.LookaheadParserContext;
@@ -28,12 +27,11 @@ public abstract class MarkupUnit
   public MarkupUnit
     (TglUnit parent
     ,CharSequence markup
-    ,ParsePosition position
+    ,TglCompiler<?> compiler
     )
     throws ParseException
   { 
-    super(parent);
-    setPosition(position.clone());
+    super(parent,compiler);
    
     this.markup=markup;
     readTag();

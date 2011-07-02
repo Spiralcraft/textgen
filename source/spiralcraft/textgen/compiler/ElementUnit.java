@@ -29,7 +29,6 @@ import spiralcraft.textgen.Element;
 import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.text.ParseException;
-import spiralcraft.text.ParsePosition;
 
 import spiralcraft.util.ArrayUtil;
 
@@ -46,7 +45,6 @@ public class ElementUnit
   
 
   
-  private final TglCompiler<?> compiler;
   private ElementFactory elementFactory;
   private URI elementPackage;
   private String elementName;
@@ -57,12 +55,10 @@ public class ElementUnit
     (TglUnit parent
     ,TglCompiler<?> compiler
     ,CharSequence code
-    ,ParsePosition position
     )
     throws ParseException
   { 
-    super(parent,code,position);
-    this.compiler=compiler;
+    super(parent,code,compiler);
 
     QName name=resolvePrefixedName(getName(),TglUnit.DEFAULT_ELEMENT_PACKAGE);
     elementPackage=name.getNamespaceURI();

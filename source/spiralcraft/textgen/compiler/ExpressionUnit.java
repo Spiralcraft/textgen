@@ -57,12 +57,11 @@ public class ExpressionUnit
   public ExpressionUnit
     (TglUnit parent
     ,CharSequence markup
-    ,ParsePosition position
+    ,TglCompiler<?> compiler
     )
     throws ParseException
   { 
-    super(parent);  
-    setPosition(position);
+    super(parent,compiler);  
     this.markup=markup;
     readExpressionElement();
     if (!open)

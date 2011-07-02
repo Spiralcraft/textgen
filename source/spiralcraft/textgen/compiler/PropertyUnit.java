@@ -19,7 +19,6 @@ import java.util.List;
 
 import spiralcraft.lang.Focus;
 import spiralcraft.text.ParseException;
-import spiralcraft.text.ParsePosition;
 
 import spiralcraft.text.markup.MarkupException;
 
@@ -39,11 +38,11 @@ public class PropertyUnit
   public PropertyUnit
     (TglUnit parent
     ,CharSequence markup
-    ,ParsePosition position
+    ,TglCompiler<?> compiler
     )
     throws MarkupException,ParseException
   { 
-    super(parent,markup,position);
+    super(parent,markup,compiler);
 
     readProperty();
 
