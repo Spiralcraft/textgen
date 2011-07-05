@@ -36,10 +36,9 @@ public class DocletUnit
   private final ArrayList<DocletUnit> subDocs
     =new ArrayList<DocletUnit>();
   
-  
-  public DocletUnit(TglUnit parent,Resource resource)
+  public DocletUnit(TglUnit parent,Resource resource,TglCompiler<?> compiler)
   { 
-    super(parent);
+    super(parent,compiler);
     this.resource=resource;
     initPrefixResolver();
 
