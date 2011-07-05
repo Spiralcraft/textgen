@@ -19,6 +19,59 @@
         </release>
         
         <notes>
+          <scm:Note>All units are constructed with a reference to the 
+            TglCompiler to provide access to source position and other
+            contextual info
+          </scm:Note>
+          <scm:Note>Use of scaffold binding context now generalized into
+            TglUnit as attribute textgen:contextX
+          </scm:Note>  
+          <scm:Note>InsertUnit can now reference resources as components
+          </scm:Note>
+          <scm:Note>All units now accept properties
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen/compiler
+        </path>
+        
+        <resources>
+          <URI>CommentUnit.java
+          </URI>
+          <URI>ContentUnit.java
+          </URI>
+          <URI>DefineUnit.java
+          </URI>
+          <URI>DocletUnit.java
+          </URI>
+          <URI>ElementUnit.java
+          </URI>
+          <URI>ExpressionUnit.java
+          </URI>
+          <URI>IncludeUnit.java
+          </URI>
+          <URI>InsertUnit.java
+          </URI>
+          <URI>MarkupUnit.java
+          </URI>
+          <URI>NamespaceUnit.java
+          </URI>
+          <URI>ProcessingUnit.java
+          </URI>
+          <URI>PropertyUnit.java
+          </URI>
+          <URI>TglCompiler.java
+          </URI>
+          <URI>TglUnit.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+        <release>-dev1
+        </release>
+        
+        <notes>
           <scm:Note>Add a toString() method to ElementState
           </scm:Note>
           <scm:Note>ElementState always indicated that the frame changed

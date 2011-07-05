@@ -162,6 +162,26 @@
             </test:Assertion>            
             <test:Assertion>
         
+              <name>Skinning 5- resource based insert
+              </name>
+          
+              <subjectX>
+                [*tg:Render
+                  {templateURI
+                    :=[*jnet:URI
+                        {"class:/spiralcraft/textgen/test/skin5Test.tgl"
+                        }
+                      ]
+                  }
+                ]
+              </subjectX>
+          
+              <testX>.=="[so[o[[a]i[c]]o]so]"
+              </testX>
+          
+            </test:Assertion>            
+            <test:Assertion>
+        
               <name>Encapsulation 1
               </name>
           
