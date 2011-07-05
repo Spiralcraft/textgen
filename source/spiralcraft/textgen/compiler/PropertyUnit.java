@@ -94,17 +94,16 @@ public class PropertyUnit
     throws MarkupException
   {
     open=false;
-    if (getParent() instanceof ElementUnit)
-    {
-      ((ElementUnit) getParent())
-        .addProperty(this);
+    try
+    { getParent().addProperty(this);
     }
-    else
-    { 
+    catch (IllegalArgumentException x)
+    {
       throw new MarkupException
         ("Cannot assign property '"+propertyName+"' to containing"
         +" element."
         ,getPosition().clone()
+        ,x
         );
     }
             

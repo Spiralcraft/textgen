@@ -30,7 +30,6 @@ import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.text.ParseException;
 
-import spiralcraft.util.ArrayUtil;
 
 import spiralcraft.log.ClassLog;
 
@@ -41,6 +40,7 @@ import spiralcraft.log.ClassLog;
 public class ElementUnit
   extends MarkupUnit
 {
+  @SuppressWarnings("unused")
   private static final ClassLog log=ClassLog.getInstance(ElementUnit.class);
   
 
@@ -48,7 +48,6 @@ public class ElementUnit
   private ElementFactory elementFactory;
   private URI elementPackage;
   private String elementName;
-  private PropertyUnit[] properties;
   private String skinName;
   
   public ElementUnit
@@ -102,18 +101,7 @@ public class ElementUnit
   }
 
   
-  public void addProperty
-    (PropertyUnit propertyUnit)
-  {
-    if (properties==null)
-    { properties=new PropertyUnit[0];
-    }
-    properties=ArrayUtil
-      .append(properties,propertyUnit);
-    if (debug)
-    { log.fine("Added property "+propertyUnit.getPropertyName());
-    }
-  }
+
   
   @Override
   public Element bind(Focus<?> focus,Element parentElement)
