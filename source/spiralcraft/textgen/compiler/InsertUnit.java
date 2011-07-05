@@ -15,6 +15,8 @@
 package spiralcraft.textgen.compiler;
 
 
+import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,10 +31,13 @@ import spiralcraft.textgen.Element;
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
 import spiralcraft.common.ContextualException;
+import spiralcraft.common.namespace.QName;
 
 
 import spiralcraft.text.xml.Attribute;
-
+import spiralcraft.util.URIUtil;
+import spiralcraft.vfs.Resolver;
+import spiralcraft.vfs.Resource;
 /**
  * A Unit which inserts the contents of an ancestral IncludeUnit, or a unit referenced by a defined name
  */
@@ -44,6 +49,7 @@ public class InsertUnit
   
 
   private String referencedName;
+  private QName qName;
   private String tagName;
   private boolean require=false;
   private Attribute[] attributes;
@@ -56,7 +62,7 @@ public class InsertUnit
     )
     throws MarkupException,ParseException
   { 
-    super(parent,compiler.getPosition());
+    super(parent,compiler);
     allowsChildren=true;
     this.tagName=tagName;
     
@@ -89,9 +95,14 @@ public class InsertUnit
       // Form <%refname ...
       if (this.referencedName==null)
       {
+        this.qName
+          =resolvePrefixedName
+            (tagName,getPosition().getContextURI().resolve(".").normalize());
+         
         this.referencedName
-          =resolvePrefixedName(tagName,TglUnit.DEFAULT_ELEMENT_PACKAGE)
-            .toString();
+          =resolvePrefixedName
+            (tagName,TglUnit.DEFAULT_ELEMENT_PACKAGE).toString();
+        
         this.require=true;
       }
       
@@ -137,6 +148,36 @@ public class InsertUnit
       
       TglUnit referencedUnit=findDefinition(referencedName);
       
+      Exception resolveException=null;
+      URI resourceURI=null;
+      
+      if (referencedUnit==null && qName!=null)
+      { 
+        try
+        { 
+          resourceURI=URIUtil.addPathSuffix(qName.toURIPath(),".tgl");
+          Resource resource=Resolver.getInstance().resolve(resourceURI);
+          if (resource.exists())
+          {
+            try
+            {
+              referencedUnit
+                =compiler.subCompile
+                  (this
+                  ,resourceURI
+                  );
+            }
+            catch (IOException e)
+            { throw new ParseException("Error reading ["+qName+"]",getPosition(),e);
+            }            
+          }
+        }
+        catch (IOException x)
+        { resolveException=x;
+        }
+
+      }
+      
       if (referencedUnit!=null)
       { 
         if (debug)
@@ -163,7 +204,14 @@ public class InsertUnit
       else
       { 
         throw new MarkupException
-          ("Fragment '"+referencedName+"' not found."
+          ("Textgen definition for ["+referencedName+"] not found. "
+          +(resourceURI!=null
+            ?(resolveException!=null
+              ?("Resolving ["+resourceURI+"]: "+resolveException)
+              :("and resource ["+resourceURI+"] not found")
+              )
+            :""
+          )
           ,getPosition()
           );
       }
