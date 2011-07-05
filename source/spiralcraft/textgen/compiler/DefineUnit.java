@@ -19,13 +19,8 @@ import java.util.List;
 import spiralcraft.app.Parent;
 import spiralcraft.common.ContextualException;
 import spiralcraft.common.namespace.QName;
-import spiralcraft.lang.BindException;
-import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.Setter;
-import spiralcraft.lang.kit.ConstantChannel;
-import spiralcraft.lang.util.DictionaryBinding;
 import spiralcraft.text.ParseException;
 import spiralcraft.text.markup.MarkupException;
 
@@ -45,7 +40,6 @@ public class DefineUnit
   private final boolean virtual;
   private String tagName;
   private boolean inDoclet;
-  private Expression<?> contextX;
   
   public DefineUnit
     (TglUnit parent
@@ -54,7 +48,7 @@ public class DefineUnit
     )
     throws ParseException
   { 
-    super(parent,compiler.getPosition());
+    super(parent,compiler);
     publishedName
       =resolvePrefixedName
         (importName,TglUnit.DEFAULT_ELEMENT_PACKAGE).toString();
@@ -73,7 +67,7 @@ public class DefineUnit
     )
     throws MarkupException,ParseException
   { 
-    super(parent,compiler.getPosition());
+    super(parent,compiler);
     this.virtual=false;
     this.tagName=tagName;
     if (tagName.startsWith("$"))
@@ -89,7 +83,7 @@ public class DefineUnit
       { this.publishedName=attrib.getValue();
       }
       else if (attrib.getName().equals("resource"))
-      { includeResource(attrib.getValue(),compiler);
+      { includeResource(attrib.getValue());
       }
       else if (attrib.getName().equals("export"))
       { this.setExported(Boolean.valueOf(attrib.getValue()));
@@ -288,7 +282,7 @@ public class DefineUnit
     
     DefineElement element=new DefineElement(this,overlay);
     if (contextX!=null)
-    { focus=bindContext(focus,attribs);
+    { focus=bindContext(focus,attribs,new QName(publishedName).toURIPath());
     }
     else if (attribs!=null && attribs.length>0)
     { throw new MarkupException("Unrecognized attribute "+attribs[0].getName(),getPosition());
@@ -298,81 +292,6 @@ public class DefineUnit
   }
   
   
-  @SuppressWarnings({ "unchecked", "rawtypes" })
-  private Focus<?> bindContext(Focus<?> focus,Attribute[] attribs)
-    throws MarkupException
-  {
-    Channel<?> context;
-    try
-    { context=new ConstantChannel(focus.bind(contextX));
-    }
-    catch (BindException x)
-    { 
-      throw new MarkupException
-        ("Error binding context expression for define",getPosition(),x);
-    }
-    Focus<?> contextFocus=focus.chain(context);
-    contextFocus.addAlias(new QName(publishedName).toURIPath());
-    focus=focus.chain(focus.getSubject());
-    focus.addFacet(contextFocus);
-    
-    if (attribs!=null)
-    {
-      for (Attribute attrib:attribs)
-      { 
-        String name=attrib.getName();
-        try
-        {
-          if (name.startsWith("$"))
-          { 
-            Channel source=focus.bind(Expression.create(attrib.getValue()));
-            if (!source.isConstant())
-            { 
-              throw new MarkupException
-                ("Attribute "+attrib.getName()
-                +" expression `"+attrib.getValue()+"` is not constant, and"
-                +" cannot be used for bind-time context"
-                ,getPosition()
-                );
-            }
-            
-            Setter setter
-              =new Setter
-                (source
-                ,contextFocus.bind(Expression.create(name.substring(1)))
-                );
-            if (!setter.set())
-            {
-              throw new MarkupException
-                ("Attribute "+attrib.getName()
-                +" could not be applied",getPosition()
-                );
-            }
-            
-          }
-          else
-          {
-            DictionaryBinding attribBinding
-              =new DictionaryBinding(attrib.getName());
-            attribBinding.bind(contextFocus);
-            attribBinding.set(attrib.getValue());
-          }
-        }
-        catch (BindException x)
-        {
-          throw new MarkupException
-            ("Error binding context expression for define",getPosition(),x);
-        }
-        catch (spiralcraft.lang.ParseException x)
-        {
-          throw new MarkupException
-            ("Error in attribute name",getPosition(),x);
-        }
-        
-      }
-    }
-    return focus;
-  }
   
   @Override
   public Element bindExtension
