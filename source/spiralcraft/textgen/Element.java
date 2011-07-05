@@ -739,8 +739,7 @@ public class Element
     { return (X) this;
     }
     else if (parent!=null)
-    { 
-      return ((Element) parent).<X>findComponent(clazz);
+    { return parent.<X>findComponent(clazz);
     }
     else
     { return null;
@@ -767,7 +766,7 @@ public class Element
     { return (X) this;
     }
     else if (parent!=null)
-    { return ((Element) parent).<X>findComponent(clazz,stop);
+    { return parent.<X>findComponent(clazz,stop);
     }
     else
     { return null;
