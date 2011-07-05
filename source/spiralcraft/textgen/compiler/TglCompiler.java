@@ -87,8 +87,8 @@ public class TglCompiler<T extends DocletUnit>
     
     CharSequence sequence = new ResourceCharSequence(sourceURI);
 
+    this.position=new ParsePosition();
     T root=createDocletUnit(null,resource);
-
     compile(root,sequence,sourceURI);
     return root;
   }
@@ -121,7 +121,7 @@ public class TglCompiler<T extends DocletUnit>
   
   @SuppressWarnings("unchecked") // Default behavior
   protected T createDocletUnit(TglUnit parent,Resource resource)
-  { return (T) new DocletUnit(parent,resource);
+  { return (T) new DocletUnit(parent,resource,this);
   }
   
   public ElementFactory createElementFactory
@@ -143,7 +143,7 @@ public class TglCompiler<T extends DocletUnit>
   @Override
   public void handleContent(CharSequence content)
   { 
-    ContentUnit unit=new ContentUnit(getUnit(),content);
+    ContentUnit unit=new ContentUnit(getUnit(),content,this);
     unit.setPosition(position);
     pushUnit(unit);
   }
@@ -193,13 +193,13 @@ public class TglCompiler<T extends DocletUnit>
     else if (code.charAt(0)=='.')
     { 
       PropertyUnit propertyUnit
-        =new PropertyUnit(getUnit(),code,position);
+        =new PropertyUnit(getUnit(),code,this);
       pushUnit(propertyUnit);
     }
     else if (code.charAt(0)=='=')
     { 
       ExpressionUnit expressionUnit
-        =new ExpressionUnit(getUnit(),code,position);
+        =new ExpressionUnit(getUnit(),code,this);
       pushUnit(expressionUnit);
     }
     else if (pushInsert(code))
@@ -208,7 +208,7 @@ public class TglCompiler<T extends DocletUnit>
     else
     {
       ElementUnit tglElementUnit
-        =new ElementUnit(getUnit(),this,code,position);
+        =new ElementUnit(getUnit(),this,code);
       // log.fine(tglElementUnit.getName()+" open="+tglElementUnit.isOpen());
       pushUnit(tglElementUnit);
     }
@@ -246,12 +246,9 @@ public class TglCompiler<T extends DocletUnit>
     }
   
     String name=tagReader.getTagName();
-    int colonPos=name.indexOf(":");
-    String localName=colonPos==-1?name:name.substring(colonPos+1);
     
-    // XXX need to find a better way to distinguish inserts from elements
-    if (Character.isLowerCase(localName.charAt(0)))
-    {     
+    if (isInsertable(name))
+    {
       Attribute[] attributes=tagReader.getAttributes();
       InsertUnit processingUnit
         =new InsertUnit(getUnit(),this,attributes,name);
@@ -276,6 +273,18 @@ public class TglCompiler<T extends DocletUnit>
   
     
     
+  }
+
+  private boolean isInsertable(String name)
+  {
+    int colonPos=name.indexOf(":");
+    String localName=colonPos==-1?name:name.substring(colonPos+1);
+    
+    // XXX need to find a better way to distinguish inserts from elements
+    if (Character.isLowerCase(localName.charAt(0)))
+    { return true;
+    }
+    else return false;
   }
   
   protected TglUnit parseDefineUnit(CharSequence code)
