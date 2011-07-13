@@ -520,33 +520,40 @@ public abstract class TglUnit
     throws MarkupException
   {
 
-    ContextualName cname=null;
-    try
-    { 
-      cname=new ContextualName
-        (qname
-        ,new StandardPrefixResolver(NamespaceContext.getPrefixResolver())
-          {
-            { 
-              this.mapPrefix
-                (""
-                ,TglUnit.this.getPosition().getContextURI().resolve(".")
-                  .normalize()
-                );
-            }
-          }
-        );
-    }
-    catch (UnresolvedPrefixException x)
-    {  
-      throw new MarkupException
-        ("Error resolving ["+qname+"]",getPosition(),x);
-    }
-
-  
     URI resourceURI=null;
-    resourceURI=cname.getQName().toURIPath();
-
+    if (qname.startsWith(":"))
+    { 
+      qname=qname.substring(1);
+    
+      ContextualName cname=null;
+      try
+      { 
+        cname=new ContextualName
+          (qname
+          ,new StandardPrefixResolver(NamespaceContext.getPrefixResolver())
+            {
+              { 
+                this.mapPrefix
+                  (""
+                  ,TglUnit.this.getPosition().getContextURI().resolve(".")
+                    .normalize()
+                  );
+              }
+            }
+          );
+      }
+      catch (UnresolvedPrefixException x)
+      {  
+        throw new MarkupException
+          ("Error resolving ["+qname+"]",getPosition(),x);
+      }
+  
+    
+      resourceURI=cname.getQName().toURIPath();
+    }
+    else
+    { resourceURI=URI.create(qname);
+    }
 
     if (!resourceURI.isAbsolute())
     {
@@ -566,7 +573,7 @@ public abstract class TglUnit
     { 
 
       throw new MarkupException
-      ("Error including '"+cname+"':"+x
+      ("Error including '"+resourceURI+"':"+x
         ,getPosition()
         ,x
       );
@@ -574,7 +581,7 @@ public abstract class TglUnit
     catch (IOException x)
     {
       throw new MarkupException
-      ("Error including URI '"+cname+"':"+x
+      ("Error including URI '"+resourceURI+"':"+x
         ,getPosition()
         ,x
       );
