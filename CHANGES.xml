@@ -19,6 +19,26 @@
         </release>
         
         <notes>
+          <scm:Note>Pull Element AssemblyClass declaration info when
+            RuntimeException occurs
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen/
+        </path>
+        
+        <resources>
+          <URI>ElementRuntimeException.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+        <release>-dev1
+        </release>
+        
+        <notes>
           <scm:Note>All units are constructed with a reference to the 
             TglCompiler to provide access to source position and other
             contextual info
