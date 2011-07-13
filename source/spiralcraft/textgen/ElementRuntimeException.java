@@ -21,7 +21,7 @@ public class ElementRuntimeException
   { 
     StringBuffer detailStr=new StringBuffer();
     if (x.getAssembly()!=null)
-    { detailStr.append(x.getAssembly().getAssemblyClass().getSourceURI()+" - ");
+    { detailStr.append(x.getAssembly().getAssemblyClass().getDeclarationInfo()+" - ");
     }
     else
     { detailStr.append(x.getClass().getName()+" - ");
