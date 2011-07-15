@@ -371,7 +371,7 @@ public class TglCompiler<T extends DocletUnit>
     if (processingUnit==null)
     { throw new MarkupException("Unknown processing unit '"+name+"'",position);
     }
-    
+
     if (tagReader.isClosed())
     { processingUnit.close();
     }
@@ -383,6 +383,7 @@ public class TglCompiler<T extends DocletUnit>
         ,position
         );
     }
+
     return processingUnit;
   }
   
@@ -391,7 +392,10 @@ public class TglCompiler<T extends DocletUnit>
   {
     try
     {
-      if (name.equals("include"))
+      if (name.equals("doclet"))
+      { return new RootUnit(getUnit(),this,attributes);
+      }
+      else if (name.equals("include"))
       { return new IncludeUnit(getUnit(),this,attributes);
       }
       else if (name.equals("insert"))
