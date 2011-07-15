@@ -14,6 +14,7 @@
 //
 package spiralcraft.textgen.compiler;
 
+import spiralcraft.common.namespace.NamespaceContext;
 import spiralcraft.text.ParseException;
 import spiralcraft.text.markup.MarkupException;
 
@@ -74,7 +75,14 @@ public class IncludeUnit
     
     if (qname!=null)
     {
-      docletUnit=includeResource(qname);
+      NamespaceContext.push(this.getNamespaceResolver());
+      try
+      {
+        docletUnit=includeResource(qname);
+      }
+      finally
+      { NamespaceContext.pop();
+      }
       docletUnit.exportDefines();
     }
     
