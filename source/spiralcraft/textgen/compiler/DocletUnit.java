@@ -14,9 +14,15 @@
 //
 package spiralcraft.textgen.compiler;
 
+import spiralcraft.common.namespace.NamespaceContext;
+import spiralcraft.lang.Expression;
 import spiralcraft.textgen.Element;
 
+import spiralcraft.text.ParseException;
+import spiralcraft.text.markup.MarkupException;
 import spiralcraft.text.markup.Unit;
+import spiralcraft.text.xml.Attribute;
+
 import java.io.IOException;
 
 import java.net.URI;
@@ -52,9 +58,48 @@ public class DocletUnit
     
   }
   
+  public void setAttributes(Attribute[] attribs)
+    throws MarkupException,ParseException
+  { 
+    NamespaceContext.push(getNamespaceResolver());
+    try
+    {
+    
+      // Form <%@insert ...
+      for (Attribute attrib: attribs)
+      {
+  
+        if (super.checkUnitAttribute(attrib))
+        {
+        }
+        else if (attrib.getName().equals("contextX"))
+        { 
+          try
+          { this.contextX=Expression.parse(attrib.getValue());
+          }
+          catch (spiralcraft.lang.ParseException x)
+          { 
+            throw new ParseException
+              ("Error parsing contextX expression",getPosition(),x);
+          }
+        }
+        else
+        { 
+          throw new MarkupException
+            ("Attribute '"+attrib.getName()+"' not in {contextX}"
+            ,compiler.getPosition()
+            );
+        }
+      }   
+    }
+    finally
+    { NamespaceContext.pop();
+    }
+  }
+  
   @Override
   public String getName()
-  { return "doclet";
+  { return "__doclet";
   }
   
   public URI getSourceURI()
@@ -90,6 +135,9 @@ public class DocletUnit
     for (DocletUnit subDoc:subDocs)
     { time=Math.max(time,subDoc.getLastModified());
     }
+    if (logLevel.isDebug())
+    { log.debug(resource+" lastModified="+resource.getLastModified()+" / "+time);
+    }
     return time;
   }
   
@@ -105,7 +153,7 @@ public class DocletUnit
   @Override
   public <X extends TglUnit> X findUnitInDocument(Class<X> unitClass)
   { 
-    if (getClass().isAssignableFrom(unitClass))
+    if (unitClass.isAssignableFrom(getClass()))
     { return (X) this;
     }
     else return null;
