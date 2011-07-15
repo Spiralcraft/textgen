@@ -18,6 +18,8 @@ import java.io.IOException;
 
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Focus;
+import spiralcraft.log.ClassLog;
+import spiralcraft.log.Level;
 import spiralcraft.text.ParseException;
 
 import spiralcraft.textgen.compiler.DocletUnit;
@@ -31,19 +33,23 @@ import java.net.URI;
 import spiralcraft.time.Clock;
 
 /**
- * <P>Compiles a TglCompilationUnit from a Resource for use as a binding
+ * <p>Compiles a TglCompilationUnit from a Resource for use as a binding
  * factory.
- * </P>
+ * </p>
  * 
- * <P>Checks the lastModified time of the Resource at a specified frequency
+ * <p>Checks the lastModified time of the Resource at a specified frequency
  * and automatically recompiles if necessary.
- * </P>
+ * </p>
  * 
  * @author mike
  *
  */
 public class ResourceUnit<T extends DocletUnit>
 {
+  private static final ClassLog log
+    =ClassLog.getInstance(ResourceUnit.class);
+  private Level logLevel=Level.INFO;
+  
   private final TglCompiler<T> compiler;
   protected final Resource resource;
   protected T unit;
@@ -160,6 +166,9 @@ public class ResourceUnit<T extends DocletUnit>
           || (lastModified==0 && unit==null && exception==null)
          )
       { 
+        if (logLevel.isDebug())
+        { log.debug("lastRead="+lastRead+"  lastModified="+lastModified);
+        }
         recompile();
         lastRead=lastModified;
         if (unit!=null)
@@ -207,6 +216,9 @@ public class ResourceUnit<T extends DocletUnit>
   {
     try
     { 
+      if (logLevel.isDebug())
+      { log.debug("Compiling "+resource);
+      }
       unit=compiler.compile(resource.getURI());
       exception=null;
     }
