@@ -33,6 +33,7 @@ import spiralcraft.lang.kit.ConstantChannel;
 import spiralcraft.lang.util.DictionaryBinding;
 import spiralcraft.scaffold.Scaffold;
 import spiralcraft.log.ClassLog;
+import spiralcraft.log.Level;
 import spiralcraft.textgen.Element;
 
 
@@ -64,9 +65,12 @@ public abstract class TglUnit
     
   protected final ClassLog log
     =ClassLog.getInstance(getClass());
+  protected Level logLevel
+    =ClassLog.getInitialDebugLevel(getClass(),Level.INFO);
+  
   protected boolean allowsChildren=true;
   protected boolean trim;
-  protected boolean debug;
+  protected boolean debug=false;
   private boolean exported;
   protected final TglCompiler<?> compiler;
 
@@ -184,7 +188,8 @@ public abstract class TglUnit
       if (elementPackage==null)
       { 
         throw new ParseException
-          ("Namespace prefix '"+name.substring(0,nspos)+"' not found"
+          ("Namespace prefix '"+name.substring(0,nspos)+"' not found "
+            +(resolver!=null?(""+resolver.computeMappings()):"")
           ,getPosition()
           );
       }
@@ -207,7 +212,7 @@ public abstract class TglUnit
   @SuppressWarnings("unchecked")
   public <X extends TglUnit> X findUnitInDocument(Class<X> unitClass)
   { 
-    if (getClass().isAssignableFrom(unitClass))
+    if (unitClass.isAssignableFrom(getClass()))
     { return (X) this;
     }
     else if (parent!=null)
@@ -233,6 +238,38 @@ public abstract class TglUnit
   { return allowsChildren;
   }
     
+  
+  public CharSequence getContent()
+  { 
+    if (children!=null)
+    { 
+      StringBuffer buf=new StringBuffer();
+      for (TglUnit child:children)
+      { 
+        if (child instanceof ContentUnit)
+        { return child.getContent();
+        }
+      }
+      return buf.toString();
+    }
+    return null;
+    
+  }
+  
+  public boolean containsMarkup()
+  {
+    if (children!=null)
+    { 
+      for (TglUnit child:children)
+      { 
+        if (!(child instanceof ContentUnit))
+        { return true;
+        }
+      }
+    }
+    return false;
+  }
+  
   public void addProperty
     (PropertyUnit propertyUnit)
   {
@@ -293,8 +330,8 @@ public abstract class TglUnit
     }
     if (children!=null && children.size()>0)
     { 
-      // XXX Need to set up an insert point for the overlay children
-      log.warning("Ignoring contents of element defined at "+getPosition());
+      // XXX Need to track the overlay children so they can be inserted
+      
     }
     return bind(focus,parentElement,createElement());
   }
@@ -458,7 +495,17 @@ public abstract class TglUnit
     { trim=Boolean.parseBoolean(value);
     }
     else if (name.equals("debug"))
-    { debug=Boolean.parseBoolean(value);
+    { 
+      debug=Boolean.parseBoolean(value);
+      logLevel=Level.DEBUG;
+    }
+    else if (name.equals("logLevel"))
+    { 
+      logLevel=Level.valueOf(value);
+      if (logLevel==null)
+      { throw new ParseException("Invalid logLevel ["+value+"]",getPosition());
+      }
+      debug=logLevel.isDebug();
     }
     else if (name.equals("import"))
     { this.includeResource(value);
@@ -515,6 +562,25 @@ public abstract class TglUnit
     }
     return null;
   }  
+  
+  @Override
+  public void close()
+    throws MarkupException
+  {
+    if (trim && children!=null && children.size()>0)
+    {
+      if (children.get(0) instanceof ContentUnit)
+      { ((ContentUnit) children.get(0)).trimStart();
+      }
+      
+      if (children.size()>1 
+          && (children.get(children.size()-1) instanceof ContentUnit)
+          )
+      { ((ContentUnit) children.get(children.size()-1)).trimEnd();
+      }
+    }
+    super.close();
+  }
   
   protected DocletUnit includeResource(String qname)
     throws MarkupException

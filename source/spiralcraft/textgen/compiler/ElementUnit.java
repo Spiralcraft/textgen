@@ -98,6 +98,7 @@ public class ElementUnit
       ,getPosition()
       ,new StandardPrefixResolver(getNamespaceResolver())
       );
+    super.close();
   }
 
   

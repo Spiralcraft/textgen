@@ -14,6 +14,8 @@
 //
 package spiralcraft.textgen.compiler;
 
+import spiralcraft.text.markup.MarkupException;
+
 
 
 /**
@@ -42,7 +44,10 @@ public abstract class ProcessingUnit
   
   @Override
   public void close()
-  { open=false;
+    throws MarkupException
+  { 
+    open=false;
+    super.close();
   }
   
   
