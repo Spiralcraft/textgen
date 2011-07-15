@@ -179,7 +179,50 @@
               <testX>.=="[so[o[[a]i[c]]o]so]"
               </testX>
           
-            </test:Assertion>            
+            </test:Assertion>     
+            
+            <test:Assertion>
+        
+              <name>Skinning 6- wrapper based component
+              </name>
+          
+              <subjectX>
+                [*tg:Render
+                  {templateURI
+                    :=[*jnet:URI
+                        {"class:/spiralcraft/textgen/test/skin6Test.tgl"
+                        }
+                      ]
+                  }
+                ]
+              </subjectX>
+          
+              <testX>.=="[so[o[[a]i[c]]o]so]"
+              </testX>
+          
+            </test:Assertion>    
+            
+            <test:Assertion>
+        
+              <name>Skinning 7- wrapper based component with context
+              </name>
+          
+              <subjectX>
+                [*tg:Render
+                  {templateURI
+                    :=[*jnet:URI
+                        {"class:/spiralcraft/textgen/test/skin7Test.tgl"
+                        }
+                      ]
+                  }
+                ]
+              </subjectX>
+          
+              <testX>.=="[o[i[outer]i]o]"
+              </testX>
+          
+            </test:Assertion>  
+                               
             <test:Assertion>
         
               <name>Encapsulation 1

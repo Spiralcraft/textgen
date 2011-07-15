@@ -1,0 +1,8 @@
+<%@doclet contextX='
+  { [#in] var:="inner"
+  }
+  '
+  textgen:trim="true"
+  %>
+  [i[<%=[in].var/%>]i]
+<%/@doclet%>

@@ -19,6 +19,100 @@
         </release>
         
         <notes>
+          <scm:Note>Fix @include not seeing local namespace prefix decls.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen/compiler/IncludeUnit.java
+        </path>
+
+        
+      </scm:Change>
+
+      <scm:Change>
+        <release>-dev1
+        </release>
+        
+        <notes>
+          <scm:Note>Whitespace trimming using the "textgen:trim" attribute
+            has been redefined to trim only beginning and end of the content
+            contained in the element.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen/compiler
+        </path>
+        
+        <resources>
+          <URI>ContentUnit.java
+          </URI>
+          <URI>TglUnit.java
+          </URI>
+          <URI>ProcessingUnit.java
+          </URI>
+          <URI>ElementUnit.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+          
+      <scm:Change>
+        <release>-dev1
+        </release>
+        
+        <notes>
+          <scm:Note>"tgns:" attributes can be used with property tags.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen/compiler
+        </path>
+        
+        <resources>
+          <URI>PropertyUnit.java
+          </URI>
+          <URI>ElementFactory.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+        <release>-dev1
+        </release>
+        
+        <notes>
+          <scm:Note>A .tgl file can now be referenced as a component using
+            a tag name.
+          </scm:Note>
+          <scm:Note>The optional "@doclet" outer processing unit allows setting
+            of attributes and properties for the Doclet itself.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen/compiler
+        </path>
+        
+        <resources>
+          <URI>DocletUnit.java
+          </URI>
+          <URI>InsertUnit.java
+          </URI>
+          <URI>TglCompiler.java
+          </URI>
+          <URI>RootUnit.java
+          </URI>
+          <URI>InsertUnit.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+        <release>-dev1
+        </release>
+        
+        <notes>
           <scm:Note>Pull Element AssemblyClass declaration info when
             RuntimeException occurs
           </scm:Note>
