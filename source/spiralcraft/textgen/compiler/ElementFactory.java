@@ -148,7 +148,12 @@ public class ElementFactory
     
     for (Attribute attrib:unit.getAttributes())
     { 
-      if (attrib.getName().equals("nature"))
+      if (attrib.getName().startsWith("tgns:")
+          || attrib.getName().startsWith("textgen:")
+          )
+      { // ignore unit attribs, they've been processed
+      }
+      else if (attrib.getName().equals("nature"))
       { nature=attrib;
       }
       else if (attrib.getName().equals("x"))
