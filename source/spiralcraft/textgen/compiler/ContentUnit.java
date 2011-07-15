@@ -22,6 +22,7 @@ import spiralcraft.lang.Focus;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.OutputContext;
 import spiralcraft.textgen.kit.RenderHandler;
+import spiralcraft.util.string.StringUtil;
 
 
 /**
@@ -30,7 +31,7 @@ import spiralcraft.textgen.kit.RenderHandler;
 public class ContentUnit
   extends TglUnit
 {
-  private final CharSequence content;
+  private CharSequence content;
   
   public ContentUnit(TglUnit parent,CharSequence content,TglCompiler<?> compiler)
   { 
@@ -44,8 +45,17 @@ public class ContentUnit
   { return new TextElement();
   }
   
+  @Override
   public CharSequence getContent()
   { return content;
+  }
+  
+  public void trimStart()
+  { content=StringUtil.trimStart(content.toString());
+  }
+  
+  public void trimEnd()
+  { content=StringUtil.trimEnd(content.toString());
   }
   
   class TextElement
@@ -75,7 +85,7 @@ public class ContentUnit
       elementContent=ContentUnit.this.content;
       
       
-      if (elementContent!=null && ContentUnit.this.getParent().getTrim())
+      if (elementContent!=null && trim)
       { elementContent=elementContent.toString().trim();
       }
       
