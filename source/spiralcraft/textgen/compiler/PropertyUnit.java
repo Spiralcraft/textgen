@@ -49,6 +49,9 @@ public class PropertyUnit
     if (!open)
     { close();
     }
+    for (Attribute attribute: attributes)
+    { super.checkUnitAttribute(attribute);
+    }
     
   }
   
@@ -80,7 +83,7 @@ public class PropertyUnit
   { return propertyName;
   }  
   
-    /**
+  /**
    * <p>Notify PropertyUnit of a close tag.
    * </p>
    * 
@@ -106,6 +109,7 @@ public class PropertyUnit
         ,x
         );
     }
+    super.close();
             
         
   }
