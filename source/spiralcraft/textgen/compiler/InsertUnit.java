@@ -31,6 +31,7 @@ import spiralcraft.textgen.Element;
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
 import spiralcraft.common.ContextualException;
+import spiralcraft.common.namespace.NamespaceContext;
 import spiralcraft.common.namespace.QName;
 
 
@@ -53,6 +54,7 @@ public class InsertUnit
   private String tagName;
   private boolean require=false;
   private Attribute[] attributes;
+  private URI resourceURI;
   
   public InsertUnit
     (TglUnit parent
@@ -92,20 +94,10 @@ public class InsertUnit
     }
     else
     {
-      // Form <%refname ...
-      if (this.referencedName==null)
-      {
-        this.qName
-          =resolvePrefixedName
-            (tagName,getPosition().getContextURI().resolve(".").normalize());
-         
-        this.referencedName
-          =resolvePrefixedName
-            (tagName,TglUnit.DEFAULT_ELEMENT_PACKAGE).toString();
-        
-        this.require=true;
-      }
+
       
+      this.require=true;
+
       ArrayList<Attribute> otherAttribs=new ArrayList<Attribute>();
       for (Attribute attrib: attribs)
       {
@@ -117,6 +109,29 @@ public class InsertUnit
         }
       }
       this.attributes=otherAttribs.toArray(new Attribute[otherAttribs.size()]);
+      
+      // Form <%refname ...
+      if (this.referencedName==null)
+      {
+        NamespaceContext.push(getNamespaceResolver());
+        try
+        {
+          this.qName
+            =resolvePrefixedName
+              (tagName,getPosition().getContextURI().resolve(".").normalize());
+         
+          this.referencedName
+            =resolvePrefixedName
+              (tagName,TglUnit.DEFAULT_ELEMENT_PACKAGE).toString();
+          
+          this.resourceURI=URIUtil.addPathSuffix(qName.toURIPath(),".tgl");
+          defineReferencedResource();
+        }
+        finally
+        { NamespaceContext.pop();
+        }
+        
+      }
     }   
   }
   
@@ -133,9 +148,48 @@ public class InsertUnit
    * @param parentElement
    * @return
    */
-  public InsertElement bindContent(Focus<?> focus,Element parentElement)
+  private InsertElement bindDefaultContent(Focus<?> focus,Element parentElement)
     throws ContextualException
   { return (InsertElement) bind(focus,parentElement,new InsertElement());
+  }
+  
+  
+  private void defineReferencedResource()
+    throws ParseException,MarkupException
+  {
+    if (qName!=null && findDefinition(referencedName)==null)
+    { 
+      if (resourceURI.getScheme()!=null 
+          && !Resolver.getInstance().handlesScheme(resourceURI.getScheme())
+          )
+      { return;
+      }
+      
+      try
+      { 
+        
+        Resource resource=Resolver.getInstance().resolve(resourceURI);
+        if (resource.exists())
+        {
+          try
+          {
+            DocletUnit referencedUnit
+              =compiler.subCompile
+                (this
+                ,resourceURI
+                );
+            this.define(referencedName,referencedUnit);
+          }
+          catch (IOException e)
+          { throw new ParseException("Error reading ["+qName+"]",getPosition(),e);
+          }            
+        }
+      }
+      catch (IOException x)
+      { throw new MarkupException("Error compiling "+resourceURI,this.getPosition(),x);
+      }
+
+    }
   }
   
   @Override
@@ -151,32 +205,7 @@ public class InsertUnit
       Exception resolveException=null;
       URI resourceURI=null;
       
-      if (referencedUnit==null && qName!=null)
-      { 
-        try
-        { 
-          resourceURI=URIUtil.addPathSuffix(qName.toURIPath(),".tgl");
-          Resource resource=Resolver.getInstance().resolve(resourceURI);
-          if (resource.exists())
-          {
-            try
-            {
-              referencedUnit
-                =compiler.subCompile
-                  (this
-                  ,resourceURI
-                  );
-            }
-            catch (IOException e)
-            { throw new ParseException("Error reading ["+qName+"]",getPosition(),e);
-            }            
-          }
-        }
-        catch (IOException x)
-        { resolveException=x;
-        }
 
-      }
       
       if (referencedUnit!=null)
       { 
@@ -194,7 +223,7 @@ public class InsertUnit
         // Render default self contents
         
         try
-        { return bindContent(focus,parentElement);
+        { return bindDefaultContent(focus,parentElement);
         }
         catch (BindException x)
         { throw new MarkupException(x.toString(),getPosition(),x);
@@ -223,13 +252,34 @@ public class InsertUnit
       //   reference.
       Element element=null;
       DefineUnit defineUnit=this.findUnitInDocument(DefineUnit.class);
+      
       if (defineUnit!=null)
-      {  
-        element=new InsertIncludeElement(defineUnit);
-        
+      { element=new InsertIncludeElement(defineUnit);
       }
       else
-      { element=new InsertIncludeElement();
+      { 
+        TglUnit docletRoot=this.findUnitInDocument(DocletUnit.class);
+        if (logLevel.isFine())
+        {
+          log.fine("Root is "+docletRoot
+                +(docletRoot!=null?" parent is "+docletRoot.getParent():"")
+                );
+        }
+        if (docletRoot!=null && (docletRoot.getParent() instanceof InsertUnit))
+        { 
+          // XXX This document may be defined at a generic place- we
+          //   need to find the referencing insert, not the defining
+          //   insert.
+          //     We really need to traverse the Element tree and
+          //   not the Unit tree to find who really inserted us
+          //   e.g. find the Element for the DocletRoot and it's 
+          //   Parent element's unit will be the correct Insert
+          element=new InsertOverlayElement((InsertUnit) docletRoot.getParent());
+        }
+        else
+        { element=new InsertIncludeElement();
+        }
+        
       }
       return bind(focus,parentElement,element);
     }
@@ -251,7 +301,7 @@ class InsertIncludeElement
 {
   private IncludeElement ancestorInclude;
   private DefineUnit defineUnit;
-  private DefineElement ancestorInsert;
+  private DefineElement ancestorDefine;
   
   public InsertIncludeElement()
   { super();
@@ -260,6 +310,7 @@ class InsertIncludeElement
   public InsertIncludeElement(DefineUnit defineUnit)
   { this.defineUnit=defineUnit;
   }  
+
   
   @Override
   public Focus<?> bind(Focus<?> focus)
@@ -273,11 +324,11 @@ class InsertIncludeElement
       //   children of the insert that referenced the define.
         
       // Find the insert that referenced our define
-      ancestorInsert=defineUnit.findBoundElement(getParent());
+      ancestorDefine=defineUnit.findBoundElement(getParent());
     }
     
-    if (ancestorInsert!=null)
-    { children=ancestorInsert.getOverlay();
+    if (ancestorDefine!=null)
+    { children=ancestorDefine.getOverlay();
     }
     else
     {
@@ -312,6 +363,42 @@ class InsertIncludeElement
 
 
   }
+}
   
+class InsertOverlayElement
+  extends Element
+{
+  private InsertUnit includingInsertUnit;
+  
+  public InsertOverlayElement()
+  { super();
+  }
+  
+  public InsertOverlayElement(InsertUnit insertUnit)
+  { this.includingInsertUnit=insertUnit;
+  } 
+  
+  @Override
+  public Focus<?> bind(Focus<?> focus)
+    throws ContextualException
+  { 
+    
+    List<TglUnit> children=getScaffold().getChildren();
+    if (includingInsertUnit!=null)
+    { 
+      children=includingInsertUnit.getChildren();
+      List<TglUnit> newChildren=new ArrayList<TglUnit>(children.size()-1);
+      for (TglUnit child:children)
+      { 
+        if (!(child instanceof DefineUnit) && !(child instanceof DocletUnit))
+        { newChildren.add(child);
+        }
+      }
+      children=newChildren;
+    }
 
+    super.bindChildren(focus,children);
+    return focus;
+  }
+  
 }
