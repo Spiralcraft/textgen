@@ -15,17 +15,13 @@
 package spiralcraft.textgen.elements;
 
 import java.io.IOException;
-import java.util.Date;
 
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
 import spiralcraft.common.ContextualException;
-import spiralcraft.lang.AccessException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.reflect.BeanReflector;
-import spiralcraft.lang.spi.AbstractChannel;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.OutputContext;
 import spiralcraft.app.MessageHandlerChain;
@@ -77,6 +73,9 @@ public abstract class Format<T extends java.text.Format>
             catch (IOException e)
             { throw new RuntimeException(e);
             }
+            catch (IllegalArgumentException x)
+            { throw new RuntimeException("Error formatting ["+val+"]",x);
+            }
           }
           next.handleMessage(dispatcher,message);
           
@@ -105,22 +104,7 @@ public abstract class Format<T extends java.text.Format>
     { target=parentFocus.bind(expression);
     }
     else
-    { 
-      target
-        =new AbstractChannel<Date>
-          (BeanReflector.<Date>getInstance(Date.class))
-      {
-
-        @Override
-        protected Date retrieve()
-        { return new Date();
-        }
-
-        @Override
-        protected boolean store(Date date) throws AccessException
-        { return false;
-        }
-      };
+    { target=parentFocus.getSubject();
     }
     
     formatLocal.set(createFormat());
