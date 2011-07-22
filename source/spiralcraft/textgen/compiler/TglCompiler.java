@@ -214,13 +214,26 @@ public class TglCompiler<T extends DocletUnit>
     }
   }
   
+  protected TagReader readTag(LookaheadParserContext context)
+    throws ParseException
+  {
+    TagReader tagReader=new TagReader();
+    try
+    { 
+      tagReader.readTag(context);
+      return tagReader;
+    }
+    catch (ParseException x)
+    { throw new ParseException(position,x);
+    }
+  }
+  
   protected boolean pushInsert(CharSequence code)
     throws MarkupException,ParseException
   { 
     LookaheadParserContext context
       =new LookaheadParserContext(code);
-    TagReader tagReader=new TagReader();
-    tagReader.readTag(context);
+    TagReader tagReader=readTag(context);
     if (!context.isEof())
     {
       String remainder
@@ -293,8 +306,7 @@ public class TglCompiler<T extends DocletUnit>
 
     LookaheadParserContext context
       =new LookaheadParserContext(code.toString().substring(1));
-    TagReader tagReader=new TagReader();
-    tagReader.readTag(context);
+    TagReader tagReader=readTag(context);
     if (!context.isEof())
     {
       String remainder
@@ -337,8 +349,7 @@ public class TglCompiler<T extends DocletUnit>
     
     LookaheadParserContext context
       =new LookaheadParserContext(code.toString().substring(1));
-    TagReader tagReader=new TagReader();
-    tagReader.readTag(context);
+    TagReader tagReader=readTag(context);
     if (!context.isEof())
     {
       String remainder
