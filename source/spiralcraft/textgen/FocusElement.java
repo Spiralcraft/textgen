@@ -91,7 +91,7 @@ public abstract class FocusElement<T>
     Focus<?> parentFocus=bindImports(focus);
     
     Channel<T> target=bindSource(parentFocus);
-    channel=new ThreadLocalChannel<T>(target.getReflector());
+    channel=new ThreadLocalChannel<T>(target.getReflector(),true,target);
     
     bindHandlers(parentFocus);
     
