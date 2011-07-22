@@ -30,6 +30,7 @@ import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Setter;
 import spiralcraft.lang.kit.ConstantChannel;
+import spiralcraft.lang.parser.Struct;
 import spiralcraft.lang.util.DictionaryBinding;
 import spiralcraft.scaffold.Scaffold;
 import spiralcraft.log.ClassLog;
@@ -356,77 +357,87 @@ public abstract class TglUnit
     )
     throws ContextualException
   {
-    Channel<?> context;
+    NamespaceContext.push(getNamespaceResolver());
     try
-    { context=new ConstantChannel(focus.bind(contextX));
-    }
-    catch (BindException x)
-    { 
-      throw new ContextualException
-        ("Error binding context expression for define",x);
-    }
-    Focus<?> contextFocus=focus.chain(context);
-    if (contextAlias!=null)
-    { contextFocus.addAlias(contextAlias);
-    }
-    focus=focus.chain(focus.getSubject()); 
-    focus.addFacet(contextFocus);
-    
-    if (attribs!=null)
     {
-      for (Attribute attrib:attribs)
-      { 
-        String name=attrib.getName();
-        try
-        {
-          if (name.startsWith("$"))
-          { 
-            Channel source=focus.bind(Expression.create(attrib.getValue()));
-            if (!source.isConstant())
-            { 
-              throw new ContextualException
-                ("Attribute "+attrib.getName()
-                +" expression `"+attrib.getValue()+"` is not constant, and"
-                +" cannot be used for bind-time context"
-                );
-            }
-            
-            Setter setter
-              =new Setter
-                (source
-                ,contextFocus.bind(Expression.create(name.substring(1)))
-                );
-            if (!setter.set())
-            {
-              throw new ContextualException
-                ("Attribute "+attrib.getName()
-                +" could not be applied"
-                );
-            }
-            
-          }
-          else
-          {
-            DictionaryBinding attribBinding
-              =new DictionaryBinding(attrib.getName());
-            attribBinding.bind(contextFocus);
-            attribBinding.set(attrib.getValue());
-          }
-        }
-        catch (BindException x)
-        {
-          throw new ContextualException
-            ("Error binding context expression for define",x);
-        }
-        catch (spiralcraft.lang.ParseException x)
-        {
-          throw new ContextualException
-            ("Error in attribute name",x);
-        }
-        
+      Channel<?> context;
+      try
+      { context=new ConstantChannel(focus.bind(contextX));
       }
+      catch (BindException x)
+      { 
+        throw new ContextualException
+          ("Error binding context expression for define",x);
+      }
+      Focus<?> contextFocus=focus.chain(context);
+      if (contextAlias!=null)
+      { contextFocus.addAlias(contextAlias);
+      }
+      focus=focus.chain(focus.getSubject()); 
+      focus.addFacet(contextFocus);
+      
+      if (attribs!=null)
+      {
+        for (Attribute attrib:attribs)
+        { 
+          String name=attrib.getName();
+          try
+          {
+            if (name.startsWith("$"))
+            { 
+              Channel source=focus.bind(Expression.create(attrib.getValue()));
+              if (!source.isConstant())
+              { 
+                throw new ContextualException
+                  ("Attribute "+attrib.getName()
+                  +" expression `"+attrib.getValue()+"` is not constant, and"
+                  +" cannot be used for bind-time context"
+                  );
+              }
+              
+              Setter setter
+                =new Setter
+                  (source
+                  ,contextFocus.bind(Expression.create(name.substring(1)))
+                  );
+              if (!setter.set())
+              {
+                throw new ContextualException
+                  ("Attribute "+attrib.getName()
+                  +" could not be applied"
+                  );
+              }
+              
+            }
+            else
+            {
+              DictionaryBinding attribBinding
+                =new DictionaryBinding(attrib.getName());
+              attribBinding.bind(contextFocus);
+              attribBinding.set(attrib.getValue());
+            }
+          }
+          catch (BindException x)
+          {
+            throw new ContextualException
+              ("Error binding context expression for define",x);
+          }
+          catch (spiralcraft.lang.ParseException x)
+          {
+            throw new ContextualException
+              ("Error in attribute name",x);
+          }
+          
+        }
+      }
+      if (context.get() instanceof Struct)
+      { ((Struct) context.get()).freeze();
+      }
+      return focus;
     }
-    return focus;
+    finally
+    { NamespaceContext.pop();
+    }
   }
 
 
