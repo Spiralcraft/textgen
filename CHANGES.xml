@@ -19,6 +19,73 @@
         </release>
         
         <notes>
+          <scm:Note>Format now uses the subject of the Focus chain when
+            no 'x' property is specified.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen/elements/Format.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+        <release>-dev1
+        </release>
+        
+        <notes>
+          <scm:Note>Freeze Structs used for bind-time Element contexts to
+            ensure that members are constant so member values can be passed
+            to nested components
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen/compiler/TglUnit.java
+        </path>
+        
+      </scm:Change>
+    
+      <scm:Change>
+        <release>-dev1
+        </release>
+        
+        <notes>
+          <scm:Note>Fix position reporting in exceptions when reading tag
+            attributes
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen/compiler/TglCompiler.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+        <release>-dev1
+        </release>
+        
+        <notes>
+          <scm:Note>Ensure that Channel metadata is propogated through
+            various Elements
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen/
+        </path>
+        
+        <resources>
+          <URI>FocusElement.java
+          </URI>
+        </resources>
+
+        
+      </scm:Change>
+
+      <scm:Change>
+        <release>-dev1
+        </release>
+        
+        <notes>
           <scm:Note>Fix @include not seeing local namespace prefix decls.
           </scm:Note>
         </notes>
