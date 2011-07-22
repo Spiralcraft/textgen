@@ -51,11 +51,15 @@ public class ContentUnit
   }
   
   public void trimStart()
-  { content=StringUtil.trimStart(content.toString());
+  { 
+    content=StringUtil.trimStart(content.toString());
+    // log.fine("Trim start ["+content+"]");
   }
   
   public void trimEnd()
-  { content=StringUtil.trimEnd(content.toString());
+  { 
+    content=StringUtil.trimEnd(content.toString());
+    // log.fine("Trim end ["+content+"]");
   }
   
   class TextElement
