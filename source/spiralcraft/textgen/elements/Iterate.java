@@ -161,7 +161,7 @@ public class Iterate
     
     {
       valueChannel
-        =new ThreadLocalChannel(decorator.getComponentReflector());
+        =new ThreadLocalChannel(decorator.getComponentReflector(),true,target);
     
 
       SimpleFocus compoundFocus
@@ -174,7 +174,7 @@ public class Iterate
     
     {
       lookaheadChannel
-        =new ThreadLocalChannel(decorator.getComponentReflector());
+        =new ThreadLocalChannel(decorator.getComponentReflector(),true,target);
 
       SimpleFocus compoundFocus
         =new SimpleFocus(parentFocus,lookaheadChannel);
@@ -187,7 +187,7 @@ public class Iterate
     
     {
       lookbehindChannel
-        =new ThreadLocalChannel(decorator.getComponentReflector());
+        =new ThreadLocalChannel(decorator.getComponentReflector(),true,target);
 
       SimpleFocus compoundFocus
         =new SimpleFocus(parentFocus,lookbehindChannel);
