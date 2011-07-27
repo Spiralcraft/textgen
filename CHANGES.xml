@@ -14,6 +14,21 @@
     </date>
     
     <detail>
+    
+      <scm:Change>
+        <release>-dev2
+        </release>
+        
+        <notes>
+          <scm:Note>FocusElement supports writeThrough mode
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen/elements/FocusElement.java
+        </path>
+        
+      </scm:Change>
+          
       <scm:Change>
         <release>-dev2
         </release>
