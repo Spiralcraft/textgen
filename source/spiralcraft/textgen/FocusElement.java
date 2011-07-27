@@ -61,6 +61,7 @@ public abstract class FocusElement<T>
   private Renderer renderer;
   private boolean computeOnInitialize;
   private URI alias;
+  private boolean writeThrough;
   
   private LinkedList<Contextual> parentContextuals;
   private LinkedList<Contextual> exportContextuals;
@@ -78,6 +79,15 @@ public abstract class FocusElement<T>
   { this.alias=alias.getQName().toURIPath();
   }  
   
+  /**
+   * Whether writes to the Focus subject will be propagated upstream
+   * 
+   * @param writeThrough
+   */
+  public void setWriteThrough(boolean writeThrough)
+  { this.writeThrough=writeThrough;
+  }
+  
   @Override
   public final Focus<?> bind(Focus<?> focus)
     throws ContextualException
@@ -91,7 +101,12 @@ public abstract class FocusElement<T>
     Focus<?> parentFocus=bindImports(focus);
     
     Channel<T> target=bindSource(parentFocus);
-    channel=new ThreadLocalChannel<T>(target.getReflector(),true,target);
+    if (!writeThrough)
+    { channel=new ThreadLocalChannel<T>(target.getReflector(),true,target);
+    }
+    else
+    { channel=new ThreadLocalChannel<T>(target,true,true);
+    }
     
     bindHandlers(parentFocus);
     
