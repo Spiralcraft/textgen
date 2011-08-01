@@ -164,6 +164,21 @@ public class DocletUnit
   { return new RootElement();
   }
   
+  /**
+   * <p>Whether whitespace should be trimmed from any content blocks directly
+   *   contained in this Unit.
+   * </p>
+   * 
+   * <p>The default value is false, but this directive will be handled
+   *   according to the specific subtype of TglUnit in use.
+   * </p>
+   * 
+   * @return Whether to trim whitespace or not
+   */
+  @Override
+  public boolean getTrim()
+  { return trim!=null?trim:false;
+  }
     
   class RootElement
     extends Element

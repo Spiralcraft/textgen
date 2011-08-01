@@ -43,6 +43,7 @@ import spiralcraft.text.markup.Unit;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.text.xml.Attribute;
 import spiralcraft.util.ArrayUtil;
+import spiralcraft.util.URIUtil;
 
 import java.io.IOException;
 import java.net.URI;
@@ -70,7 +71,7 @@ public abstract class TglUnit
     =ClassLog.getInitialDebugLevel(getClass(),Level.INFO);
   
   protected boolean allowsChildren=true;
-  protected boolean trim;
+  protected Boolean trim;
   protected boolean debug=false;
   private boolean exported;
   protected final TglCompiler<?> compiler;
@@ -324,7 +325,11 @@ public abstract class TglUnit
     throws ContextualException
   { 
     if (contextX!=null)
-    { focus=bindContext(focus,attribs,getPosition().getContextURI());
+    { 
+      focus=bindContext
+        (focus,attribs
+        ,URIUtil.removePathSuffix(getPosition().getContextURI(),".tgl")
+        );
     }
     else if (attribs!=null && attribs.length>0)
     { throw new MarkupException("Unrecognized attribute "+attribs[0].getName(),getPosition());
@@ -555,7 +560,7 @@ public abstract class TglUnit
    * @return Whether to trim whitespace or not
    */
   public boolean getTrim()
-  { return trim;
+  { return trim!=null?trim:(parent!=null?parent.getTrim():false);
   }
   
   /**
@@ -578,7 +583,7 @@ public abstract class TglUnit
   public void close()
     throws MarkupException
   {
-    if (trim && children!=null && children.size()>0)
+    if (children!=null && children.size()>0 && getTrim())
     {
       if (children.get(0) instanceof ContentUnit)
       { ((ContentUnit) children.get(0)).trimStart();

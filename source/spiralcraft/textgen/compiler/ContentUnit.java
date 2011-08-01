@@ -89,7 +89,7 @@ public class ContentUnit
       elementContent=ContentUnit.this.content;
       
       
-      if (elementContent!=null && trim)
+      if (elementContent!=null && Boolean.TRUE.equals(trim))
       { elementContent=elementContent.toString().trim();
       }
       
