@@ -20,6 +20,63 @@
         </release>
         
         <notes>
+          <scm:Note>Handle messages that should not affect the state frame,
+            such as the InitializeMessage
+          </scm:Note>
+          <scm:Note>InitializeMessage subsumed into 
+            spiralcraft.app.InitializeMessage
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen/
+        </path>
+        
+        <resources>
+          <URI>EventContext.java
+          </URI>
+          <URI>FocusElement.java
+          </URI>
+          <URI>InitializeMessage.java
+          </URI>
+          <URI>elements/If.java
+          </URI>
+          <URI>elements/Iterate.java
+          </URI>
+        </resources>
+        
+        
+      </scm:Change>
+
+      <scm:Change>
+        <release>-dev2
+        </release>
+        
+        <notes>
+          <scm:Note>The textgen:trim setting is inherited within the same 
+            doclet until it is turned off
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen/compiler/
+        </path>
+        
+        <resources>
+          <URI>TglUnit.java
+          </URI>
+          <URI>ContentUnit.java
+          </URI>
+          <URI>DocletUnit.java
+          </URI>
+        </resources>
+        
+        
+      </scm:Change>
+
+      <scm:Change>
+        <release>-dev2
+        </release>
+        
+        <notes>
           <scm:Note>FocusElement supports writeThrough mode
           </scm:Note>
         </notes>
