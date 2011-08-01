@@ -20,11 +20,11 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.Channel;
 
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.InitializeMessage;
 import spiralcraft.textgen.ValueState;
 
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
+import spiralcraft.app.InitializeMessage;
 import spiralcraft.common.ContextualException;
 
 

@@ -28,11 +28,13 @@ import spiralcraft.log.ClassLog;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.IterationState;
 import spiralcraft.textgen.MementoState;
+
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
+import spiralcraft.app.InitializeMessage;
+
 import spiralcraft.common.ContextualException;
 
-import spiralcraft.textgen.InitializeMessage;
 
 
 import spiralcraft.util.LookaroundIterator;
@@ -263,12 +265,12 @@ public class Iterate
           valueChannel.push(val);
           lookaheadChannel.push(cursor.getCurrent());
           state.ensureChild(i,val);
-          genContext.descend(i);
+          genContext.descend(i,message.isOutOfBand());
           relayMessage(genContext,message);
         }
         finally
         { 
-          genContext.ascend();
+          genContext.ascend(message.isOutOfBand());
           lookaheadChannel.pop();
           valueChannel.pop();
           lookbehindChannel.pop();
@@ -328,12 +330,12 @@ public class Iterate
           valueChannel.push(childState.getValue());
           lookaheadChannel.push
             (it.getCurrent()!=null?it.getCurrent().getValue():null);
-          genContext.descend(iter.index);
+          genContext.descend(iter.index,message.isOutOfBand());
           relayMessage(genContext,message);
         }
         finally
         { 
-          genContext.ascend();
+          genContext.ascend(message.isOutOfBand());
           lookaheadChannel.pop();
           valueChannel.pop();
           lookbehindChannel.pop();
@@ -376,12 +378,12 @@ public class Iterate
       valueChannel.push(childState.getValue());
       lookaheadChannel.push(null);
 //      genContext.setState(childState);
-      genContext.descend(index);
+      genContext.descend(index,message.isOutOfBand());
       relayMessage(genContext,message);
     }
     finally
     { 
-      genContext.ascend();
+      genContext.ascend(message.isOutOfBand());
       lookaheadChannel.pop();
       valueChannel.pop();
       lookbehindChannel.pop();

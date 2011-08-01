@@ -21,6 +21,8 @@ import java.util.List;
 
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
+import spiralcraft.app.InitializeMessage;
+
 import spiralcraft.common.ContextualException;
 import spiralcraft.common.namespace.ContextualName;
 import spiralcraft.common.namespace.PrefixedName;

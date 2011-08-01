@@ -157,7 +157,7 @@ public class EventContext
     State lastState=this.state;
     LinkedList<Integer> lastMessagePath=messagePath;
     OutputContext.push(output);
-    if (startingState!=null)
+    if (startingState!=null && !message.isOutOfBand())
     { startingState.enterFrame(currentFrame);
     }
     try
@@ -168,7 +168,7 @@ public class EventContext
     }
     finally
     { 
-      if (startingState!=null)
+      if (startingState!=null && !message.isOutOfBand())
       { startingState.exitFrame();
       }
       OutputContext.pop();
@@ -201,7 +201,7 @@ public class EventContext
   }
   
   @Override
-  public final void descend(int index)
+  public final void descend(int index,boolean outOfBand)
   { 
     if (messagePath!=null && !messagePath.isEmpty())
     { 
@@ -218,16 +218,20 @@ public class EventContext
       if (this.state==null)
       { throw new IllegalStateException("Child state must exist");
       }
-      this.state.enterFrame(currentFrame);
+      if (!outOfBand)
+      { this.state.enterFrame(currentFrame);
+      }
     }
   }
   
   @Override
-  public final void ascend()
+  public final void ascend(boolean outOfBand)
   { 
     if (this.state!=null)
     { 
-      this.state.exitFrame();
+      if (!outOfBand)
+      { this.state.exitFrame();
+      }
       this.state=this.state.getParent();
     }
   }  
@@ -256,13 +260,13 @@ public class EventContext
       
       final State lastState=this.state;
       
-      descend(childIndex);
+      descend(childIndex,message.isOutOfBand());
       try
       { childComponent.message(this,message);
       }
       finally
       {
-        ascend();
+        ascend(message.isOutOfBand());
         this.state=lastState;
       }
     }
