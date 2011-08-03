@@ -670,11 +670,6 @@ public class Element
         }
       }
     }
-    catch (ElementRuntimeException x)
-    { 
-      x.addDetail(this);
-      throw x;
-    }
     catch (RuntimeException x)
     { throw new ElementRuntimeException(this,x);
     }
