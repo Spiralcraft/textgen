@@ -16,6 +16,20 @@
     <detail>
     
       <scm:Change>
+        <release>-dev3
+        </release>
+        
+        <notes>
+          <scm:Note>Wrap an ElementRuntimeException in another instead of 
+            appending to the caught exception.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen/Element.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
         <release>-dev2
         </release>
         
