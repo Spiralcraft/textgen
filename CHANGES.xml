@@ -4,6 +4,35 @@
   
   <scm:Change>
   
+    <revision>0.4.15.1
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>
+    </date>
+    
+    <detail>
+    
+      <scm:Change>
+        <release>-dev1
+        </release>
+        
+        <notes>
+          <scm:Note>Update for minor changes to spiralcraft.app.MessageHandler
+            and spiralcraft.app.Component
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen/Element.java
+        </path>
+      </scm:Change>
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
+  
     <revision>0.4.15
     </revision>
     
