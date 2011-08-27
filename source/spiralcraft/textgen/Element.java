@@ -117,12 +117,7 @@ public class Element
   
   class DefaultHandler
     implements MessageHandler
-  {
-    @Override
-    public Message.Type getType()
-    { return null;
-    }
-    
+  {    
     @Override
     public Focus<?> bind(
       Focus<?> focusChain)
@@ -427,6 +422,7 @@ public class Element
    * </p>
    * 
    */
+  @Override
   public void setParent(Parent parent)
   { 
     if (this.parent!=null)

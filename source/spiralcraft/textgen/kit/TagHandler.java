@@ -30,11 +30,6 @@ public abstract class TagHandler
   }
   
   @Override
-  public Message.Type getType()
-  { return RenderMessage.TYPE;
-  }
-  
-  @Override
   public Focus<?> bind(
     Focus<?> focusChain)
     throws BindException
