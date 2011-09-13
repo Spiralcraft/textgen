@@ -18,7 +18,7 @@ import spiralcraft.util.string.StringConverter;
 public class Out<T>
   extends Element
 { 
-  private ExpressionRenderer<T> renderer
+  protected final ExpressionRenderer<T> renderer
     =new ExpressionRenderer<T>();
   
   { addHandler(new RenderHandler(renderer));
