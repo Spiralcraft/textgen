@@ -14,7 +14,21 @@
     </date>
     
     <detail>
-    
+
+      <scm:Change>
+        <release>-dev2
+        </release>
+        
+        <notes>
+          <scm:Note>"Out" element is now extendable to support the use of 
+            context specific encoders.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen/elements/Out.java
+        </path>
+      </scm:Change>
+        
       <scm:Change>
         <release>-dev1
         </release>
