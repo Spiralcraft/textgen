@@ -4,6 +4,31 @@
   
   <scm:Change>
   
+    <revision>0.4.15.2
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2011-09-24
+    </date>
+    
+    <detail>
+
+      <scm:Change>
+        
+        <notes>
+          <scm:Note>Add location detail when an error occurs evaluating an
+            expression using the &lt;%=expr/%&gt; syntax
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen/compiler/ExpressionUnit.java
+        </path>
+      </scm:Change>
+
+  <scm:Change>
+  
     <revision>0.4.15.1
     </revision>
     
