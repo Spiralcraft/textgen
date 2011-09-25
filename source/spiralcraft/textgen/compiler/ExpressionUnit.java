@@ -29,6 +29,7 @@ import java.net.URI;
 import java.io.IOException;
 
 import spiralcraft.textgen.Element;
+import spiralcraft.textgen.ElementRuntimeException;
 import spiralcraft.textgen.OutputContext;
 import spiralcraft.textgen.kit.RenderHandler;
 
@@ -168,10 +169,8 @@ public class ExpressionUnit
             try
             { value=_source.get();
             }
-            catch (NullPointerException x)
-            { 
-              x.printStackTrace();
-              value=null;
+            catch (RuntimeException x)
+            { throw new ElementRuntimeException(ExpressionElement.this,x);
             }
               
             if (value!=null)
