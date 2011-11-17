@@ -79,6 +79,7 @@ public abstract class TglUnit
   protected HashMap<String,TglUnit> defines;
 
   private TglPrefixResolver prefixResolver;
+  protected boolean namespaceRoot=false;
   
   
   public TglUnit(TglUnit parent,TglCompiler<?> compiler)
@@ -150,7 +151,7 @@ public abstract class TglUnit
   
   protected void initPrefixResolver()
   {
-    if (parent==null)
+    if (parent==null || namespaceRoot)
     { prefixResolver=new TglPrefixResolver();
     }
     else
@@ -296,7 +297,7 @@ public abstract class TglUnit
     throws ContextualException
   { 
     if (contextX!=null)
-    { focus=bindContext(focus,null,null);
+    { focus=bindContext(focus,null,null,getNamespaceResolver());
     }
     return bind(focus,parentElement,createElement());
   }
@@ -321,14 +322,17 @@ public abstract class TglUnit
     ,Focus<?> focus
     ,Element parentElement
     ,List<TglUnit> children
+    ,PrefixResolver attributePrefixResolver
     )
     throws ContextualException
   { 
     if (contextX!=null)
     { 
       focus=bindContext
-        (focus,attribs
+        (focus
+        ,attribs
         ,URIUtil.removePathSuffix(getPosition().getContextURI(),".tgl")
+        ,attributePrefixResolver
         );
     }
     else if (attribs!=null && attribs.length>0)
@@ -359,6 +363,7 @@ public abstract class TglUnit
     (Focus<?> focus
     ,Attribute[] attribs
     ,URI contextAlias
+    ,PrefixResolver attributePrefixResolver
     )
     throws ContextualException
   {
@@ -386,6 +391,7 @@ public abstract class TglUnit
         for (Attribute attrib:attribs)
         { 
           String name=attrib.getName();
+          NamespaceContext.push(attributePrefixResolver);
           try
           {
             if (name.startsWith("$"))
@@ -431,6 +437,9 @@ public abstract class TglUnit
           {
             throw new ContextualException
               ("Error in attribute name",x);
+          }
+          finally
+          { NamespaceContext.pop();
           }
           
         }
@@ -572,6 +581,11 @@ public abstract class TglUnit
   { 
     if (prefixResolver!=null)
     { return prefixResolver;
+    }
+    else if (namespaceRoot)
+    { 
+      initPrefixResolver();
+      return prefixResolver;
     }
     else if (parent!=null)
     { return parent.getNamespaceResolver();
