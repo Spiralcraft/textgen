@@ -42,6 +42,9 @@ public class DocletUnit
   private final ArrayList<DocletUnit> subDocs
     =new ArrayList<DocletUnit>();
   
+  { namespaceRoot=true;
+  }
+  
   public DocletUnit(TglUnit parent,Resource resource,TglCompiler<?> compiler)
   { 
     super(parent,compiler);
