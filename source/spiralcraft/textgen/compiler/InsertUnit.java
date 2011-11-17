@@ -213,7 +213,8 @@ public class InsertUnit
         { log.fine("Binding referenced unit '"+referencedName+"'");
         }
         referencedUnit.exportDefines(this);
-        return referencedUnit.bindExtension(attributes,focus,parentElement,children);
+        return referencedUnit.bindExtension
+          (attributes,focus,parentElement,children,getNamespaceResolver());
       }
       else if (!require)
       { 

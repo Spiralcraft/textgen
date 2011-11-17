@@ -17,6 +17,7 @@ package spiralcraft.textgen.compiler;
 
 import java.util.List;
 
+import spiralcraft.common.namespace.PrefixResolver;
 import spiralcraft.lang.Focus;
 import spiralcraft.text.ParseException;
 
@@ -124,7 +125,9 @@ public class PropertyUnit
     Attribute[] attribs,
     Focus<?> focus,
     Element parentElement,
-    List<TglUnit> children)
+    List<TglUnit> children
+    ,PrefixResolver attributePrefixResolver
+    )
     throws MarkupException
   {
     // TODO Auto-generated method stub

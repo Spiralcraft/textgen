@@ -554,7 +554,7 @@ public class Element
     if (skin!=null)
     {
       Element skinElement
-        =skin.bindContent(new Attribute[0],focus,this,childUnits);
+        =skin.bindContent(new Attribute[0],focus,this,childUnits,scaffold.getNamespaceResolver());
       children=new Element[1];
       children[0]=skinElement;
     }

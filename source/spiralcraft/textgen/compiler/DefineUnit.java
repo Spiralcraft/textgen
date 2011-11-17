@@ -18,6 +18,7 @@ import java.util.List;
 
 import spiralcraft.app.Parent;
 import spiralcraft.common.ContextualException;
+import spiralcraft.common.namespace.PrefixResolver;
 import spiralcraft.common.namespace.QName;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
@@ -206,6 +207,7 @@ public class DefineUnit
     ,Focus<?> focus
     ,Element parentElement
     ,List<TglUnit> overlay
+    ,PrefixResolver attributePrefixResolver
     )
     throws ContextualException
   {
@@ -239,7 +241,7 @@ public class DefineUnit
             { 
               DefineUnit subst=(DefineUnit) child;
               if (subst.getPublishedName().equals(publishedName))
-              { return subst.bindContent(attribs,focus,parentElement,children);
+              { return subst.bindContent(attribs,focus,parentElement,children,attributePrefixResolver);
               }
             }
           }
@@ -267,7 +269,7 @@ public class DefineUnit
             { 
               DefineUnit subst=(DefineUnit) child;
               if (subst.getPublishedName().equals(publishedName))
-              { return subst.bindContent(attribs,focus,parentElement,children);
+              { return subst.bindContent(attribs,focus,parentElement,children,attributePrefixResolver);
               }
             }                  
           }
@@ -282,7 +284,7 @@ public class DefineUnit
     
     DefineElement element=new DefineElement(this,overlay);
     if (contextX!=null)
-    { focus=bindContext(focus,attribs,new QName(publishedName).toURIPath());
+    { focus=bindContext(focus,attribs,new QName(publishedName).toURIPath(),attributePrefixResolver);
     }
     else if (attribs!=null && attribs.length>0)
     { throw new MarkupException("Unrecognized attribute "+attribs[0].getName(),getPosition());
@@ -299,6 +301,7 @@ public class DefineUnit
     ,Focus<?> focus
     ,Element parentElement
     ,List<TglUnit> children
+    ,PrefixResolver attributePrefixResolver
     )
     throws ContextualException
   { 
@@ -314,7 +317,7 @@ public class DefineUnit
     //   field definition is.
     //
     // Some expressions can be defined as textual substitutions? 
-    return bindContent(attribs,focus,parentElement,children);
+    return bindContent(attribs,focus,parentElement,children,attributePrefixResolver);
   }
   
   
