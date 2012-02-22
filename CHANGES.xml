@@ -17,6 +17,18 @@
 
       <scm:Change>
         
+        <release>-dev2
+        </release>
+        
+        <notes>
+          <scm:Note>Recompile due to changed Declarable interface
+          </scm:Note>
+        </notes>
+      </scm:Change>
+      
+
+      <scm:Change>
+        
         <release>-dev1
         </release>
         
