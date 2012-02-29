@@ -17,6 +17,45 @@
 
       <scm:Change>
         
+        <release>-dev3
+        </release>
+        
+        <notes>
+          <scm:Note>PrepareMessage has a singleton instance to reduce the
+            amount of generated garbage.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen/PrepareMessage.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+        
+        <release>-dev3
+        </release>
+        
+        <notes>
+          <scm:Note>Routes to component states are now represented by
+            a Sequence instead of an int[]
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen
+        </path>
+        
+        <resources>
+          <URI>ElementState.java
+          </URI>
+          <URI>EventContext.java
+          </URI>
+          <URI>IterationState.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+        
         <release>-dev2
         </release>
         
