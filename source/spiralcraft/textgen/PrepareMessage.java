@@ -26,6 +26,7 @@ public class PrepareMessage
     extends Message
 {
   public static final Type TYPE=new Type();
+  public static final PrepareMessage INSTANCE=new PrepareMessage();  
   
   { multicast=true;
   }
