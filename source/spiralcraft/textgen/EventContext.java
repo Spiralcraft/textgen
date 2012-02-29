@@ -24,6 +24,7 @@ import spiralcraft.app.State;
 import spiralcraft.app.StateFrame;
 
 import spiralcraft.sax.XmlWriter;
+import spiralcraft.util.Sequence;
 
 import org.xml.sax.ContentHandler;
 
@@ -50,6 +51,7 @@ public class EventContext
   private final boolean stateful;
   private StateFrame currentFrame;
   private LinkedList<Integer> messagePath;
+  private Component component;
   
   /**
    * <p>Create a GenerationContext that does not refer to any ancestors,
@@ -139,23 +141,34 @@ public class EventContext
   { this.state=state;
   }
   
+  @Override
   public void dispatch
     (Message message
-    ,Element root
-    ,LinkedList<Integer> messagePath
+    ,Sequence<Integer> path
     )
-  { dispatch(message,root,state,messagePath);
+  { dispatch(message,component,state,path);
   }
   
   public void dispatch
     (Message message
-    ,Element root
+    ,Component root
+    ,Sequence<Integer> messagePath
+    )
+  { dispatch(message,root,state,messagePath);
+  }
+  
+  @Override
+  public void dispatch
+    (Message message
+    ,Component root
     ,State startingState
-    ,LinkedList<Integer> messagePath
+    ,Sequence<Integer> messagePath
     )
   {
     State lastState=this.state;
-    LinkedList<Integer> lastMessagePath=messagePath;
+    Component lastComponent=this.component;
+    
+    LinkedList<Integer> lastMessagePath=this.messagePath;
     OutputContext.push(output);
     if (startingState!=null && !message.isOutOfBand())
     { startingState.enterFrame(currentFrame);
@@ -163,7 +176,13 @@ public class EventContext
     try
     {
       this.state=startingState;
-      this.messagePath=messagePath;
+      this.component=root;
+      if (messagePath!=null)
+      { this.messagePath=messagePath.toList(new LinkedList<Integer>());
+      }
+      else
+      { this.messagePath=new LinkedList<Integer>();
+      }
       root.message(this,message);
     }
     finally
@@ -172,7 +191,8 @@ public class EventContext
       { startingState.exitFrame();
       }
       OutputContext.pop();
-      messagePath=lastMessagePath;
+      this.messagePath=lastMessagePath;
+      this.component=lastComponent;
       this.state=lastState;
     }
   }

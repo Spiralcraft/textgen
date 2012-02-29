@@ -16,6 +16,7 @@ package spiralcraft.textgen;
 
 import spiralcraft.app.State;
 import spiralcraft.app.StateFrame;
+import spiralcraft.util.Sequence;
 
 /**
  * <p>Represents the state of an Element in association with a specific 
@@ -86,7 +87,7 @@ public class ElementState
 
   private State parent;
   private final State[] children;
-  private int[] path;
+  private Sequence<Integer> path;
   private volatile StateFrame lastFrame;
   private volatile boolean frameChanged;
   
@@ -107,7 +108,7 @@ public class ElementState
   }
   
   @Override
-  public void link(State parent,int[] path)
+  public void link(State parent,Sequence<Integer> path)
   {
     if (this.parent!=null)
     { 
@@ -122,7 +123,7 @@ public class ElementState
   { this.parent=parent;
   }
   
-  void setPath(int[] path)
+  void setPath(Sequence<Integer> path)
   { this.path=path;
   }
   
@@ -131,7 +132,7 @@ public class ElementState
    * @return The path from the root of the ElementState tree 
    */
   @Override
-  public int[] getPath()
+  public Sequence<Integer> getPath()
   { return path;
   }
   
@@ -140,7 +141,7 @@ public class ElementState
    * @return The index of this ElementState within its parent ElementState
    */
   public int getIndex()
-  { return path[path.length-1];
+  { return path.getLast();
   }
   
   @Override
@@ -175,12 +176,10 @@ public class ElementState
     { 
 
       if (path==null)
-      { path=new int[0];
+      { path=new Sequence<Integer>(new Integer[] {});
       }
-      
-      int[] childPath=new int[path.length+1];
-      System.arraycopy(path,0,childPath,0,path.length);
-      childPath[childPath.length-1]=index;
+      Sequence<Integer> childPath
+        =path.concat(new Integer[] {index});
       child.link(this,childPath);
     }
   }

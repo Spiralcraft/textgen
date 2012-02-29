@@ -17,6 +17,8 @@ package spiralcraft.textgen;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import spiralcraft.util.Sequence;
+
 public class IterationState
     extends ElementState
     implements Iterable<MementoState>
@@ -39,10 +41,9 @@ public class IterationState
     { 
       MementoState child=new MementoState(grandchildCount);
         
-      int[] path=getPath();
-      int[] childPath=new int[path.length+1];
-      System.arraycopy(path,0,childPath,0,path.length);
-      childPath[childPath.length-1]=index;
+      Sequence<Integer> path=getPath();
+      Sequence<Integer> childPath
+        =path.concat(new Integer[] {index});
       child.setPath(childPath);      
 
       child.setParent(this);
