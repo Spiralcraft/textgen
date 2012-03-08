@@ -589,6 +589,7 @@ public class Element
    */
   protected List<TglUnit> expandChildren
     (Focus<?> focus,List<TglUnit> childUnits)
+    throws ContextualException
   { return childUnits;
   }
   
