@@ -21,6 +21,20 @@
         </release>
         
         <notes>
+          <scm:Note>Element.expandChildren() throws ContextualException
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen/Element.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+        
+        <release>-dev3
+        </release>
+        
+        <notes>
           <scm:Note>PrepareMessage has a singleton instance to reduce the
             amount of generated garbage.
           </scm:Note>
