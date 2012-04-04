@@ -28,6 +28,7 @@ import spiralcraft.common.LifecycleException;
 import spiralcraft.common.Lifecycler;
 
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -37,6 +38,7 @@ import spiralcraft.textgen.compiler.TglUnit;
 import spiralcraft.text.ParsePosition;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.text.xml.Attribute;
+import spiralcraft.util.ListMap;
 
 import spiralcraft.app.Component;
 import spiralcraft.app.Dispatcher;
@@ -115,6 +117,10 @@ public class Element
   
   private Focus<?> selfFocus;
   
+  private HashSet<Message.Type> notifications;
+  private HashSet<Message.Type> subscriptions;
+  private ListMap<Message.Type,Integer> childSubscriptions;
+  
   class DefaultHandler
     implements MessageHandler
   {    
@@ -158,6 +164,40 @@ public class Element
   
   public void setSkin(DefineUnit skin)
   { this.skin=skin;
+  }
+
+
+
+  @Override
+  public Message.Type[] getSubscribedTypes()
+  { 
+    if (subscriptions!=null)
+    { return subscriptions.toArray(new Message.Type[subscriptions.size()]);
+    }
+    else
+    { return null;
+    }
+  }
+  
+  /**
+   * @see Parent.subscribe()
+   */
+  @Override
+  public void subscribe(Message.Type[] types)
+  {
+    
+    for (Message.Type type: types)
+    {
+      if (notifications==null 
+          || !notifications.contains(type)
+          )
+      { 
+        if (subscriptions==null)
+        { subscriptions=new HashSet<Message.Type>();
+        }  
+        subscriptions.add(type);
+      }
+    }
   }
   
   /**
@@ -428,7 +468,7 @@ public class Element
     if (this.parent!=null)
     { throw new IllegalStateException("Parent already specified");
     }
-    this.parent=parent;
+    this.parent=parent;    
   }
   
   /**
@@ -546,6 +586,7 @@ public class Element
     )
     throws ContextualException
   {
+    
     if (innerContext!=null)
     { focus=innerContext.bind(focus);
     }
@@ -569,6 +610,34 @@ public class Element
         }
       }
     }
+    
+    // Add child subscriptions
+    if (children!=null)
+    {
+      int index=0;
+      for (Component child : children)
+      { 
+        Message.Type[] types=child.getSubscribedTypes();
+        if (types!=null)
+        {
+          if (childSubscriptions==null)
+          { childSubscriptions=new ListMap<Message.Type,Integer>();
+          }
+          
+          for (Message.Type type : types)
+          { 
+            if (subscriptions==null)
+            { subscriptions=new HashSet<Message.Type>();
+            }
+            childSubscriptions.add(type,index);
+            subscriptions.add(type);
+          }
+        }
+        
+        index++;
+      }
+    }
+    
   }
 
   /**
@@ -666,6 +735,17 @@ public class Element
           }
         }
       }
+      else if (childSubscriptions!=null)
+      {
+        
+        List<Integer> subscribers=childSubscriptions.get(message.getType());
+        if (subscribers!=null)
+        { 
+          for (int i:subscribers)
+          { messageChild(i,context,message);
+          }
+        }
+      }      
     }
     catch (RuntimeException x)
     { throw new ElementRuntimeException(this,x);
