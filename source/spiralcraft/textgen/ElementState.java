@@ -127,6 +127,11 @@ public class ElementState
   { this.path=path;
   }
   
+  @Override
+  public StateFrame getFrame()
+  { return lastFrame;
+  }
+  
   /**
    * 
    * @return The path from the root of the ElementState tree 
