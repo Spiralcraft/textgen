@@ -4,6 +4,43 @@
   
   <scm:Change>
   
+    <revision>0.4.17
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>
+    </date>
+    
+    <detail>
+
+      <scm:Change>
+        
+        <release>-dev1
+        </release>
+        
+        <notes>
+          <scm:Note>Add subscriptions and notifications model in required by
+            enhancements to the spiralcraft.app.Component interface.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/textgen
+        </path>
+        
+        <resources>
+          <URI>Element.java
+          </URI>
+          <URI>ElementState.java
+          </URI>
+        </resources>
+      </scm:Change>
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
+  
     <revision>0.4.16
     </revision>
     
