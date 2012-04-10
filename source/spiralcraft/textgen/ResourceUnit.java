@@ -48,7 +48,8 @@ public class ResourceUnit<T extends DocletUnit>
 {
   private static final ClassLog log
     =ClassLog.getInstance(ResourceUnit.class);
-  private Level logLevel=Level.INFO;
+  private Level logLevel
+    =ClassLog.getInitialDebugLevel(ResourceUnit.class,null);
   
   private final TglCompiler<T> compiler;
   protected final Resource resource;
