@@ -30,6 +30,7 @@ import spiralcraft.textgen.Element;
 
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
+import spiralcraft.app.Parent;
 import spiralcraft.common.ContextualException;
 import spiralcraft.common.namespace.NamespaceContext;
 import spiralcraft.common.namespace.QName;
@@ -148,7 +149,7 @@ public class InsertUnit
    * @param parentElement
    * @return
    */
-  private InsertElement bindDefaultContent(Focus<?> focus,Element parentElement)
+  private InsertElement bindDefaultContent(Focus<?> focus,Parent parentElement)
     throws ContextualException
   { return (InsertElement) bind(focus,parentElement,new InsertElement());
   }
@@ -193,7 +194,7 @@ public class InsertUnit
   }
   
   @Override
-  public Element bind(Focus<?> focus,Element parentElement)
+  public Element bind(Focus<?> focus,Parent parentElement)
     throws ContextualException
   {
     if (referencedName!=null)
@@ -314,7 +315,7 @@ class InsertIncludeElement
 
   
   @Override
-  public Focus<?> bind(Focus<?> focus)
+  protected Focus<?> bindStandard(Focus<?> focus)
     throws ContextualException
   { 
     
@@ -350,7 +351,7 @@ class InsertIncludeElement
   }
   
   @Override
-  public void message
+  protected void messageStandard
     (Dispatcher context
     ,Message message
     )
@@ -359,7 +360,7 @@ class InsertIncludeElement
     { ancestorInclude.messageClosure(context,message);
     }
     else 
-    { super.message(context, message);
+    { super.messageStandard(context, message);
     }
 
 
@@ -380,7 +381,7 @@ class InsertOverlayElement
   } 
   
   @Override
-  public Focus<?> bind(Focus<?> focus)
+  protected Focus<?> bindStandard(Focus<?> focus)
     throws ContextualException
   { 
     
