@@ -32,10 +32,11 @@ import spiralcraft.lang.Setter;
 import spiralcraft.lang.kit.ConstantChannel;
 import spiralcraft.lang.parser.Struct;
 import spiralcraft.lang.util.DictionaryBinding;
-import spiralcraft.scaffold.Scaffold;
 import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
 import spiralcraft.textgen.Element;
+import spiralcraft.app.Parent;
+import spiralcraft.app.Scaffold;
 
 
 import spiralcraft.text.ParseException;
@@ -50,13 +51,14 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 
+
 /**
  * A Unit of text generation which represents a
  *   node in the tree structure of a TGL block.
  */
 public abstract class TglUnit
   extends Unit<TglUnit>
-  implements Scaffold<TglUnit,Element,ContextualException>
+  implements Scaffold<TglUnit>
 {
 
   public static final URI DEFAULT_ELEMENT_PACKAGE
@@ -257,7 +259,7 @@ public abstract class TglUnit
     }
     return null;
     
-  }
+  }  
   
   public boolean containsMarkup()
   {
@@ -293,7 +295,7 @@ public abstract class TglUnit
    * </p>
    */
   @Override
-  public Element bind(Focus<?> focus,Element parentElement)
+  public Element bind(Focus<?> focus,Parent parentElement)
     throws ContextualException
   { 
     if (contextX!=null)
@@ -320,7 +322,7 @@ public abstract class TglUnit
   public Element bindExtension
     (Attribute[] attribs
     ,Focus<?> focus
-    ,Element parentElement
+    ,Parent parentElement
     ,List<TglUnit> children
     ,PrefixResolver attributePrefixResolver
     )
@@ -471,7 +473,7 @@ public abstract class TglUnit
   
   protected Element bind
     (Focus<?> focus
-    ,Element parentElement
+    ,Parent parentElement
     ,Element unboundElement
     )
     throws ContextualException

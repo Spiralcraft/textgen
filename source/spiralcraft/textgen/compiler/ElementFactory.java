@@ -1,5 +1,6 @@
 package spiralcraft.textgen.compiler;
 
+import spiralcraft.app.Parent;
 import spiralcraft.builder.Assembly;
 import spiralcraft.builder.AssemblyClass;
 import spiralcraft.builder.BuildException;
@@ -249,7 +250,7 @@ public class ElementFactory
   
   
   @SuppressWarnings({"rawtypes"})
-  public Element createElement(Focus<?> focus,Element parentElement)
+  public Element createElement(Focus<?> focus,Parent parentElement)
     throws MarkupException
   {
     

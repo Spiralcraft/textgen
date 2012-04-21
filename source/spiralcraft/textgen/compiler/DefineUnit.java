@@ -17,6 +17,7 @@ package spiralcraft.textgen.compiler;
 import java.util.List;
 
 import spiralcraft.app.Parent;
+import spiralcraft.app.Scaffold;
 import spiralcraft.common.ContextualException;
 import spiralcraft.common.namespace.PrefixResolver;
 import spiralcraft.common.namespace.QName;
@@ -205,7 +206,7 @@ public class DefineUnit
   public Element bindContent
     (Attribute[] attribs
     ,Focus<?> focus
-    ,Element parentElement
+    ,Parent parentElement
     ,List<TglUnit> overlay
     ,PrefixResolver attributePrefixResolver
     )
@@ -230,7 +231,7 @@ public class DefineUnit
         if (boundContainer!=null)
         { 
       
-          for (TglUnit child : boundContainer.getOverlay())
+          for (Scaffold<?> child : boundContainer.getOverlay())
           {
             if (debug)
             { log.fine("Checking overlay for import '"+publishedName+"': "
@@ -299,7 +300,7 @@ public class DefineUnit
   public Element bindExtension
     (Attribute[] attribs
     ,Focus<?> focus
-    ,Element parentElement
+    ,Parent parentElement
     ,List<TglUnit> children
     ,PrefixResolver attributePrefixResolver
     )

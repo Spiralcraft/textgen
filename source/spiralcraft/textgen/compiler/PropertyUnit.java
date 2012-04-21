@@ -17,6 +17,7 @@ package spiralcraft.textgen.compiler;
 
 import java.util.List;
 
+import spiralcraft.app.Parent;
 import spiralcraft.common.namespace.PrefixResolver;
 import spiralcraft.lang.Focus;
 import spiralcraft.text.ParseException;
@@ -124,7 +125,7 @@ public class PropertyUnit
   public Element bindExtension(
     Attribute[] attribs,
     Focus<?> focus,
-    Element parentElement,
+    Parent parentElement,
     List<TglUnit> children
     ,PrefixResolver attributePrefixResolver
     )
