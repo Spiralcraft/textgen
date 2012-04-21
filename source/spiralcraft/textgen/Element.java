@@ -14,6 +14,7 @@
 //
 package spiralcraft.textgen;
 
+import spiralcraft.lang.Binding;
 import spiralcraft.lang.Context;
 import spiralcraft.lang.Contextual;
 import spiralcraft.lang.Focus;
@@ -28,6 +29,7 @@ import spiralcraft.common.LifecycleException;
 import spiralcraft.common.Lifecycler;
 
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,6 +49,7 @@ import spiralcraft.app.Message;
 import spiralcraft.app.MessageHandler;
 import spiralcraft.app.MessageHandlerChain;
 import spiralcraft.app.Parent;
+import spiralcraft.app.Scaffold;
 
 import spiralcraft.app.kit.StandardMessageHandlerChain;
 
@@ -120,6 +123,11 @@ public class Element
   private HashSet<Message.Type> notifications;
   private HashSet<Message.Type> subscriptions;
   private ListMap<Message.Type,Integer> childSubscriptions;
+  private boolean ignoreBindError;
+  private ContextualException bindError;
+  private Binding<?> onBind;
+  
+  private HashMap<String,Integer> idMap;
   
   class DefaultHandler
     implements MessageHandler
@@ -167,7 +175,10 @@ public class Element
   }
 
 
-
+  public void setIgnoreBindError(boolean ignoreBindError)
+  { this.ignoreBindError=ignoreBindError;
+  }
+  
   @Override
   public Message.Type[] getSubscribedTypes()
   { 
@@ -198,6 +209,13 @@ public class Element
         subscriptions.add(type);
       }
     }
+  }
+  
+  public void setOnBind(Binding<?> onBind)
+  { 
+    removeSelfContextual(this.onBind);
+    this.onBind=onBind;
+    addSelfContextual(this.onBind);
   }
   
   /**
@@ -363,6 +381,7 @@ public class Element
   { this.id=id;
   }
   
+  @Override
   public String getId()
   { return id;
   }
@@ -494,6 +513,31 @@ public class Element
   { return parent;
   }
   
+  
+  @Override
+  public final Focus<?> bind(Focus<?> focus)
+    throws ContextualException
+  {
+    try
+    { return bindStandard(focus);
+    }
+    catch (ContextualException x)
+    {
+      bindError=x;
+      if (!ignoreBindError)
+      { throw new ContextualException("Bind error",this.getErrorContext(),x);
+      }
+      else
+      { 
+        log.info
+          ("Ignoring bind error at "
+            +this.getErrorContext()+": "+x.toString()
+          );
+        return focus;
+      }
+    }
+  }
+  
   /**
    * <p>Called when binding Units, to allow the Element to initialize by 
    *   referencing its data source and parent Element, supplied before this
@@ -507,29 +551,32 @@ public class Element
    * @throws BindException 
    * @throws MarkupException
    */
-  @Override
-  public Focus<?> bind(Focus<?> focus)
+  protected Focus<?> bindStandard(Focus<?> focus)
     throws ContextualException
   { 
-    try
-    {
-      bindParentContextuals(focus);
+    bindParentContextuals(focus);
     
-      bindSelfFocus(focus);
+    bindSelfFocus(focus);
     
-      bindHandlers(focus);
+    bindHandlers(focus);
     
-      bindExportContextuals(focus);
+    bindExportContextuals(focus);
     
-      bindChildren(focus);
-      return focus;
-    }
-    catch (ContextualException x)
-    { throw new ContextualException("Bind error",this.getErrorContext(),x);
-    }
+    bindChildren(focus);
+    
+    onBind(focus);
+    bindComplete(focus);
+    return focus;
     
   }
   
+  
+  protected void onBind(Focus<?> focus)
+  {
+    if (onBind!=null)
+    { onBind.get();
+    }
+  }
   
   protected Focus<?> bindSelfFocus(Focus<?> focus) 
     throws ContextualException
@@ -540,15 +587,37 @@ public class Element
     return selfFocus;
   }
   
+  /**
+   * Override to add any handlers after the parent and self context has been
+   *   bound
+   */
+  protected void addHandlers()
+    throws ContextualException
+  {
+  }
+  
   protected final void bindHandlers(Focus<?> focus)
     throws ContextualException
   { 
+    addHandlers();
     if (handlerChain!=null)
     { 
       handlerChain.chain(createDefaultHandler());
       handlerChain.bind(focus);
     }
     
+  }
+  
+  /**
+   * <p>Override to process any information received from descendants during
+   *   the bind process
+   * </p>
+   * 
+   * @param focus
+   */
+  protected void bindComplete(Focus<?> focus)
+    throws ContextualException
+  { 
   }
   
   protected MessageHandler createDefaultHandler()
@@ -564,10 +633,16 @@ public class Element
    * @throws BindException
    * @throws MarkupException
    */
+  @SuppressWarnings("unchecked")
   protected final void bindChildren(Focus<?> focus)
     throws ContextualException
   { 
-    bindChildren(focus,scaffold!=null?scaffold.getChildren():null);
+    bindChildren
+      (focus
+      ,scaffold!=null
+        ?scaffold.getChildren()
+        :null
+      );
   }
   
   public Component[] getChildren()
@@ -591,32 +666,33 @@ public class Element
     { focus=innerContext.bind(focus);
     }
     
-    childUnits=expandChildren(focus,childUnits);
     if (skin!=null)
     {
       Element skinElement
         =skin.bindContent(new Attribute[0],focus,this,childUnits,scaffold.getNamespaceResolver());
-      children=new Element[1];
+      children=new Component[1];
       children[0]=skinElement;
     }
     else
     {
-      if (childUnits!=null)
+      List<Scaffold<?>> scaffoldChildren=expandChildren(focus,childUnits);
+      if (scaffoldChildren!=null)
       { 
-        children=new Element[childUnits.size()];
+        children=new Component[scaffoldChildren.size()];
         int i=0;
-        for (TglUnit child: childUnits)
+        for (Scaffold<?> child: scaffoldChildren)
         { children[i++]=child.bind(focus,this);
         }
       }
     }
     
-    // Add child subscriptions
     if (children!=null)
     {
+      // Register children
       int index=0;
       for (Component child : children)
       { 
+        // Add child subscriptions
         Message.Type[] types=child.getSubscribedTypes();
         if (types!=null)
         {
@@ -634,6 +710,9 @@ public class Element
           }
         }
         
+        if (child.getId()!=null)
+        { registerChild(child.getId(),index);
+        }  
         index++;
       }
     }
@@ -656,10 +735,18 @@ public class Element
    * @param childUnits
    * @return
    */
-  protected List<TglUnit> expandChildren
+  protected List<Scaffold<?>> expandChildren
     (Focus<?> focus,List<TglUnit> childUnits)
     throws ContextualException
-  { return childUnits;
+  { 
+    if (childUnits==null)
+    { return null;
+    }
+    List<Scaffold<?>> children=new LinkedList<Scaffold<?>>();
+    for (TglUnit unit:childUnits)
+    { children.add(unit);
+    }
+    return children;
   }
   
 
@@ -686,8 +773,7 @@ public class Element
    * </p>
    * 
    */
-  @Override
-  public void message
+  protected void messageStandard
     (Dispatcher dispatcher
     ,Message message
     )
@@ -698,6 +784,16 @@ public class Element
     else
     { relayMessage(dispatcher,message);
     }
+  }
+  
+  @Override
+  public final void message(Dispatcher dispatcher,Message message)
+  { 
+    if (bindError==null)
+    { messageStandard(dispatcher,message); 
+    }
+    
+    
   }
 
   
@@ -921,5 +1017,25 @@ public class Element
   @Override
   public Component asComponent()
   { return this;
+  }
+  
+  protected Focus<?> getSelfFocus()
+  { return selfFocus;
+  }
+  
+  private void registerChild(String id,int index)
+  {
+    if (idMap==null)
+    { idMap=new HashMap<String,Integer>();
+    }
+    idMap.put(id,index);
+  }
+  
+  protected Integer getChildIndex(String id)
+  {
+    if (idMap==null)
+    { return null;
+    }
+    else return idMap.get(id);
   }
 }
