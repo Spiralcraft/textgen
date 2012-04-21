@@ -32,7 +32,7 @@ public class RendererElement
   }
   
   @Override
-  public Focus<?> bind(Focus<?> focus) 
+  protected Focus<?> bindStandard(Focus<?> focus) 
     throws ContextualException
   { 
     addHandler(new RenderHandler(renderer));
@@ -44,7 +44,7 @@ public class RendererElement
       
     }
     focus=focus.chain(getAssembly().getFocus().getSubject());
-    return super.bind(focus);
+    return super.bindStandard(focus);
   }
 
   

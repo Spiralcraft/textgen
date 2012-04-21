@@ -32,7 +32,7 @@ public class IncludeElement
 
   
   @Override
-  public void message
+  protected void messageStandard
     (Dispatcher context
     ,Message message
     )

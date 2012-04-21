@@ -182,7 +182,7 @@ public class ExpressionUnit
     }    
     
     @Override
-    public Focus<?> bind(Focus<?> focus)
+    protected Focus<?> bindStandard(Focus<?> focus)
       throws ContextualException
     { 
       try
@@ -198,7 +198,7 @@ public class ExpressionUnit
           ,x
           );
       }
-      return super.bind(focus);
+      return super.bindStandard(focus);
 
     }
     

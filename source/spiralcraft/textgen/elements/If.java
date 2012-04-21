@@ -73,7 +73,7 @@ public class If
   
   @Override
   @SuppressWarnings("unchecked") // Not using generic versions
-  public Focus<?> bind(Focus<?> parentFocus)
+  protected Focus<?> bindStandard(Focus<?> parentFocus)
     throws ContextualException
   { 
     
@@ -101,7 +101,7 @@ public class If
         ("<%If%> requires a boolean expression, not a "+target.getContentType());
     }
     
-    super.bind(parentFocus);
+    super.bindStandard(parentFocus);
     int childCount=getChildCount();
     for (int i=0;i<childCount;i++)
     { 
@@ -115,7 +115,7 @@ public class If
   }
   
   @Override
-  public void message
+  protected void messageStandard
     (Dispatcher context
     ,Message message
     )
@@ -159,7 +159,7 @@ public class If
     { 
       // Initialize event broadcast and targeted events
       //   always get through
-      super.message(context,message);
+      super.messageStandard(context,message);
     }
     
   

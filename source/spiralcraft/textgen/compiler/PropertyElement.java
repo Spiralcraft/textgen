@@ -10,7 +10,7 @@ public class PropertyElement
 {
 
   @Override
-  public Focus<?> bind(Focus<?> focus)
+  protected Focus<?> bindStandard(Focus<?> focus)
   { 
     // Stop binding here, rest of tree does not contain elements
     return focus;

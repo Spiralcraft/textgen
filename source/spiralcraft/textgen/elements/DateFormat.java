@@ -69,13 +69,13 @@ public class DateFormat
   }
   
   @Override
-  public Focus<?> bind(Focus<?> parentFocus)
+  protected Focus<?> bindStandard(Focus<?> parentFocus)
     throws ContextualException
   { 
     if (timeZoneExpression!=null)
     { timeZone=parentFocus.bind(timeZoneExpression);
     }
     
-    return super.bind(parentFocus);
+    return super.bindStandard(parentFocus);
   }
 }

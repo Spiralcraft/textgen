@@ -49,7 +49,7 @@ public class StandardElement
   
   
   @Override
-  public final Focus<?> bind(
+  public final Focus<?> bindStandard(
     Focus<?> focusChain)
     throws ContextualException
   { 
@@ -93,9 +93,6 @@ public class StandardElement
   { return focusChain;
   }
   
-  protected void bindComplete(Focus<?> focusChain)
-    throws BindException
-  { }
   
   private final Focus<?> bindInternal(Focus<?> focusChain)
     throws ContextualException
@@ -137,7 +134,7 @@ public class StandardElement
   }  
   
   @Override
-  public final void message
+  protected final void messageStandard
     (Dispatcher context
     ,Message message
     )
@@ -147,7 +144,7 @@ public class StandardElement
     }
   
     try
-    { super.message(context,message);
+    { super.messageStandard(context,message);
     }
     finally
     { 

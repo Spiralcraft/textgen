@@ -91,7 +91,7 @@ public abstract class FocusElement<T>
   }
   
   @Override
-  public final Focus<?> bind(Focus<?> focus)
+  public final Focus<?> bindStandard(Focus<?> focus)
     throws ContextualException
   { 
 
@@ -195,14 +195,14 @@ public abstract class FocusElement<T>
 
   
   @Override
-  public final void message
+  public final void messageStandard
     (Dispatcher context
     ,Message message
     )
   {
     push(context,message);
     try
-    { super.message(context,message);
+    { super.messageStandard(context,message);
     }
     finally
     { pop();

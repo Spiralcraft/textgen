@@ -54,7 +54,7 @@ public class Constant<Tresult>
 
   
   @Override
-  public final Focus<?> bind(Focus<?> focus)
+  public final Focus<?> bindStandard(Focus<?> focus)
     throws ContextualException
   { 
     Channel<Tresult> temp=focus.bind(x);
@@ -70,7 +70,7 @@ public class Constant<Tresult>
     { focus.addAlias(alias);
     }
     
-    return super.bind(focus);
+    return super.bindStandard(focus);
   }
 
   

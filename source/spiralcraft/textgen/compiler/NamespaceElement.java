@@ -25,12 +25,12 @@ public class NamespaceElement
   
 
   @Override
-  public Focus<?> bind(Focus<?> focus)
+  protected Focus<?> bindStandard(Focus<?> focus)
     throws ContextualException
   { 
     
     focus=focus.chain(resolver);
-    return super.bind(focus);
+    return super.bindStandard(focus);
     
   }
 

@@ -53,7 +53,7 @@ public class FocusChainElement
 
 
   @Override
-  public Focus<?> bind(Focus<?> context) 
+  protected Focus<?> bindStandard(Focus<?> context) 
     throws ContextualException 
   { 
     
@@ -65,7 +65,7 @@ public class FocusChainElement
     { focus=context.chain(getAssembly().getFocus().getSubject());
     }
     focus.addFacet(getAssembly().getFocus());
-    super.bind(focus);
+    super.bindStandard(focus);
     
     if (object instanceof Lifecycle)
     { 
@@ -80,20 +80,20 @@ public class FocusChainElement
   }
   
   @Override
-  public void message
+  protected void messageStandard
     (final Dispatcher context
     ,final Message message
     )
   { 
     
     if (tfco==null)
-    { super.message(context,message);
+    { super.messageStandard(context,message);
     }
     else
     {
       tfco.push();
       try
-      { super.message(context,message);
+      { super.messageStandard(context,message);
       }
       finally
       { tfco.pop();

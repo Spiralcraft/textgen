@@ -58,7 +58,7 @@ public class SharedReference<Treferent>
   
   
   @Override
-  public Focus<?> bind(Focus<?> focusChain)
+  protected Focus<?> bindStandard(Focus<?> focusChain)
     throws ContextualException
   { 
     if (type==null && typeX!=null)
@@ -73,7 +73,7 @@ public class SharedReference<Treferent>
         (type!=null?type.getURI():null,instanceURI,focusChain);
 
     
-    return super.bind(reference.getFocus());
+    return super.bindStandard(reference.getFocus());
   }
 
   /**
@@ -119,14 +119,14 @@ public class SharedReference<Treferent>
 
 
   @Override
-  public void message
+  protected void messageStandard
     (final Dispatcher context
     ,final Message message
     )
   { 
     reference.push();
     try
-    { super.message(context,message);
+    { super.messageStandard(context,message);
     }
     finally
     { reference.pop();

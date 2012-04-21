@@ -55,7 +55,7 @@ public class Group
   
   @Override
   @SuppressWarnings({ "unchecked", "rawtypes" }) // Not using generic versions
-  public Focus<?> bind(Focus<?> parentFocus)
+  protected Focus<?> bindStandard(Focus<?> parentFocus)
     throws ContextualException
   { 
     if (expression==null)
@@ -82,7 +82,7 @@ public class Group
       =new SimpleFocus(parentFocus,parentFocus.getSubject());
     focus.addFacet(getAssembly().getFocus());
 
-    return super.bind(focus);
+    return super.bindStandard(focus);
     
   }
   

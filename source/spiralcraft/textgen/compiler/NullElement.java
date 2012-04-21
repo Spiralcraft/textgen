@@ -9,7 +9,7 @@ public class NullElement
 {
 
   @Override
-  public Focus<?> bind(Focus<?> focus)
+  protected Focus<?> bindStandard(Focus<?> focus)
   { return focus;
   }
   

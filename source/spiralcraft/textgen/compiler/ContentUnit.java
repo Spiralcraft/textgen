@@ -83,7 +83,7 @@ public class ContentUnit
     }
     
     @Override
-    public Focus<?> bind(Focus<?> focus)
+    protected Focus<?> bindStandard(Focus<?> focus)
       throws ContextualException
     { 
       elementContent=ContentUnit.this.content;
@@ -93,7 +93,7 @@ public class ContentUnit
       { elementContent=elementContent.toString().trim();
       }
       
-      return super.bind(focus);
+      return super.bindStandard(focus);
     }
     
   }

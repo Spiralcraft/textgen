@@ -126,7 +126,7 @@ public class Iterate
   }
   
   @Override
-  public Focus<?> bind(Focus<?> parentFocus)
+  protected Focus<?> bindStandard(Focus<?> parentFocus)
     throws ContextualException
   { 
     Channel<?> target=null;
@@ -203,7 +203,7 @@ public class Iterate
     { log.fine("Iterator exposes "+valueChannel);
     }
     
-    return super.bind(currentFocus);
+    return super.bindStandard(currentFocus);
   }
   
   /**
@@ -507,7 +507,7 @@ public class Iterate
   }  
   
   @Override
-  public void message
+  protected void messageStandard
     (final Dispatcher context
     ,Message message
     )

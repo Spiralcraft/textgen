@@ -96,7 +96,7 @@ public abstract class Format<T extends java.text.Format>
   }
   
   @Override
-  public Focus<?> bind(Focus<?> parentFocus)
+  protected Focus<?> bindStandard(Focus<?> parentFocus)
     throws ContextualException
   { 
     
@@ -110,7 +110,7 @@ public abstract class Format<T extends java.text.Format>
     formatLocal.set(createFormat());
 
     
-    return super.bind(parentFocus);
+    return super.bindStandard(parentFocus);
   }
   
 

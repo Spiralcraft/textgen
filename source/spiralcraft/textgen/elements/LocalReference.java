@@ -90,7 +90,7 @@ public class LocalReference<Treferent>
   
   @Override
   @SuppressWarnings({"unchecked","rawtypes"}) // Not using generic versions
-  public Focus<?> bind(Focus<?> parentFocus)
+  protected Focus<?> bindStandard(Focus<?> parentFocus)
     throws ContextualException
   { 
     
@@ -120,7 +120,7 @@ public class LocalReference<Treferent>
     focus=new SimpleFocus(parentFocus,channel);
     focus.addFacet(getAssembly().getFocus());
     
-    return super.bind(focus);
+    return super.bindStandard(focus);
   }
 
   
@@ -128,7 +128,7 @@ public class LocalReference<Treferent>
 
   @SuppressWarnings("unchecked")
   @Override
-  public void message
+  protected void messageStandard
     (Dispatcher context
     ,Message message
     )
@@ -160,7 +160,7 @@ public class LocalReference<Treferent>
     
     
     try
-    { super.message(context,message);
+    { super.messageStandard(context,message);
     }
     finally
     { channel.pop();
