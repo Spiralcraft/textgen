@@ -14,6 +14,7 @@
 //
 package spiralcraft.textgen.compiler;
 
+import java.net.URI;
 import java.util.List;
 
 import spiralcraft.app.Parent;
@@ -285,7 +286,12 @@ public class DefineUnit
     
     DefineElement element=new DefineElement(this,overlay);
     if (contextX!=null)
-    { focus=bindContext(focus,attribs,new QName(publishedName).toURIPath(),attributePrefixResolver);
+    { 
+      focus=bindContext
+       (focus,attribs
+       ,new URI[] {new QName(publishedName).toURIPath()}
+       ,attributePrefixResolver
+       );
     }
     else if (attribs!=null && attribs.length>0)
     { throw new MarkupException("Unrecognized attribute "+attribs[0].getName(),getPosition());

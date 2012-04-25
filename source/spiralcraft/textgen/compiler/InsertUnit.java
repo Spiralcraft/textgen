@@ -27,6 +27,7 @@ import spiralcraft.text.ParseException;
 import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.Element;
+import spiralcraft.textgen.Theme;
 
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
@@ -56,6 +57,7 @@ public class InsertUnit
   private boolean require=false;
   private Attribute[] attributes;
   private URI resourceURI;
+  private Resource resource;
   
   public InsertUnit
     (TglUnit parent
@@ -128,6 +130,9 @@ public class InsertUnit
           this.resourceURI=URIUtil.addPathSuffix(qName.toURIPath(),".tgl");
           defineReferencedResource();
         }
+        catch (StackOverflowError x)
+        { throw new MarkupException("Recursive definition of "+referencedName,getPosition());
+        }
         finally
         { NamespaceContext.pop();
         }
@@ -168,8 +173,27 @@ public class InsertUnit
       
       try
       { 
+         
+        resource
+          =Resolver.getInstance().resolve(resourceURI);
         
-        Resource resource=Resolver.getInstance().resolve(resourceURI);
+        // Search the theme inheritance hierarchy if there is one
+        Resource baseResource=resource;
+        while (baseResource!=null && !baseResource.exists())
+        {
+          log.fine("Checking "+baseResource);
+          Theme theme=Theme.fromContainer(baseResource.getParent().asContainer());
+          if (theme!=null)
+          { baseResource=theme.baseResource(resource);
+          }
+          else
+          { baseResource=null;
+          }
+        }
+        if (baseResource!=null && baseResource.exists())
+        { resource=baseResource;
+        }
+        
         if (resource.exists())
         {
           try
@@ -177,14 +201,18 @@ public class InsertUnit
             DocletUnit referencedUnit
               =compiler.subCompile
                 (this
-                ,resourceURI
+                ,resource.getURI()
                 );
+            referencedUnit.setReferencedURI(qName.toURIPath());
             this.define(referencedName,referencedUnit);
           }
           catch (IOException e)
           { throw new ParseException("Error reading ["+qName+"]",getPosition(),e);
           }            
         }
+      }
+      catch (ContextualException x)
+      { throw new MarkupException("Error reading theme for "+resourceURI,this.getPosition(),x);
       }
       catch (IOException x)
       { throw new MarkupException("Error compiling "+resourceURI,this.getPosition(),x);
@@ -201,10 +229,18 @@ public class InsertUnit
     {
       // This is a directive to insert a named reference to another component
       
-      TglUnit referencedUnit=findDefinition(referencedName);
+      TglUnit referencedUnit;
+      
+      try
+      { referencedUnit=findDefinition(referencedName);
+      }
+      catch (StackOverflowError x)
+      {
+        throw new ContextualException
+          ("Recursive definition of "+referencedName,getPosition());
+      }
       
       Exception resolveException=null;
-      URI resourceURI=null;
       
 
       
@@ -239,10 +275,15 @@ public class InsertUnit
           +(resourceURI!=null
             ?(resolveException!=null
               ?("Resolving ["+resourceURI+"]: "+resolveException)
-              :("and resource ["+resourceURI+"] not found")
+              :("and resource ["
+                +(resource!=null
+                  ?resource.getURI()
+                  :resourceURI
+                )
+                +"] not found")
               )
             :""
-          )
+            )
           ,getPosition()
           );
       }

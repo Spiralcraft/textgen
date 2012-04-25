@@ -82,6 +82,7 @@ public abstract class TglUnit
 
   private TglPrefixResolver prefixResolver;
   protected boolean namespaceRoot=false;
+  protected URI referencedURI;
   
   
   public TglUnit(TglUnit parent,TglCompiler<?> compiler)
@@ -167,6 +168,15 @@ public abstract class TglUnit
     { initPrefixResolver();
     }
     prefixResolver.mapPrefix(prefix, namespace);
+  }
+  
+  /**
+   * The actual URI that was used to instantiate this unit
+   * 
+   * @param uri
+   */
+  void setReferencedURI(URI uri)
+  { this.referencedURI=uri;
   }
   
   /**
@@ -333,7 +343,7 @@ public abstract class TglUnit
       focus=bindContext
         (focus
         ,attribs
-        ,URIUtil.removePathSuffix(getPosition().getContextURI(),".tgl")
+        ,new URI[] {URIUtil.removePathSuffix(getPosition().getContextURI(),".tgl"),referencedURI}
         ,attributePrefixResolver
         );
     }
@@ -364,7 +374,7 @@ public abstract class TglUnit
   protected Focus<?> bindContext
     (Focus<?> focus
     ,Attribute[] attribs
-    ,URI contextAlias
+    ,URI[] contextAlias
     ,PrefixResolver attributePrefixResolver
     )
     throws ContextualException
@@ -383,7 +393,13 @@ public abstract class TglUnit
       }
       Focus<?> contextFocus=focus.chain(context);
       if (contextAlias!=null)
-      { contextFocus.addAlias(contextAlias);
+      { 
+        for (URI uri:contextAlias)
+        { 
+          if (uri!=null)
+          { contextFocus.addAlias(uri);
+          }
+        }
       }
       focus=focus.chain(focus.getSubject()); 
       focus.addFacet(contextFocus);
@@ -433,12 +449,12 @@ public abstract class TglUnit
           catch (BindException x)
           {
             throw new ContextualException
-              ("Error binding context expression for define",x);
+              ("Error binding context expression for define",getPosition(),x);
           }
           catch (spiralcraft.lang.ParseException x)
           {
             throw new ContextualException
-              ("Error in attribute name",x);
+              ("Error in attribute name",getPosition(),x);
           }
           finally
           { NamespaceContext.pop();
