@@ -50,6 +50,7 @@ public class ElementUnit
   private URI elementPackage;
   private String elementName;
   private String skinName;
+  private String instanceX;
   
   public ElementUnit
     (TglUnit parent
@@ -99,6 +100,7 @@ public class ElementUnit
       ,getPosition()
       ,new StandardPrefixResolver(getNamespaceResolver())
       );
+    elementFactory.setInstanceX(instanceX);
     super.close();
   }
 
@@ -155,6 +157,9 @@ public class ElementUnit
     name=name.intern();
     if (name.equals("skin"))
     { skinName=value;
+    }
+    else if (name.equals("x"))
+    { instanceX=value;
     }
     else
     { super.addUnitAttribute(name,value);

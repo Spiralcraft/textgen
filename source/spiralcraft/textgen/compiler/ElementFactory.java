@@ -137,6 +137,10 @@ public class ElementFactory
     
   }
   
+  public void setInstanceX(String instanceX)
+  { assemblyClass.setInstanceX(instanceX);
+  }
+  
   public AssemblyClass getAssemblyClass()
   { return assemblyClass;
   }
