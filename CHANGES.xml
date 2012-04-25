@@ -17,6 +17,74 @@
 
       <scm:Change>
         
+        <release>-dev3
+        </release>
+        
+        <notes>
+          <scm:Note>Added experimental feature to construct an element
+            using the "textgen:x" attribute instead of using the default
+            constructor for the underlying Java class/Assembly
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/compiler
+        </path>
+        
+        <resources>
+          <URI>ElementFactory.java
+          </URI>
+          <URI>ElementUnit.java
+          </URI>
+        </resources>
+                
+      </scm:Change>
+      
+      <scm:Change>
+        
+        <release>-dev3
+        </release>
+        
+        <notes>
+          <scm:Note>Theme overlay system to allow for a set of resources
+            to override or customize a base set. This is experimental.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen
+        </path>
+        
+        <resources>
+          <URI>Theme.java
+          </URI>
+          <URI>compiler/DefineUnit.java
+          </URI>
+          <URI>compiler/InsertUnit.java
+          </URI>
+          <URI>compiler/TglUnit.java
+          </URI>
+        </resources>
+                
+      </scm:Change>
+
+      <scm:Change>
+        
+        <release>-dev3
+        </release>
+        
+        <notes>
+          <scm:Note>New Text element to wrap a spiralcraft.text.MessageFormat 
+            to render formatted strings that will accommodate future i18n
+            capabilities.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/elements/Text.java
+        </path>
+                
+      </scm:Change>
+
+      <scm:Change>
+        
         <release>-dev2
         </release>
         
