@@ -17,6 +17,29 @@
 
       <scm:Change>
         
+        <release>-dev4
+        </release>
+        
+        <notes>
+          <scm:Note>The Theme overlay system now uses the vfs Package system
+            to resolve resources through overlays.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen
+        </path>
+        
+        <resources>
+          <URI>Theme.java
+          </URI>
+          <URI>compiler/InsertUnit.java
+          </URI>
+        </resources>
+                
+      </scm:Change>
+
+      <scm:Change>
+        
         <release>-dev3
         </release>
         
