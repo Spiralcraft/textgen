@@ -27,7 +27,6 @@ import spiralcraft.text.ParseException;
 import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.Theme;
 
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
@@ -39,6 +38,7 @@ import spiralcraft.common.namespace.QName;
 
 import spiralcraft.text.xml.Attribute;
 import spiralcraft.util.URIUtil;
+import spiralcraft.vfs.Package;
 import spiralcraft.vfs.Resolver;
 import spiralcraft.vfs.Resource;
 /**
@@ -176,25 +176,15 @@ public class InsertUnit
          
         resource
           =Resolver.getInstance().resolve(resourceURI);
-        
-        // Search the theme inheritance hierarchy if there is one
-        Resource baseResource=resource;
-        while (baseResource!=null && !baseResource.exists())
-        {
-          log.fine("Checking "+baseResource);
-          Theme theme=Theme.fromContainer(baseResource.getParent().asContainer());
-          if (theme!=null)
-          { baseResource=theme.baseResource(resource);
-          }
-          else
-          { baseResource=null;
+        if (!resource.exists())
+        {          
+          Package pkg=Package.fromContainer(resource.getParent());
+          if (pkg!=null)
+          { resource=pkg.searchForBaseResource(resource);
           }
         }
-        if (baseResource!=null && baseResource.exists())
-        { resource=baseResource;
-        }
         
-        if (resource.exists())
+        if (resource!=null && resource.exists())
         {
           try
           {
