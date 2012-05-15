@@ -45,7 +45,9 @@ public class TglPrefixResolver
     { return super.resolvePrefix(name);
     }
     else
-    { return TglUnit.DEFAULT_ELEMENT_PACKAGE;
+    { 
+      URI ret=super.resolvePrefix("");
+      return ret!=null?ret:TglUnit.DEFAULT_ELEMENT_PACKAGE;
     }
   }
   

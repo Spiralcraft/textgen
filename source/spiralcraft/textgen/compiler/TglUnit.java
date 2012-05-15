@@ -527,6 +527,14 @@ public abstract class TglUnit
         );
       return true;
     }
+    else if (attrib.getName().equals("tgns"))
+    {
+      mapNamespace
+        (""
+        ,URI.create(attrib.getValue())
+        );
+      return true;
+    }
     return false;
   }
   
