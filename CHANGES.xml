@@ -17,6 +17,30 @@
 
       <scm:Change>
         
+        <release>-dev5
+        </release>
+        
+        <notes>
+          <scm:Note>Allow the default namespace in .tgl and .webui files
+            to be set using tgns="uri" to allow for extensions of the
+            class:/spiralcraft/textgen/elements package.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/compiler
+        </path>
+        
+        <resources>
+          <URI>TglPrefixResolver.java
+          </URI>
+          <URI>TglUnit.java
+          </URI>
+        </resources>
+                
+      </scm:Change>
+
+      <scm:Change>
+        
         <release>-dev4
         </release>
         
