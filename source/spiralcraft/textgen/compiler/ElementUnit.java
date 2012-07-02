@@ -61,7 +61,7 @@ public class ElementUnit
   { 
     super(parent,code,compiler);
 
-    QName name=resolvePrefixedName(getName(),TglUnit.DEFAULT_ELEMENT_PACKAGE);
+    QName name=resolvePrefixedName(getName(),getNamespaceResolver().resolvePrefix(""));
     elementPackage=name.getNamespaceURI();
     elementName=name.getLocalName();
     

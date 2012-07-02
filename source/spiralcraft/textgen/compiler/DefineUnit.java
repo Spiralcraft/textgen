@@ -54,7 +54,7 @@ public class DefineUnit
     super(parent,compiler);
     publishedName
       =resolvePrefixedName
-        (importName,TglUnit.DEFAULT_ELEMENT_PACKAGE).toString();
+        (importName,getNamespaceResolver().resolvePrefix("")).toString();
     virtual=true;
     debug=parent.debug;
     inDoclet=parent instanceof DocletUnit;
@@ -76,7 +76,7 @@ public class DefineUnit
     if (tagName.startsWith("$"))
     { publishedName
         =resolvePrefixedName
-          (tagName.substring(1),TglUnit.DEFAULT_ELEMENT_PACKAGE).toString();
+          (tagName.substring(1),getNamespaceResolver().resolvePrefix("")).toString();
     }
     allowsChildren=true;
     

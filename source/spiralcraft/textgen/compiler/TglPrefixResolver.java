@@ -55,7 +55,9 @@ public class TglPrefixResolver
   public Map<String,URI> computeMappings()
   { 
     Map<String,URI> computedMappings=super.computeMappings();
-    computedMappings.put("",TglUnit.DEFAULT_ELEMENT_PACKAGE);
+    if (computedMappings.get("")==null)
+    { computedMappings.put("",TglUnit.DEFAULT_ELEMENT_PACKAGE);
+    }
     return computedMappings;
   }    
 }

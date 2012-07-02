@@ -125,7 +125,7 @@ public class InsertUnit
          
           this.referencedName
             =resolvePrefixedName
-              (tagName,TglUnit.DEFAULT_ELEMENT_PACKAGE).toString();
+              (tagName,getNamespaceResolver().resolvePrefix("")).toString();
           
           this.resourceURI=URIUtil.addPathSuffix(qName.toURIPath(),".tgl");
           defineReferencedResource();
