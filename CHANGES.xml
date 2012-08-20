@@ -20,6 +20,37 @@
         </release>
         
         <notes>
+          <scm:Note>Attribute values in tgl files are now scanned for 
+            contextual substitutions
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/compiler/TglCompiler.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+        
+        <release>-dev6
+        </release>
+        
+        <notes>
+          <scm:Note>Element now implements Reflectable and Declarable
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/Element.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+        
+        <release>-dev6
+        </release>
+        
+        <notes>
           <scm:Note>Fixes- Allow the default namespace in .tgl and .webui files
             to be set using tgns="uri" to allow for extensions of the
             class:/spiralcraft/textgen/elements package.
