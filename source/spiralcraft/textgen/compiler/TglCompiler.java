@@ -28,6 +28,8 @@ import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.text.ParseException;
 import spiralcraft.text.ParsePosition;
+import spiralcraft.util.ContextDictionary;
+import spiralcraft.util.string.StringPool;
 
 import spiralcraft.vfs.Resource;
 import spiralcraft.vfs.Resolver;
@@ -220,7 +222,7 @@ public class TglCompiler<T extends DocletUnit>
     TagReader tagReader=new TagReader();
     try
     { 
-      tagReader.readTag(context);
+      tagReader.readTag(context);     
       return tagReader;
     }
     catch (ParseException x)
@@ -262,7 +264,7 @@ public class TglCompiler<T extends DocletUnit>
     
     if (isInsertable(name))
     {
-      Attribute[] attributes=tagReader.getAttributes();
+      Attribute[] attributes=contextualizeAttributes(tagReader.getAttributes());
       InsertUnit processingUnit
         =new InsertUnit(getUnit(),this,attributes,name);
       if (tagReader.isClosed())
@@ -285,6 +287,36 @@ public class TglCompiler<T extends DocletUnit>
     }
   
     
+    
+  }
+  
+  private Attribute[] contextualizeAttributes(Attribute[] raw)
+    throws MarkupException
+  {
+    if (raw==null)
+    { return null;
+    }
+    Attribute[] ret=new Attribute[raw.length];
+    int i=0;
+    for (Attribute attribute: raw)
+    { 
+      try
+      {
+        ret[i++]
+          =new Attribute
+            (attribute.getName()
+            ,StringPool.INSTANCE.get(ContextDictionary.substitute(attribute.getValue()))
+            );
+      }
+      catch (ParseException x)
+      { throw new MarkupException
+          ("Invalid context substitution in "+attribute.getName()+"="+attribute.getValue()
+          ,position
+          ,x
+          );
+      }
+    }
+    return ret;
     
   }
 
