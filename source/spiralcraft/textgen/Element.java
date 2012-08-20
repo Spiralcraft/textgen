@@ -19,6 +19,8 @@ import spiralcraft.lang.Context;
 import spiralcraft.lang.Contextual;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.Reflector;
+import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
@@ -27,6 +29,7 @@ import spiralcraft.builder.Assembly;
 import spiralcraft.common.ContextualException;
 import spiralcraft.common.LifecycleException;
 import spiralcraft.common.Lifecycler;
+import spiralcraft.common.declare.DeclarationInfo;
 
 
 import java.util.HashMap;
@@ -128,6 +131,7 @@ public class Element
   private Binding<?> onBind;
   
   private HashMap<String,Integer> idMap;
+  private DeclarationInfo declarationInfo;
   
   class DefaultHandler
     implements MessageHandler
@@ -156,6 +160,11 @@ public class Element
   
   public Element()
   {
+  }
+  
+  @Override
+  public Reflector<Component> reflect()
+  { return BeanReflector.getInstance(getClass());
   }
   
   public void setFocusURI(URI focusURI)
@@ -1017,6 +1026,16 @@ public class Element
   @Override
   public Component asComponent()
   { return this;
+  }
+  
+  @Override
+  public void setDeclarationInfo(DeclarationInfo info)
+  { this.declarationInfo=info;
+  }
+  
+  @Override
+  public DeclarationInfo getDeclarationInfo()
+  { return declarationInfo;
   }
   
   protected Focus<?> getSelfFocus()
