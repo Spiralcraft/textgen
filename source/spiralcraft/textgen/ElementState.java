@@ -237,7 +237,7 @@ public class ElementState
   }
   
   @Override
-  public String getComponentId()
+  public String getLocalId()
   { return null;
   }
     
