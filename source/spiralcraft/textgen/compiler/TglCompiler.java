@@ -32,7 +32,7 @@ import spiralcraft.util.ContextDictionary;
 import spiralcraft.util.string.StringPool;
 
 import spiralcraft.vfs.Resource;
-import spiralcraft.vfs.Resolver;
+import spiralcraft.vfs.Package;
 
 import java.net.URI;
 
@@ -82,12 +82,16 @@ public class TglCompiler<T extends DocletUnit>
   public T compile(URI sourceURI)
     throws ParseException,IOException
   {
-    Resource resource=Resolver.getInstance().resolve(sourceURI);
+    Resource resource=Package.findResource(sourceURI);
+    if (resource==null)
+    { throw new IOException("Resource not found: "+sourceURI);
+    }
+    
     if (!resource.supportsRead())
     { throw new IOException("Resource "+resource.getURI()+" is not readable");
     }
     
-    CharSequence sequence = new ResourceCharSequence(sourceURI);
+    CharSequence sequence = new ResourceCharSequence(resource);
 
     this.position=new ParsePosition();
     T root=createDocletUnit(null,resource);
@@ -106,8 +110,12 @@ public class TglCompiler<T extends DocletUnit>
   public T subCompile(TglUnit parent,URI sourceURI)
     throws ParseException,IOException
   { 
-    Resource resource=Resolver.getInstance().resolve(sourceURI);
-    CharSequence sequence = new ResourceCharSequence(sourceURI);
+    Resource resource=Package.findResource(sourceURI);
+    if (resource==null)
+    { throw new IOException("Resource not found: "+sourceURI);
+    }
+    
+    CharSequence sequence = new ResourceCharSequence(resource);
 
     T root=createDocletUnit(parent,resource);
     // Launch new compiler for subcompile
