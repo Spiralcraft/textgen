@@ -16,6 +16,21 @@
     <detail>
       <scm:Change>
         
+        <release>-dev7
+        </release>
+        
+        <notes>
+          <scm:Note>Use vfs packages to resolve included resources
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/compiler/TglCompiler.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+        
         <release>-dev6
         </release>
         
