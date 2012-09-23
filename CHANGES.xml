@@ -16,6 +16,30 @@
     <detail>
       <scm:Change>
         
+        <release>-dev8
+        </release>
+        
+        <notes>
+          <scm:Note>Allow option to automatically publish an element's
+            self reference as a constant and add aliases for all declared types
+            into the element's DeclarationInfo.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen
+        </path>
+        
+        <resources>
+          <URI>Element.java
+          </URI>
+          <URI>compiler/ElementFactory.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+        
         <release>-dev7
         </release>
         
