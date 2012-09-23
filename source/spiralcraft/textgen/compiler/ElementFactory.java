@@ -5,6 +5,7 @@ import spiralcraft.builder.Assembly;
 import spiralcraft.builder.AssemblyClass;
 import spiralcraft.builder.BuildException;
 import spiralcraft.builder.PropertySpecifier;
+import spiralcraft.common.declare.DeclarationInfo;
 import spiralcraft.common.namespace.StandardPrefixResolver;
 
 import spiralcraft.data.DataComposite;
@@ -294,6 +295,8 @@ public class ElementFactory
       element.setAssembly(assembly);
       assembly.getFocus().addAlias(focusURI);
       element.setFocusURI(focusURI);
+      element.setDeclarationInfo
+        (new DeclarationInfo(element.getDeclarationInfo(),focusURI, position.toURI()));
       
       if (properties!=null)
       {

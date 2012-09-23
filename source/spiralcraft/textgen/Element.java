@@ -116,6 +116,7 @@ public class Element
   protected URI focusURI;
   
   protected Context innerContext;
+  protected boolean addSelfFacet;
 
   private LinkedList<Contextual> parentContextuals;
   private LinkedList<Contextual> exportContextuals;
@@ -565,7 +566,21 @@ public class Element
   { 
     bindParentContextuals(focus);
     
+    
+    // Focus parentFocus=focus;
+    // focus=bindImports()
+    //
+    // if (focus==parentFocus)
+    // { focus=focus.chain(focus.getSubject());
+    // }
+    // 
+    
     bindSelfFocus(focus);
+    if (addSelfFacet)
+    {
+      focus=focus.chain(focus.getSubject());
+      focus.addFacet(selfFocus);
+    }
     
     bindHandlers(focus);
     
@@ -592,6 +607,15 @@ public class Element
   { 
     selfFocus=focus.chain
       (new SimpleChannel<Element>(Element.this,true));
+
+    DeclarationInfo di=this.declarationInfo;
+    while (di!=null)
+    { 
+      if (di.getDeclaredType()!=null)
+      { selfFocus.addAlias(di.getDeclaredType());
+      }
+      di=di.getBase();
+    }
     bindSelfContextuals(selfFocus);
     return selfFocus;
   }
