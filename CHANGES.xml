@@ -16,6 +16,37 @@
     <detail>
       <scm:Change>
         
+        <release>-dev9
+        </release>
+        
+        <notes>
+          <scm:Note>Report source channel info in exception thrown when 
+            input is not iterable.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/elements/Iterate.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+        
+        <release>-dev9
+        </release>
+        
+        <notes>
+          <scm:Note>Fix NPE getting code position
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/Element.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+        
         <release>-dev8
         </release>
         
