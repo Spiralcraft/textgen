@@ -177,7 +177,7 @@ public class Element
   }
   
   public ParsePosition getCodePosition()
-  { return this.position!=null?this.position:scaffold.getPosition();
+  { return this.position!=null?this.position:(scaffold!=null?scaffold.getPosition():null);
   }
   
   public void setSkin(DefineUnit skin)
