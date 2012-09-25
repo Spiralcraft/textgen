@@ -149,7 +149,7 @@ public class Iterate
     if (decorator==null)
     { 
       throw new BindException
-        ("Cannot iterate through a "+target.getContentType().getName());
+        ("Cannot iterate through a "+target.getContentType().getName()+" provided by "+target.toString());
     }
     
     // iterationContextBinding
