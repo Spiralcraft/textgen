@@ -344,4 +344,15 @@ public class EventContext
   public String getContextInfo()
   { return null;
   }
+  
+  @Override
+  public Sequence<Integer> getForwardPath()
+  { 
+    if (messagePath.isEmpty())
+    { return null;
+    }
+    else 
+    { return new Sequence<Integer>(messagePath.toArray(new Integer[messagePath.size()]));
+    }
+  }
 }
