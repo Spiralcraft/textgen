@@ -1,0 +1,8 @@
+<vfs:Package
+  xmlns:vfs="class:/spiralcraft/vfs/"
+  >
+  <base>class:/spiralcraft/app/components/
+  </base>
+  <logLevel>INFO
+  </logLevel>
+</vfs:Package>
