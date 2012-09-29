@@ -16,6 +16,21 @@
     <detail>
       <scm:Change>
         
+        <release>-dev10
+        </release>
+        
+        <notes>
+          <scm:Note>Implement Dispatcher.getForwardPath()
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/EventContext.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+        
         <release>-dev9
         </release>
         
