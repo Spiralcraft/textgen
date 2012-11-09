@@ -141,11 +141,12 @@ public class TglCompiler<T extends DocletUnit>
     ,PropertyUnit[] properties
     ,ParsePosition parsePosition
     ,StandardPrefixResolver prefixResolver
+    ,ElementUnit elementUnit
     )
     throws MarkupException
   {
     return new ElementFactory
-      (namespaceUri,elementName,attributes,properties,parsePosition,prefixResolver);
+      (namespaceUri,elementName,attributes,properties,parsePosition,prefixResolver,elementUnit);
     
     
   }

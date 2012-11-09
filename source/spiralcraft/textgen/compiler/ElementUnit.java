@@ -99,6 +99,7 @@ public class ElementUnit
       ,properties
       ,getPosition()
       ,new StandardPrefixResolver(getNamespaceResolver())
+      ,this
       );
     elementFactory.setInstanceX(instanceX);
     super.close();

@@ -21,7 +21,7 @@ import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 
-//import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.text.ParseException;
@@ -48,14 +48,15 @@ import org.xml.sax.SAXException;
 public class ElementFactory
 {
 
-//  private static final ClassLogger log
-//    =ClassLogger.getInstance(AssemblyElementFactory.class);
+  private static final ClassLog log
+    =ClassLog.getInstance(ElementFactory.class);
   
   private final AssemblyClass assemblyClass;
   private final ParsePosition position;
   private URI namespaceURI;
   private String elementClassName;
   private LinkedHashMap<String,PropertyUnit> properties;
+  private boolean debug;
   
   public ElementFactory
     (URI namespaceURI
@@ -64,9 +65,11 @@ public class ElementFactory
     ,PropertyUnit[] properties
     ,ParsePosition position
     ,StandardPrefixResolver prefixResolver
+    ,ElementUnit elementUnit
     )
     throws MarkupException
   {
+    debug=elementUnit.debug;
     elementClassName=elementName;
     this.position=position.clone();
     this.namespaceURI=namespaceURI;
@@ -105,6 +108,9 @@ public class ElementFactory
             );
         }
         specifier.setPrefixResolver(prefixResolver);
+        if (debug)
+        { log.fine("Adding property "+specifier+" to "+namespaceURI+"/"+elementClassName);
+        }
         assemblyClass.addPropertySpecifier
           (specifier);
       }
@@ -241,6 +247,11 @@ public class ElementFactory
       {        
         property.addCharacters(buf.toString().toCharArray());
       }
+
+      if (debug)
+      { log.fine("Adding property "+property+" to "+namespaceURI+"/"+elementClassName);
+      }
+
       assemblyClass.addPropertySpecifier(property);
       
     }
