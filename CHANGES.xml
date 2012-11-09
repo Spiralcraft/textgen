@@ -16,6 +16,30 @@
     <detail>
       <scm:Change>
         
+        <release>-dev11
+        </release>
+        
+        <notes>
+          <scm:Note>Minor refactoring to support debugging
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/compiler
+        </path>
+        
+        <resources>
+          <URI>ElementFactory.java
+          </URI>
+          <URI>ElementUnit.java
+          </URI>
+          <URI>TglCompiler.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+        
         <release>-dev10
         </release>
         
