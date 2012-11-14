@@ -55,6 +55,7 @@ import spiralcraft.app.Parent;
 import spiralcraft.app.Scaffold;
 
 import spiralcraft.app.kit.StandardMessageHandlerChain;
+import spiralcraft.app.kit.TraceHandler;
 
 
 import java.net.URI;
@@ -415,6 +416,9 @@ public class Element
   public void setLogLevel(Level logLevel)
   { 
     this.logLevel=logLevel;
+    if (logLevel.isTrace())
+    { addHandler(new TraceHandler());
+    }
     if (logLevel.isDebug())
     { this.debug=true;
     }
@@ -627,11 +631,13 @@ public class Element
   protected void addHandlers()
     throws ContextualException
   {
+
   }
   
   protected final void bindHandlers(Focus<?> focus)
     throws ContextualException
   { 
+
     addHandlers();
     if (handlerChain!=null)
     { 
