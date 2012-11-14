@@ -24,15 +24,17 @@
           </scm:Note>
         </notes>
 
-        <path>source/spiralcraft/textgen/compiler
+        <path>source/spiralcraft/textgen
         </path>
         
         <resources>
-          <URI>ElementFactory.java
+          <URI>Element.java
           </URI>
-          <URI>ElementUnit.java
+          <URI>compiler/ElementFactory.java
           </URI>
-          <URI>TglCompiler.java
+          <URI>compiler/ElementUnit.java
+          </URI>
+          <URI>compiler/TglCompiler.java
           </URI>
         </resources>
         
