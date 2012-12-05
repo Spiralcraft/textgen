@@ -28,6 +28,7 @@ import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.Element;
 
+import spiralcraft.app.Component;
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
 import spiralcraft.app.Parent;
@@ -212,7 +213,7 @@ public class InsertUnit
   }
   
   @Override
-  public Element bind(Focus<?> focus,Parent parentElement)
+  public Component bind(Focus<?> focus,Parent parentElement)
     throws ContextualException
   {
     if (referencedName!=null)
@@ -350,7 +351,8 @@ class InsertIncludeElement
     throws ContextualException
   { 
     
-    List<TglUnit> children=getScaffold().getChildren();
+    @SuppressWarnings("unchecked")
+    List<TglUnit> children=(List<TglUnit>) getScaffold().getChildren();
     if (defineUnit!=null)
     {
       // If the anonymous insert is inside a define unit, bind the default
@@ -416,7 +418,8 @@ class InsertOverlayElement
     throws ContextualException
   { 
     
-    List<TglUnit> children=getScaffold().getChildren();
+    @SuppressWarnings("unchecked")
+    List<TglUnit> children=(List<TglUnit>) getScaffold().getChildren();
     if (includingInsertUnit!=null)
     { 
       children=includingInsertUnit.getChildren();

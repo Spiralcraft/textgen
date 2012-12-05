@@ -17,6 +17,7 @@ package spiralcraft.textgen.compiler;
 
 import java.net.URI;
 
+import spiralcraft.app.Component;
 import spiralcraft.app.Parent;
 import spiralcraft.builder.AssemblyClass;
 import spiralcraft.common.ContextualException;
@@ -109,34 +110,41 @@ public class ElementUnit
 
   
   @Override
-  public Element bind(Focus<?> focus,Parent parentElement)
+  public Component bind(Focus<?> focus,Parent parentElement)
     throws ContextualException
   { 
     NamespaceContext.push(getNamespaceResolver());
     try
     { 
       
-      Element element=elementFactory.createElement(focus,parentElement);
+      Component element=elementFactory.createElement(focus,parentElement);
 
       // An element that has a skin should insert it around its children
       if (skinName!=null)
       {
-        
-        TglUnit skin=findDefinition(skinName);
-        if (skin!=null)
-        { 
-          if (skin instanceof DefineUnit)
-          { element.setSkin((DefineUnit) skin);
+        if (element instanceof Element)
+        {
+          TglUnit skin=findDefinition(skinName);
+          if (skin!=null)
+          { 
+            if (skin instanceof DefineUnit)
+            { ((Element) element).setSkin((DefineUnit) skin);
+            }
+            else
+            { throw new MarkupException
+                ("Skin '"+skinName+"' must be a Define",getPosition());
+            }
           }
           else
-          { throw new MarkupException
-              ("Skin '"+skinName+"' must be a Define",getPosition());
+          { 
+            throw new MarkupException
+            ("Skin '"+skinName+"' not defined",getPosition());
           }
-        }
+        }  
         else
         { 
           throw new MarkupException
-          ("Skin '"+skinName+"' not defined",getPosition());
+            ("Cannot specify skin for this type of component.",getPosition());
         }
       }
       return bind(focus,parentElement,element);

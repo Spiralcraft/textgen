@@ -102,7 +102,7 @@ public class Element
   private Component[] children;
   
   private Parent parent;
-  private TglUnit scaffold;
+  private Scaffold<?> scaffold;
   
   private Assembly<?> assembly;
   private String id;
@@ -510,7 +510,8 @@ public class Element
    * </p>
    * 
    */
-  public void setScaffold(TglUnit scaffold)
+  @Override
+  public void setScaffold(Scaffold<?> scaffold)
   { 
     if (this.scaffold!=null)
     { throw new IllegalStateException("Scaffold already specified");
@@ -518,7 +519,7 @@ public class Element
     this.scaffold=scaffold;
   }
   
-  public TglUnit getScaffold()
+  public Scaffold<?> getScaffold()
   { return scaffold;
   }
   
@@ -679,7 +680,7 @@ public class Element
     bindChildren
       (focus
       ,scaffold!=null
-        ?scaffold.getChildren()
+        ?(List<TglUnit>) scaffold.getChildren()
         :null
       );
   }
@@ -707,8 +708,8 @@ public class Element
     
     if (skin!=null)
     {
-      Element skinElement
-        =skin.bindContent(new Attribute[0],focus,this,childUnits,scaffold.getNamespaceResolver());
+      Component skinElement
+        =skin.bindContent(new Attribute[0],focus,this,childUnits,((TglUnit) scaffold).getNamespaceResolver());
       children=new Component[1];
       children[0]=skinElement;
     }
@@ -782,7 +783,7 @@ public class Element
     { return null;
     }
     List<Scaffold<?>> children=new LinkedList<Scaffold<?>>();
-    for (TglUnit unit:childUnits)
+    for (Scaffold<?> unit:childUnits)
     { children.add(unit);
     }
     return children;

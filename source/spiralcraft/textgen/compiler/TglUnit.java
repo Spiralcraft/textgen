@@ -35,6 +35,7 @@ import spiralcraft.lang.util.DictionaryBinding;
 import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
 import spiralcraft.textgen.Element;
+import spiralcraft.app.Component;
 import spiralcraft.app.Parent;
 import spiralcraft.app.Scaffold;
 
@@ -305,7 +306,7 @@ public abstract class TglUnit
    * </p>
    */
   @Override
-  public Element bind(Focus<?> focus,Parent parentElement)
+  public Component bind(Focus<?> focus,Parent parentElement)
     throws ContextualException
   { 
     if (contextX!=null)
@@ -329,7 +330,7 @@ public abstract class TglUnit
    * @return
    * @throws MarkupException
    */
-  public Element bindExtension
+  public Component bindExtension
     (Attribute[] attribs
     ,Focus<?> focus
     ,Parent parentElement
@@ -481,16 +482,16 @@ public abstract class TglUnit
     }
   }  
   
-  protected Element defaultBind(Focus<?> focus,Element parentElement)
+  protected Component defaultBind(Focus<?> focus,Element parentElement)
     throws ContextualException
   { return bind(focus,parentElement,new DefaultElement());
   }
   
   
-  protected Element bind
+  protected Component bind
     (Focus<?> focus
     ,Parent parentElement
-    ,Element unboundElement
+    ,Component unboundElement
     )
     throws ContextualException
   {

@@ -17,6 +17,7 @@ package spiralcraft.textgen.compiler;
 import java.net.URI;
 import java.util.List;
 
+import spiralcraft.app.Component;
 import spiralcraft.app.Parent;
 import spiralcraft.app.Scaffold;
 import spiralcraft.common.ContextualException;
@@ -204,7 +205,7 @@ public class DefineUnit
    * @return
    * @throws MarkupException
    */
-  public Element bindContent
+  public Component bindContent
     (Attribute[] attribs
     ,Focus<?> focus
     ,Parent parentElement
@@ -303,7 +304,7 @@ public class DefineUnit
   
   
   @Override
-  public Element bindExtension
+  public Component bindExtension
     (Attribute[] attribs
     ,Focus<?> focus
     ,Parent parentElement

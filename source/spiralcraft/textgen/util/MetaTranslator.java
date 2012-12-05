@@ -13,7 +13,6 @@ import spiralcraft.vfs.Translator;
 
 import spiralcraft.vfs.spi.AbstractResource;
 
-import spiralcraft.textgen.Element;
 import spiralcraft.textgen.RenderMessage;
 import spiralcraft.textgen.compiler.TglCompiler;
 import spiralcraft.textgen.compiler.DocletUnit;
@@ -22,6 +21,7 @@ import spiralcraft.textgen.EventContext;
 
 import spiralcraft.text.ParseException;
 
+import spiralcraft.app.Component;
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.reflect.BeanFocus;
 import spiralcraft.lang.BindException;
@@ -93,7 +93,7 @@ public class MetaTranslator
   {
    
     private BeanFocus<MetaResource> focus;
-    private Element element;
+    private Component element;
     private Resource resource;
     private long templateLastModified;
     

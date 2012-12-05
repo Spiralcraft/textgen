@@ -16,6 +16,7 @@ package spiralcraft.textgen;
 
 import java.io.IOException;
 
+import spiralcraft.app.Component;
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Focus;
 import spiralcraft.log.ClassLog;
@@ -186,7 +187,7 @@ public class ResourceUnit<T extends DocletUnit>
     }
   }
 
-  public Element bind(Focus<?> focus)
+  public Component bind(Focus<?> focus)
     throws ContextualException,IOException
   {
     DocletUnit unit=getUnit();

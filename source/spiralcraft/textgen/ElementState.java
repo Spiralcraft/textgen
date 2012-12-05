@@ -98,7 +98,7 @@ public class ElementState
   public ElementState(int numChildren)
   { 
     // System.err.println("ElementState: new "+toString());
-    this.children=new ElementState[numChildren];
+    this.children=new State[numChildren];
   }
   
   

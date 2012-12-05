@@ -19,6 +19,7 @@ import java.io.StringWriter;
 import java.net.URI;
 
 
+import spiralcraft.app.Component;
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Focus;
 import spiralcraft.log.ClassLog;
@@ -45,7 +46,7 @@ public class Generator
     =ClassLog.getInstance(Generator.class);
   
   private final Focus<?> focus;
-  private Element element;
+  private Component element;
   
   /**
    * <p>Create a generator using the markup at the specifed resource bound

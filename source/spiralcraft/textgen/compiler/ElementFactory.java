@@ -1,5 +1,6 @@
 package spiralcraft.textgen.compiler;
 
+import spiralcraft.app.Component;
 import spiralcraft.app.Parent;
 import spiralcraft.builder.Assembly;
 import spiralcraft.builder.AssemblyClass;
@@ -266,7 +267,7 @@ public class ElementFactory
   
   
   @SuppressWarnings({"rawtypes"})
-  public Element createElement(Focus<?> focus,Parent parentElement)
+  public Component createElement(Focus<?> focus,Parent parentElement)
     throws MarkupException
   {
     
@@ -275,39 +276,43 @@ public class ElementFactory
       Assembly assembly
         =assemblyClass.newInstance(focus);
       
-      Element element;
+      Component component;
       Object object=assembly.get();
       
       
-      if (object instanceof Element)
-      { element=(Element) object;
+      if (object instanceof Component)
+      { component=(Component) object;
       }
       else if (object instanceof Renderer)
-      { element=new RendererElement((Renderer) object);
+      { component=new RendererElement((Renderer) object);
       }
       else if (object instanceof Wrapper)
-      { element=new WrapperElement((Wrapper) object);
+      { component=new WrapperElement((Wrapper) object);
       }
       else
       { 
         if (parentElement instanceof PropertyElement)
-        { element=new ObjectElement(object);
+        { component=new ObjectElement(object);
         }
         else
         { 
           // Put the instance directly into the Chain
-          element=new FocusChainElement(object);
+          component=new FocusChainElement(object);
         }
       }
       
       URI focusURI=URI.create(namespaceURI.toString()+elementClassName);
       
-      element.setCodePosition(position);
-      element.setAssembly(assembly);
+      if (component instanceof Element)
+      {
+        Element element=(Element) component;
+        element.setCodePosition(position);
+        element.setAssembly(assembly);
+        element.setFocusURI(focusURI);
+      }
       assembly.getFocus().addAlias(focusURI);
-      element.setFocusURI(focusURI);
-      element.setDeclarationInfo
-        (new DeclarationInfo(element.getDeclarationInfo(),focusURI, position.toURI()));
+      component.setDeclarationInfo
+        (new DeclarationInfo(component.getDeclarationInfo(),focusURI, position.toURI()));
       
       if (properties!=null)
       {
@@ -320,7 +325,7 @@ public class ElementFactory
         }
       }
       
-      return element;
+      return component;
     }
     catch (BuildException x)
     { 
