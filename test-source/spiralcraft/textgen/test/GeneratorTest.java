@@ -15,7 +15,6 @@
 package spiralcraft.textgen.test;
 
 
-import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.RenderMessage;
 
@@ -31,6 +30,7 @@ import java.net.URI;
 
 //import spiralcraft.time.Clock;
 
+import spiralcraft.app.Component;
 import spiralcraft.data.persist.XmlAssembly;
 import spiralcraft.exec.Executable;
 import spiralcraft.exec.ExecutionContext;
@@ -58,7 +58,7 @@ public class GeneratorTest
       =new TglCompiler().compile(uri);
     
 
-    Element element
+    Component element
       =root.bind
         (new BeanFocus
           (new XmlAssembly

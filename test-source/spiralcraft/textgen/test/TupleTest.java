@@ -16,12 +16,12 @@ package spiralcraft.textgen.test;
 
 
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.Element;
 import spiralcraft.textgen.RenderMessage;
 
 import spiralcraft.textgen.compiler.TglCompiler;
 import spiralcraft.textgen.compiler.DocletUnit;
 
+import spiralcraft.app.Component;
 import spiralcraft.data.sax.DataReader;
 
 import spiralcraft.data.Tuple;
@@ -83,7 +83,7 @@ public class TupleTest
     focus.setTuple(tuple);
 
     DocletUnit unit=new TglCompiler<DocletUnit>().compile(uri);    
-    Element element=unit.bind(focus,null);
+    Component element=unit.bind(focus,null);
 
     Writer writer=new OutputStreamWriter(System.out);
     EventContext context=new EventContext(writer,false,null);
@@ -117,7 +117,7 @@ public class TupleTest
 
 
     DocletUnit unit=new TglCompiler().compile(uri);    
-    Element element=unit.bind(focus,null);
+    Component element=unit.bind(focus,null);
 
     Writer writer=new OutputStreamWriter(System.out);
     EventContext context=new EventContext(writer,false,null);

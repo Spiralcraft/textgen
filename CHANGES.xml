@@ -16,6 +16,44 @@
     <detail>
       <scm:Change>
         
+        <release>-dev12
+        </release>
+        
+        <notes>
+          <scm:Note>Support the use of generic components in textgen trees.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen
+        </path>
+        
+        <resources>
+          <URI>Element.java
+          </URI>
+          <URI>ElementState.java
+          </URI>
+          <URI>Generator.java
+          </URI>
+          <URI>ResourceUnit.java
+          </URI>
+          <URI>compiler/DefineUnit.java
+          </URI>
+          <URI>compiler/ElementUnit.java
+          </URI>
+          <URI>compiler/ElementFactory.java
+          </URI>
+          <URI>compiler/InsertUnit.java
+          </URI>
+          <URI>compiler/TglUnit.java
+          </URI>
+          <URI>util/MetaTranslator.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+        
         <release>-dev11
         </release>
         
