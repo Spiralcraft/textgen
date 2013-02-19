@@ -16,6 +16,21 @@
     <detail>
       <scm:Change>
         
+        <release>-dev13
+        </release>
+        
+        <notes>
+          <scm:Note>OnPrepare element triggers an expression when the
+            Prepare message is received
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/elements/OnPrepare.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+        
         <release>-dev12
         </release>
         
