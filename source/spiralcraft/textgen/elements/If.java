@@ -125,6 +125,9 @@ public class If
        && filterMessages
        )
     {
+      if (debug)
+      { log.fine(getDeclarationInfo()+" :"+message);
+      }
       
       Boolean val=currentValue(context);
       boolean passed=val!=null && val;
@@ -157,6 +160,10 @@ public class If
     }
     else
     { 
+      if (debug)
+      { log.fine(getDeclarationInfo()+" :"+message);
+      }
+      
       // Initialize event broadcast and targeted events
       //   always get through
       super.messageStandard(context,message);
