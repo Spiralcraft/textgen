@@ -30,6 +30,7 @@ import java.net.URI;
 import spiralcraft.vfs.Resource;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * A compilation unit (ie. a file or other container) of tgl markup.
@@ -41,6 +42,8 @@ public class DocletUnit
   protected final Resource resource;
   private final ArrayList<DocletUnit> subDocs
     =new ArrayList<DocletUnit>();
+  private LinkedList<ElementUnit> elements
+    =new LinkedList<ElementUnit>();
   
   { namespaceRoot=true;
   }
@@ -142,6 +145,21 @@ public class DocletUnit
     { log.debug(resource+" lastModified="+resource.getLastModified()+" / "+time);
     }
     return time;
+  }
+  
+  void registerElement(ElementUnit elementUnit)
+  { elements.add(elementUnit);
+  }
+  
+  public boolean hasStaleElements()
+  {
+    for (ElementUnit element:elements)
+    { 
+      if (element.getAssemblyClass().isStale())
+      { return true;
+      }
+    }
+    return false;
   }
   
   

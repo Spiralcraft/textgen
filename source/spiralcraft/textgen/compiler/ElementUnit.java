@@ -71,12 +71,6 @@ public class ElementUnit
     }
   }
   
-  
-  
-
-
-  
-  
   /**
    * <p>Notify ElementUnit of a close tag.
    * </p>
@@ -86,6 +80,7 @@ public class ElementUnit
    * </p>
    *   
    */
+  @SuppressWarnings("rawtypes")
   @Override
   public void close()
     throws MarkupException
@@ -103,7 +98,12 @@ public class ElementUnit
       ,this
       );
     elementFactory.setInstanceX(instanceX);
-    super.close();
+    
+    DocletUnit docletUnit=findUnit(DocletUnit.class);
+    if (docletUnit!=null)
+    { docletUnit.registerElement(this);
+    }
+    super.close();  
   }
 
   

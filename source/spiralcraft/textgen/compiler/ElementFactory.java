@@ -77,6 +77,7 @@ public class ElementFactory
     
     assemblyClass=new AssemblyClass
       (position.getContextURI()
+        ,null
         ,namespaceURI
         ,elementClassName
         ,null

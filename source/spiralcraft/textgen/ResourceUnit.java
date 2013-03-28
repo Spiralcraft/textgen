@@ -166,6 +166,7 @@ public class ResourceUnit<T extends DocletUnit>
               && now-maxRecompileRateMs>lastRecompile
              )
           || (lastModified==0 && unit==null && exception==null)
+          || hasStaleElements()
          )
       { 
         if (logLevel.isDebug())
@@ -185,6 +186,10 @@ public class ResourceUnit<T extends DocletUnit>
       unit=null;
       exception=x;
     }
+  }
+  
+  private boolean hasStaleElements()
+  { return unit!=null && unit.hasStaleElements();
   }
 
   public Component bind(Focus<?> focus)
