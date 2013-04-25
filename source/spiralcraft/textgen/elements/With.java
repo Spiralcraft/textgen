@@ -123,7 +123,7 @@ public class With<T>
     {
       // Don't recompute by default (Session mode)
       
-      if (withState.getLastComputeTime()<=0)
+      if (withState.getLastComputeTime()<=0 || withState.getForceCompute())
       { recompute=true;
       }
       
@@ -162,6 +162,7 @@ class WithState<T>
 {
   private volatile long lastCompute;
   public final ChannelBuffer<Object> trigger;
+  private volatile boolean forceCompute;
   
   public WithState(With<T> control,ChannelBuffer<Object> trigger)
   {
@@ -173,8 +174,18 @@ class WithState<T>
   { return lastCompute;
   }
   
+  public void forceCompute()
+  { forceCompute=true;
+  }
+  
+  public boolean getForceCompute()
+  { return forceCompute;
+  }
+  
   public void computed()
-  { lastCompute=Clock.instance().approxTimeMillis();
+  { 
+    lastCompute=Clock.instance().approxTimeMillis();
+    forceCompute=false;
   }
   
 
