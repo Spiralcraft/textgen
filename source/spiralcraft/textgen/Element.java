@@ -134,6 +134,7 @@ public class Element
   
   private HashMap<String,Integer> idMap;
   private DeclarationInfo declarationInfo;
+  protected boolean alwaysRunHandlers;
   
   class DefaultHandler
     implements MessageHandler
@@ -818,7 +819,7 @@ public class Element
     ,Message message
     )
   {    
-    if (dispatcher.isTarget() && handlerChain!=null)
+    if ((alwaysRunHandlers || dispatcher.isTarget()) && handlerChain!=null)
     { handlerChain.handleMessage(dispatcher,message);
     }
     else
