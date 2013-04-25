@@ -125,11 +125,11 @@ public class If
        && filterMessages
        )
     {
-      if (debug)
-      { log.fine(getDeclarationInfo()+" :"+message);
-      }
       
       Boolean val=currentValue(context);
+      if (debug)
+      { log.fine(getDeclarationInfo()+" :"+expression+":"+message+" (currentValue="+val+")");
+      }
       boolean passed=val!=null && val;
     
       int childCount=getChildCount();
@@ -186,6 +186,9 @@ public class If
       { 
         val=target.get();
         state.setValue(val);
+        if (debug)
+        { log.fine(getDeclarationInfo()+" :"+expression+": recomputed currentValue="+val);
+        }
       }
       else
       { val=state.getValue();
