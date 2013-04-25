@@ -16,6 +16,35 @@
     <detail>
       <scm:Change>
         
+        <release>-dev15
+        </release>
+        
+        <notes>
+          <scm:Note>Protected option in Element to always run MessageHandlers
+            emulating same behavior as spiralcraft.app components.
+          </scm:Note>
+          <scm:Note>"With" provides machinery to force recomputation on next
+            Frame
+          </scm:Note>
+          <scm:Note>"Session" provides for a programmatic reset
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen
+        </path>
+        
+        <resources>
+          <URI>Element.java
+          </URI>
+          <URI>elements/Session.java
+          </URI>
+          <URI>elements/With.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+        
         <release>-dev14
         </release>
         

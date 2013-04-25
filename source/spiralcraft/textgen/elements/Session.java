@@ -14,6 +14,8 @@
 //
 package spiralcraft.textgen.elements;
 
+import spiralcraft.app.kit.StateReferenceHandler;
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Binding;
 import spiralcraft.lang.util.ChannelBuffer;
 import spiralcraft.textgen.ValueState;
@@ -40,7 +42,13 @@ public class Session<T>
   
   protected Binding<Void> onStartX;
   
-  { defaultRecompute=false;
+  @SuppressWarnings({"unchecked","rawtypes"})
+  private StateReferenceHandler<SessionState<T>> stateRef
+    =new StateReferenceHandler(SessionState.class);
+  
+  { 
+    defaultRecompute=false;
+    alwaysRunHandlers=true;
   }
   
   public void setOnStart(Binding<Void> onStart)
@@ -55,6 +63,10 @@ public class Session<T>
   { return new SessionState<T>(this,new ChannelBuffer<Object>(triggerKeyX));
   } 
 
+  public void reset()
+  { stateRef.get().forceCompute();
+  }
+  
   /**
    * Called when the Stateful value should be recomputed
    * 
@@ -68,6 +80,15 @@ public class Session<T>
     return super.computeExportValue(state); 
   }
 
+ 
+  @Override
+  protected void addHandlers()
+    throws ContextualException
+  {
+    super.addHandlers();
+    addHandler(stateRef);
+  }
+  
 }
 
 class SessionState<T>
