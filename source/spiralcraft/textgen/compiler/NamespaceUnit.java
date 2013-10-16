@@ -25,6 +25,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import spiralcraft.text.markup.MarkupException;
+import spiralcraft.util.refpool.URIPool;
 
 /**
  * A Unit which defines namespaces
@@ -55,9 +56,9 @@ public class NamespaceUnit
         { continue;
         }
         
-        URI uri=new URI(attrib.getValue());
+        URI uri=URIPool.get(new URI(attrib.getValue()));
         if (!uri.isAbsolute())
-        { uri=compiler.getPosition().getContextURI().resolve(uri);
+        { uri=URIPool.get(compiler.getPosition().getContextURI().resolve(uri));
         }
         prefixResolver.mapPrefix(attrib.getName(),uri);
       }

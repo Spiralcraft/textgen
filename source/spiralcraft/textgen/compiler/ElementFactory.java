@@ -34,6 +34,7 @@ import spiralcraft.textgen.Element;
 
 import spiralcraft.text.xml.Attribute;
 import spiralcraft.util.ContextDictionary;
+import spiralcraft.util.refpool.URIPool;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -302,7 +303,7 @@ public class ElementFactory
         }
       }
       
-      URI focusURI=URI.create(namespaceURI.toString()+elementClassName);
+      URI focusURI=URIPool.create(namespaceURI.toString()+elementClassName);
       
       if (component instanceof Element)
       {

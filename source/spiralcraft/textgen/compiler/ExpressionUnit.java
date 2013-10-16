@@ -39,6 +39,7 @@ import spiralcraft.text.markup.MarkupException;
 import spiralcraft.text.ParseException;
 import spiralcraft.text.ParsePosition;
 import spiralcraft.util.ContextDictionary;
+import spiralcraft.util.refpool.URIPool;
 
 /**
  * A Unit which contains an expression for output
@@ -48,7 +49,7 @@ public class ExpressionUnit
 {
   
   public static final URI DEFAULT_ELEMENT_PACKAGE
-    =URI.create("class:/spiralcraft/textgen/elements/");
+    =URIPool.create("class:/spiralcraft/textgen/elements/");
   
   private boolean open;
   
