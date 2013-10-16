@@ -46,6 +46,7 @@ import spiralcraft.text.markup.MarkupException;
 import spiralcraft.text.xml.Attribute;
 import spiralcraft.util.ArrayUtil;
 import spiralcraft.util.URIUtil;
+import spiralcraft.util.refpool.URIPool;
 
 import java.io.IOException;
 import java.net.URI;
@@ -63,7 +64,7 @@ public abstract class TglUnit
 {
 
   public static final URI DEFAULT_ELEMENT_PACKAGE
-    =URI.create("class:/spiralcraft/textgen/elements/");
+    =URIPool.create("class:/spiralcraft/textgen/elements/");
 
   protected PropertyUnit[] properties;  
   protected Expression<?> contextX;
@@ -91,6 +92,9 @@ public abstract class TglUnit
     super(parent);
     this.compiler=compiler;
     setPosition(compiler.getPosition().clone());
+    if (parent!=null)
+    { trim=parent.getTrim();
+    }
   }
   
   @Override
@@ -524,7 +528,7 @@ public abstract class TglUnit
     { 
       mapNamespace
         (attrib.getName().substring(5)
-        ,URI.create(attrib.getValue())
+        ,URIPool.create(attrib.getValue())
         );
       return true;
     }
@@ -532,7 +536,7 @@ public abstract class TglUnit
     {
       mapNamespace
         (""
-        ,URI.create(attrib.getValue())
+        ,URIPool.create(attrib.getValue())
         );
       return true;
     }
@@ -658,8 +662,10 @@ public abstract class TglUnit
               { 
                 this.mapPrefix
                   (""
-                  ,TglUnit.this.getPosition().getContextURI().resolve(".")
-                    .normalize()
+                  ,URIPool.get
+                    (TglUnit.this.getPosition().getContextURI().resolve(".")
+                      .normalize()
+                    )
                   );
               }
             }
@@ -675,14 +681,14 @@ public abstract class TglUnit
       resourceURI=cname.getQName().toURIPath();
     }
     else
-    { resourceURI=URI.create(qname);
+    { resourceURI=URIPool.create(qname);
     }
 
     if (!resourceURI.isAbsolute())
     {
       DocletUnit parentDoc=findUnit(DocletUnit.class);
       URI baseURI=parentDoc.getSourceURI();
-      resourceURI=baseURI.resolve(resourceURI);
+      resourceURI=URIPool.get(baseURI.resolve(resourceURI));
 
     }
 
