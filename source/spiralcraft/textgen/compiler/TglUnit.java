@@ -345,6 +345,8 @@ public abstract class TglUnit
   { 
     if (contextX!=null)
     { 
+      // TODO: Replace/augment contextX with "tgconst:varname=''" and
+      //   dynamically build struct using passed arguments.
       focus=bindContext
         (focus
         ,attribs
