@@ -22,6 +22,7 @@ import spiralcraft.lang.Focus;
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.OutputContext;
 import spiralcraft.textgen.kit.RenderHandler;
+import spiralcraft.util.string.StringPool;
 import spiralcraft.util.string.StringUtil;
 
 
@@ -31,13 +32,13 @@ import spiralcraft.util.string.StringUtil;
 public class ContentUnit
   extends TglUnit
 {
-  private CharSequence content;
+  private String content;
   
   public ContentUnit(TglUnit parent,CharSequence content,TglCompiler<?> compiler)
   { 
     super(parent,compiler);
     
-    this.content=content;
+    this.content=StringPool.INSTANCE.get(content.toString());
   }
   
   @Override
@@ -52,20 +53,20 @@ public class ContentUnit
   
   public void trimStart()
   { 
-    content=StringUtil.trimStart(content.toString());
+    content=StringPool.INSTANCE.get(StringUtil.trimStart(content.toString()));
     // log.fine("Trim start ["+content+"]");
   }
   
   public void trimEnd()
   { 
-    content=StringUtil.trimEnd(content.toString());
+    content=StringPool.INSTANCE.get(StringUtil.trimEnd(content.toString()));
     // log.fine("Trim end ["+content+"]");
   }
   
   class TextElement
     extends Element
   {
-    private CharSequence elementContent;
+    private String elementContent;
     
     { addHandler
         (new RenderHandler() 
@@ -90,7 +91,7 @@ public class ContentUnit
       
       
       if (elementContent!=null && Boolean.TRUE.equals(trim))
-      { elementContent=elementContent.toString().trim();
+      { elementContent=StringPool.INSTANCE.get(elementContent.trim());
       }
       
       return super.bindStandard(focus);

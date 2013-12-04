@@ -8,6 +8,7 @@ import spiralcraft.text.markup.MarkupException;
 import spiralcraft.text.xml.Attribute;
 import spiralcraft.text.LookaheadParserContext;
 import spiralcraft.text.xml.TagReader;
+import spiralcraft.util.string.StringPool;
 
 /**
  * <P>Abstract base class for standard markup units which accept attributes,
@@ -20,7 +21,7 @@ import spiralcraft.text.xml.TagReader;
 public abstract class MarkupUnit
   extends TglUnit
 {
-  protected CharSequence markup;
+  protected String markup;
   protected Attribute[] attributes;
   protected boolean open;
 
@@ -33,7 +34,7 @@ public abstract class MarkupUnit
   { 
     super(parent,compiler);
    
-    this.markup=markup;
+    this.markup=StringPool.INSTANCE.get(markup.toString());
     readTag();
 
 
@@ -43,7 +44,7 @@ public abstract class MarkupUnit
   protected void readTag()
     throws ParseException
   {
-    LookaheadParserContext context=new LookaheadParserContext(markup.toString());
+    LookaheadParserContext context=new LookaheadParserContext(markup);
     TagReader tagReader=new TagReader();
     
     try
@@ -52,7 +53,7 @@ public abstract class MarkupUnit
       if (!context.isEof())
       {
         String remainder
-          =markup.toString().substring(1)
+          =markup.substring(1)
             .substring(context.getPosition().getIndex()-1);
         if (remainder.trim().length()>0)
         { 
@@ -68,7 +69,7 @@ public abstract class MarkupUnit
     }
 
 
-    String name=tagReader.getTagName();
+    String name=StringPool.INSTANCE.get(tagReader.getTagName());
 
     setName(name);
 
