@@ -16,6 +16,21 @@
     <detail>
       <scm:Change>
         
+        <release>-dev19
+        </release>
+        
+        <notes>
+          <scm:Note>Log compilation event and duration to system log
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/ResourceUnit.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+        
         <release>-dev18
         </release>
         
