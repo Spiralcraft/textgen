@@ -2,7 +2,7 @@
 
   <property name="module" value="textgen"/>
   <property name="buildVersion" value="0.4.17-dev19"/>
-  <property name="build.status" value="integration"/>
+  <property name="build.status" value="milestone"/>
   <property name="classpath" value="lib/spiralcraft-core.jar"/>
   <property name="test-classpath" value="lib/spiralcraft-core-test.jar"/>
   <property name="manifest.class.path" value="spiralcraft-core.jar"/>
