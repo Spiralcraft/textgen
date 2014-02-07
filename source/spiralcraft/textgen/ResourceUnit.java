@@ -22,16 +22,15 @@ import spiralcraft.lang.Focus;
 import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
 import spiralcraft.text.ParseException;
-
 import spiralcraft.textgen.compiler.DocletUnit;
 import spiralcraft.textgen.compiler.TglCompiler;
-
 import spiralcraft.vfs.Resource;
 import spiralcraft.vfs.Resolver;
 
 import java.net.URI;
 
 import spiralcraft.time.Clock;
+import spiralcraft.util.thread.BlockTimer;
 
 /**
  * <p>Compiles a TglCompilationUnit from a Resource for use as a binding
@@ -226,7 +225,20 @@ public class ResourceUnit<T extends DocletUnit>
       if (logLevel.isDebug())
       { log.debug("Compiling "+resource);
       }
-      unit=compiler.compile(resource.getURI());
+      BlockTimer timer=BlockTimer.instance();
+      timer.push();
+      try
+      { 
+        unit=compiler.compile(resource.getURI());
+        if (logLevel.isInfo())
+        { 
+          log.info("Compiled "+resource.getURI()+" in "
+            +timer.elapsedTimeMillis()+" ms");
+        }        
+      }
+      finally
+      { timer.pop();
+      }      
       exception=null;
     }
     catch (IOException x)
