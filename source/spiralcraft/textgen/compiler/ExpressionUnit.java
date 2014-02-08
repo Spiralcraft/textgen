@@ -54,7 +54,6 @@ public class ExpressionUnit
   private boolean open;
   
   private Expression<?> expression;
-  private CharSequence markup;
   
   public ExpressionUnit
     (TglUnit parent
@@ -64,8 +63,7 @@ public class ExpressionUnit
     throws ParseException
   { 
     super(parent,compiler);  
-    this.markup=markup;
-    readExpressionElement();
+    readExpressionElement(markup);
     if (!open)
     { close();
     }
@@ -81,7 +79,7 @@ public class ExpressionUnit
    * 
    * @throws ParseException
    */
-  private void readExpressionElement()
+  private void readExpressionElement(CharSequence markup)
     throws MarkupException
   { 
     CharSequence expressionText;
