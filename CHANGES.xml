@@ -16,6 +16,22 @@
     <detail>
       <scm:Change>
         
+        <release>-dev20
+        </release>
+        
+        <notes>
+          <scm:Note>Save memory by not retaining intermediate markup text
+            within ExpressionUnit
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/compiler/ExpressionUnit.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+        
         <release>-dev19
         </release>
         
