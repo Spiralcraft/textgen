@@ -98,4 +98,10 @@ public class ContentUnit
     }
     
   }
+  
+  @Override
+  public String toString()
+  { return super.toString()+": "+content;
+  }
+  
 }
