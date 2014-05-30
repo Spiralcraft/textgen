@@ -313,10 +313,22 @@ public abstract class TglUnit
   public Component bind(Focus<?> focus,Parent parentElement)
     throws ContextualException
   { 
-    if (contextX!=null)
-    { focus=bindContext(focus,null,null,getNamespaceResolver());
+    if (debug)
+    { log.debug(getPosition().toURI()+": Binding...");
     }
-    return bind(focus,parentElement,createElement());
+    try
+    {
+      if (contextX!=null)
+      { focus=bindContext(focus,null,null,getNamespaceResolver());
+      }
+      return bind(focus,parentElement,createElement());
+    }
+    finally
+    {
+      if (debug)
+      { log.debug(getPosition().toURI()+": Bound...");
+      }
+    }
   }
 
   protected Element createElement()
@@ -555,7 +567,9 @@ public abstract class TglUnit
     else if (name.equals("debug"))
     { 
       debug=Boolean.parseBoolean(value);
-      logLevel=Level.DEBUG;
+      if (debug)
+      { logLevel=Level.DEBUG;
+      }
     }
     else if (name.equals("logLevel"))
     { 
