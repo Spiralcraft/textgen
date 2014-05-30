@@ -1,0 +1,16 @@
+<%@doclet textgen:trim="true"%>
+  <%$comp
+    x='{ constBool:=true }'
+    %>
+    <%?[comp].constBool%>
+      <%Out x="true"/%>
+    <%/?%>
+    <%?![comp].constBool%>
+      <%Out x="false"/%>
+    <%/?%>
+  <%/$comp%>
+  
+  <%comp constBool="true"/%>
+  <%comp constBool="false"/%>
+<%/@doclet%>
+

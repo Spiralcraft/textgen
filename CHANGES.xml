@@ -16,6 +16,76 @@
     <detail>
       <scm:Change>
         
+        <release>-dev22
+        </release>
+        
+        <notes>
+          <scm:Note>Add a constant conditional unit to include/exclude a set
+            of elements based on the bind-time value of a constant boolean 
+            expression.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/compiler
+        </path>
+        
+        <resources>
+          <URI>ConditionalUnit.java
+          </URI>
+          <URI>TglCompiler.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+        
+        <release>-dev22
+        </release>
+        
+        <notes>
+          <scm:Note>Fix issue where the Render function would bind the 
+            component model twice
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/
+        </path>
+        
+        <resources>
+          <URI>Generator.java
+          </URI>
+          <URI>Render.java
+          </URI>
+          <URI>ResourceUnit.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+        
+        <release>-dev22
+        </release>
+        
+        <notes>
+          <scm:Note>Give Element subtypes finer control over which children
+            are added to the component tree to allow the If component to
+            optimize itself when the condition is constant.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/
+        </path>
+        
+        <resources>
+          <URI>Element.java
+          </URI>
+          <URI>elements/If.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+        
         <release>-dev20
         </release>
         

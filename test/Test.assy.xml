@@ -244,6 +244,46 @@
               </testX>
           
             </test:Assertion>        
+
+            <test:Assertion>
+              <name>Constants 1
+              </name>
+          
+              <subjectX>
+                [*tg:Render 
+                  {templateURI
+                    :=[*jnet:URI
+                        {"class:/spiralcraft/textgen/test/const1.tgl"
+                        }
+                      ]
+                  }
+                ]
+              </subjectX>
+          
+              <testX>true
+              </testX>
+          
+            </test:Assertion>        
+
+            <test:Assertion>
+              <name>Constants 2
+              </name>
+          
+              <subjectX>
+                [*tg:Render 
+                  {templateURI
+                    :=[*jnet:URI
+                        {"class:/spiralcraft/textgen/test/const2.tgl"
+                        }
+                      ]
+                  }
+                ]
+              </subjectX>
+          
+              <testX>true
+              </testX>
+          
+            </test:Assertion>        
           </scenarios>
         </task:Sequence>
       
