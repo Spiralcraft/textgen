@@ -16,9 +16,6 @@ package spiralcraft.textgen;
 
 import java.io.IOException;
 
-import spiralcraft.app.Component;
-import spiralcraft.common.ContextualException;
-import spiralcraft.lang.Focus;
 import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
 import spiralcraft.text.ParseException;
@@ -46,9 +43,9 @@ import spiralcraft.util.thread.BlockTimer;
  */
 public class ResourceUnit<T extends DocletUnit>
 {
-  private static final ClassLog log
+  protected static final ClassLog log
     =ClassLog.getInstance(ResourceUnit.class);
-  private Level logLevel
+  protected Level logLevel
     =ClassLog.getInitialDebugLevel(ResourceUnit.class,null);
   
   private final TglCompiler<T> compiler;
@@ -75,6 +72,10 @@ public class ResourceUnit<T extends DocletUnit>
   {
     this.compiler=createCompiler();
     this.resource=resource;
+  }
+  
+  public void setLogLevel(Level logLevel)
+  { this.logLevel=logLevel;
   }
   
   /**
@@ -191,32 +192,6 @@ public class ResourceUnit<T extends DocletUnit>
   { return unit!=null && unit.hasStaleElements();
   }
 
-  public Component bind(Focus<?> focus)
-    throws ContextualException,IOException
-  {
-    DocletUnit unit=getUnit();
-    if (unit!=null)
-    { return unit.bind(focus,null);
-    }
-    else
-    {
-      if (exception instanceof IOException)
-      { throw (IOException) exception;
-      }
-      else if (exception instanceof ParseException)
-      { throw (ParseException) exception;
-      }
-      else if (exception!=null)
-      { throw new RuntimeException(exception.toString(),exception);
-      }
-      else
-      { throw new IOException
-          (resource.getURI()+" not compiled- last modified "
-          +resource.getLastModified()
-          );
-      }
-    }
-  }
   
   protected void recompile()
   {

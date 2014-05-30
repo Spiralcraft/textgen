@@ -22,7 +22,6 @@ import java.net.URI;
 import spiralcraft.app.Component;
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Focus;
-import spiralcraft.log.ClassLog;
 
 import spiralcraft.text.Renderer;
 
@@ -42,9 +41,6 @@ public class Generator
   extends ResourceUnit<DocletUnit>
   implements Renderer
 {
-  private static final ClassLog log
-    =ClassLog.getInstance(Generator.class);
-  
   private final Focus<?> focus;
   private Component element;
   
@@ -90,6 +86,9 @@ public class Generator
     {
       try
       { 
+        if (logLevel.isDebug())
+        { log.fine("Rebinding "+unit);
+        }
         element=unit.bind(focus,null);
         exception=null;
       }

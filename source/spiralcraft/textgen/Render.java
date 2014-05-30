@@ -27,6 +27,7 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.lang.spi.AbstractChannel;
 import spiralcraft.lang.spi.ClosureFocus;
+import spiralcraft.log.Level;
 import spiralcraft.vfs.util.ByteArrayResource;
 
 /**
@@ -44,6 +45,7 @@ public class Render<T>
   
   private Generator generator;
   private ClosureFocus<T> focus;
+  private boolean debug;
 
   /**
    * The location of the template to render against the input
@@ -61,6 +63,10 @@ public class Render<T>
    */
   public void setTemplateText(String templateText)
   { this.templateText=templateText;
+  }
+  
+  public void setDebug(boolean debug)
+  { this.debug=debug;
   }
   
   @Override
@@ -81,14 +87,24 @@ public class Render<T>
         generator
           =new Generator(new ByteArrayResource(templateText.getBytes()),focus);
       }
-      generator.bind(focus);
+      
+      if (debug)
+      {
+        generator.setLogLevel(Level.FINE);
+      }
+      
+      if (generator.getUnit()==null)
+      {
+        if (generator.getException()!=null)
+        { 
+          throw new BindException
+            ("Error loading template "+templateURI,generator.getException());
+        }
+      }
     }
     catch (IOException x)
     { throw new BindException("Error loading template "+templateURI,x);
-    }
-    catch (ContextualException x)
-    { throw new BindException("Error loading template "+templateURI,x);
-    }    
+    }  
     return new RenderChannel();
     
   }
