@@ -534,6 +534,9 @@ public class Element
   public final Focus<?> bind(Focus<?> focus)
     throws ContextualException
   {
+    if (logLevel.isDebug())
+    { log.fine(getDeclarationInfo()+": Binding...");
+    }
     try
     { return bindStandard(focus);
     }
@@ -550,6 +553,12 @@ public class Element
             +this.getErrorContext()+": "+x.toString()
           );
         return focus;
+      }
+    }
+    finally
+    {
+      if (logLevel.isDebug())
+      { log.fine(getDeclarationInfo()+": Bound");
       }
     }
   }
@@ -719,11 +728,19 @@ public class Element
       List<Scaffold<?>> scaffoldChildren=expandChildren(focus,childUnits);
       if (scaffoldChildren!=null)
       { 
-        children=new Component[scaffoldChildren.size()];
+        LinkedList<Component> childList=new LinkedList<>();
+        
         int i=0;
         for (Scaffold<?> child: scaffoldChildren)
-        { children[i++]=child.bind(focus,this);
+        { 
+          Component childComponent=bindChild(i,child,focus);
+          if (childComponent!=null)
+          { 
+            childList.add(childComponent);
+            i++;
+          }
         }
+        children=childList.toArray(new Component[i]);
       }
     }
     
@@ -760,6 +777,20 @@ public class Element
     
   }
 
+  /**
+   * Called for each Scaffold unit when generating this element's children
+   * 
+   * @param index
+   * @param child
+   * @param focus
+   * @return
+   * @throws ContextualException
+   */
+  protected Component bindChild(int index,Scaffold<?> child,Focus<?> focus)
+    throws ContextualException
+  { return child.bind(focus,this);
+  }
+  
   /**
    * <p>Called by bindChildren() before binding to expand the tree between
    *   this node and the specified children.

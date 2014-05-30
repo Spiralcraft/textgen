@@ -18,13 +18,13 @@ import spiralcraft.lang.BindException;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Channel;
-
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.ValueState;
-
+import spiralcraft.app.Component;
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
 import spiralcraft.app.InitializeMessage;
+import spiralcraft.app.Scaffold;
 import spiralcraft.common.ContextualException;
 
 
@@ -44,6 +44,8 @@ public class If
   private Channel<Boolean> target;
   private int elsePos=-1;
   private boolean filterMessages=true;
+  private Boolean constValue;
+  private boolean hasElse;
   
   /**
    * <p>A boolean filter expression
@@ -92,7 +94,13 @@ public class If
       target=(Channel<Boolean>) parentFocus.getSubject();
     }
     
-    
+    if (target.isConstant())
+    { 
+      constValue=(Boolean.TRUE.equals(target.get()));
+      if (debug)
+      { log.fine(getDeclarationInfo()+": Target is constant ("+constValue+")");
+      }
+    }
     
     if (!Boolean.class.isAssignableFrom(target.getContentType())
         && !boolean.class.isAssignableFrom(target.getContentType())
@@ -102,18 +110,45 @@ public class If
     }
     
     super.bindStandard(parentFocus);
-    int childCount=getChildCount();
-    for (int i=0;i<childCount;i++)
-    { 
-      if (getChild(i) instanceof Else)
-      { 
-        elsePos=i;
-        break;
-      }
-    }
+
     return parentFocus;
   }
-  
+
+  @Override
+  protected Component bindChild(int childNum,Scaffold<?> child,Focus<?> focus)
+    throws ContextualException
+  {
+    
+    Component childComponent=super.bindChild(childNum,child,focus);
+    if (childComponent instanceof Else)
+    { 
+      if (hasElse)
+      { throw new ContextualException("If can only contain one Else");
+      }
+      elsePos=childNum;
+      hasElse=true;
+      return childComponent;
+    }
+
+    if (constValue==Boolean.TRUE && hasElse)
+    { 
+      if (debug)
+      { log.fine(getDeclarationInfo()+": Discarding unreachable child "+childComponent);
+      }
+      return null;
+    }
+    else if (constValue==Boolean.FALSE && !hasElse)
+    { 
+      if (debug)
+      { log.fine(getDeclarationInfo()+": Discarding unreachable child "+childComponent);
+      }
+      return null;
+   }
+    
+    
+    return childComponent;
+  }
+    
   @Override
   protected void messageStandard
     (Dispatcher context
