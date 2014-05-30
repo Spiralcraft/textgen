@@ -213,6 +213,12 @@ public class TglCompiler<T extends DocletUnit>
         =new ExpressionUnit(getUnit(),code,this);
       pushUnit(expressionUnit);
     }
+    else if (code.charAt(0)=='?')
+    {
+      ConditionalUnit conditionalUnit
+        =new ConditionalUnit(getUnit(),code,this);
+      pushUnit(conditionalUnit);  
+    }
     else if (pushInsert(code))
     {
     }
