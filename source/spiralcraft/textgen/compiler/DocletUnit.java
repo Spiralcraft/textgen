@@ -14,17 +14,16 @@
 //
 package spiralcraft.textgen.compiler;
 
+import spiralcraft.common.declare.DeclarationInfo;
 import spiralcraft.common.namespace.NamespaceContext;
 import spiralcraft.lang.Expression;
 import spiralcraft.textgen.Element;
-
 import spiralcraft.text.ParseException;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.text.markup.Unit;
 import spiralcraft.text.xml.Attribute;
 
 import java.io.IOException;
-
 import java.net.URI;
 
 import spiralcraft.vfs.Resource;
@@ -89,10 +88,13 @@ public class DocletUnit
               ("Error parsing contextX expression",getPosition(),x);
           }
         }
+        else if (attrib.getName().equals("debug"))
+        { this.debug="true".equals(attrib.getValue());
+        }
         else
         { 
           throw new MarkupException
-            ("Attribute '"+attrib.getName()+"' not in {contextX}"
+            ("Attribute '"+attrib.getName()+"' not in {contextX,debug}"
             ,compiler.getPosition()
             );
         }
@@ -204,6 +206,12 @@ public class DocletUnit
   class RootElement
     extends Element
   {
+    { 
+      setDebug(DocletUnit.this.debug);
+      setDeclarationInfo
+        (new DeclarationInfo(null,null,DocletUnit.this.getSourceURI())
+        );
+    }
     
     @Override
     public URI getContextURI()
