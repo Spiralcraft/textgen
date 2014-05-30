@@ -17,7 +17,6 @@ package spiralcraft.textgen;
 import java.io.IOException;
 import java.net.URI;
 
-import spiralcraft.common.ContextualException;
 import spiralcraft.lang.AccessException;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
