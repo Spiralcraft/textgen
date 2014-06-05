@@ -18,13 +18,12 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URI;
 
-
 import spiralcraft.app.Component;
+import spiralcraft.app.InitializeMessage;
+import spiralcraft.app.StateFrame;
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Focus;
-
 import spiralcraft.text.Renderer;
-
 import spiralcraft.textgen.compiler.DocletUnit;
 import spiralcraft.vfs.Resource;
 
@@ -43,6 +42,7 @@ public class Generator
 {
   private final Focus<?> focus;
   private Component element;
+  private boolean stateful;
   
   /**
    * <p>Create a generator using the markup at the specifed resource bound
@@ -77,6 +77,9 @@ public class Generator
   { return resource;
   }
 
+  public void setStateful(boolean stateful)
+  { this.stateful=stateful;
+  }
   
   @Override
   protected void recompile()
@@ -116,7 +119,17 @@ public class Generator
     {
       if (element!=null)
       {
-        EventContext context=new EventContext(writer,false,null);
+        EventContext context=new EventContext(writer,stateful,null);
+        if (stateful)
+        { 
+          context.setCurrentFrame(new StateFrame());
+          context.setState(element.createState());
+          log.fine(""+context.getState().toString());
+          context.dispatch(InitializeMessage.INSTANCE,element,null);
+          log.fine(""+context.getState().toString());
+          context.dispatch(PrepareMessage.INSTANCE,element,null);
+          log.fine(""+context.getState().toString());
+        }
         context.dispatch(RenderMessage.INSTANCE,element,null);
       }
       else

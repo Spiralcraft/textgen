@@ -45,6 +45,7 @@ public class Render<T>
   private Generator generator;
   private ClosureFocus<T> focus;
   private boolean debug;
+  private boolean stateful;
 
   /**
    * The location of the template to render against the input
@@ -66,6 +67,10 @@ public class Render<T>
   
   public void setDebug(boolean debug)
   { this.debug=debug;
+  }
+  
+  public void setStateful(boolean stateful)
+  { this.stateful=stateful;
   }
   
   @Override
@@ -90,6 +95,10 @@ public class Render<T>
       if (debug)
       {
         generator.setLogLevel(Level.FINE);
+      }
+      
+      if (stateful)
+      { generator.setStateful(true);
       }
       
       if (generator.getUnit()==null)
