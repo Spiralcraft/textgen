@@ -16,6 +16,51 @@
     <detail>
       <scm:Change>
         
+        <release>-dev23
+        </release>
+        
+        <notes>
+          <scm:Note>Enhance the Render task and the Generator object
+            to support stateful rendering over a single sequence.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen
+        </path>
+        
+        <resources>
+          <URI>Generator.java
+          </URI>
+          <URI>Render.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+        
+        <release>-dev23
+        </release>
+        
+        <notes>
+          <scm:Note>Add a "RenderTo" element which renders its subtree to any
+            Appendable, along with a generic "Wrap" which provides "header"
+            and "footer" rendering targets.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/elements
+        </path>
+        
+        <resources>
+          <URI>RenderTo.java
+          </URI>
+          <URI>Wrap.java
+          </URI>
+        </resources>
+      </scm:Change>
+      
+      <scm:Change>
+        
         <release>-dev22
         </release>
         

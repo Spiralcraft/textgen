@@ -1,0 +1,9 @@
+Before Header
+<%Wrap%>
+  After Header
+  <%RenderTo target="[Wrap].header"%>Header<%/RenderTo%>
+  Content
+  <%RenderTo target="[Wrap].footer"%>Footer<%/RenderTo%>
+  Before Footer
+<%/Wrap%>
+After Footer

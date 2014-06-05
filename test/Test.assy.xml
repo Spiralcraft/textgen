@@ -284,6 +284,27 @@
               </testX>
           
             </test:Assertion>        
+
+            <test:Assertion>
+              <name>Render Wrap 
+              </name>
+          
+              <subjectX>
+                [*tg:Render 
+                  {templateURI
+                    :=[*jnet:URI
+                        {"class:/spiralcraft/textgen/test/renderWrap.tgl"
+                        }
+                      ]
+                  ,stateful:=true
+                  }
+                ]
+              </subjectX>
+          
+              <testX>true
+              </testX>
+          
+            </test:Assertion>        
           </scenarios>
         </task:Sequence>
       
