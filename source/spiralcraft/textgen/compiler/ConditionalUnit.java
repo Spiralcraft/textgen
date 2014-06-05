@@ -80,7 +80,6 @@ class ConditionalElement
   }
   
   @Override
-  @SuppressWarnings("unchecked") // Not using generic versions
   protected Focus<?> bindStandard(Focus<?> parentFocus)
     throws ContextualException
   {

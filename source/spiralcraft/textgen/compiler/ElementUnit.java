@@ -80,7 +80,6 @@ public class ElementUnit
    * </p>
    *   
    */
-  @SuppressWarnings("rawtypes")
   @Override
   public void close()
     throws MarkupException
