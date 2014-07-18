@@ -16,6 +16,22 @@
     <detail>
       <scm:Change>
         
+        <release>-dev24
+        </release>
+        
+        <notes>
+          <scm:Note>Expose ResourceUnit.resource property for exception
+            handling purposes.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/ResourceUnit.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+        
         <release>-dev23
         </release>
         
