@@ -138,6 +138,14 @@ public class ResourceUnit<T extends DocletUnit>
   
   /**
    * 
+   * @return The resource that provides the source code
+   */
+  public Resource getResource()
+  { return resource;
+  }
+  
+  /**
+   * 
    * @return Any exception that occurred during compilation, or null if
    *   compilation was successful
    */
