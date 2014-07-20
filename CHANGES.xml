@@ -25,8 +25,15 @@
           </scm:Note>
         </notes>
 
-        <path>source/spiralcraft/textgen/ResourceUnit.java
+        <path>source/spiralcraft/textgen
         </path>
+        
+        <resources>
+          <URI>ResourceUnit.java
+          </URI>
+          <URI>Generator.java
+          </URI>
+        </resources>
         
       </scm:Change>
 
