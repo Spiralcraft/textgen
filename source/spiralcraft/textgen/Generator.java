@@ -73,10 +73,6 @@ public class Generator
     this.focus=focus;
   }
 
-  public Resource getResource()
-  { return resource;
-  }
-
   public void setStateful(boolean stateful)
   { this.stateful=stateful;
   }
