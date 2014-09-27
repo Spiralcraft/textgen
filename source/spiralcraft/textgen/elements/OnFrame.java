@@ -40,7 +40,9 @@ public class OnFrame
       {
         @Override
         public void doHandler(Dispatcher dispatcher,Message message,MessageHandlerChain chain)
-        { binding.get();
+        { 
+          binding.get();
+          chain.handleMessage(dispatcher, message);
         }
       }
     );
