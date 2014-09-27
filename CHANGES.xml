@@ -16,6 +16,20 @@
     <detail>
       <scm:Change>
         
+        <release>-dev25
+        </release>
+        
+        <notes>
+          <scm:Note>Fix OnFrame to delegate messages properly
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/elements/OnFrame.java
+        </path>
+      </scm:Change>
+      
+      <scm:Change>
+        
         <release>-dev24
         </release>
         
