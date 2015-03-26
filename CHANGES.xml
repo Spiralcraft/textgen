@@ -20,6 +20,21 @@
         </release>
         
         <notes>
+          <scm:Note>The Conditional syntax now supports embedded contextual
+            property resolution.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/compiler/ConditionalUnit.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+        
+        <release>-dev25
+        </release>
+        
+        <notes>
           <scm:Note>Fix OnFrame to delegate messages properly
           </scm:Note>
         </notes>
