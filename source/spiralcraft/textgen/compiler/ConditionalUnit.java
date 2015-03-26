@@ -22,6 +22,7 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.ParseException;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.Element;
+import spiralcraft.util.ContextDictionary;
 
 
 /**
@@ -44,7 +45,12 @@ public class ConditionalUnit
     super(parent,compiler);
     NamespaceContext.push(getNamespaceResolver());
     try
-    { this.code=Expression.<Boolean>parse(code.toString().substring(1));
+    { this.code=Expression.<Boolean>parse(ContextDictionary.substitute(code.toString().substring(1)));
+    }
+    catch (spiralcraft.text.ParseException x)
+    {       
+      throw new MarkupException
+        ("Error parsing contextual substitution",compiler.getPosition(),x);
     }
     catch (ParseException x)
     {
