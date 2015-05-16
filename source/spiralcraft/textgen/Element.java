@@ -940,6 +940,15 @@ public class Element
     ,Message message
     )
   { 
+    if (children==null)
+    { 
+      log.warning
+        ("Element has no children (while looking up route "+index+"): "
+         +getDeclarationInfo()
+         );
+      return;
+    }
+    
     if (index<children.length)
     { context.relayMessage(children[index],index,message);
     }
