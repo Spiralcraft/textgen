@@ -16,6 +16,20 @@
     <detail>
       <scm:Change>
         
+        <release>-dev26
+        </release>
+        
+        <notes>
+          <scm:Note>Fix NPE when handling erroneous message path
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/Element.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+        
         <release>-dev25
         </release>
         
