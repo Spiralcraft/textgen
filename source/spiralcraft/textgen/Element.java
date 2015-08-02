@@ -726,9 +726,16 @@ public class Element
     else
     {
       List<Scaffold<?>> scaffoldChildren=expandChildren(focus,childUnits);
+      
+      LinkedList<Component> childList=null;
+      
+      childList=addFirstBoundChildren(focus,childList);
+      
       if (scaffoldChildren!=null)
       { 
-        LinkedList<Component> childList=new LinkedList<>();
+        if (childList==null)
+        { childList=new LinkedList<>();
+        }
         
         int i=0;
         for (Scaffold<?> child: scaffoldChildren)
@@ -740,7 +747,12 @@ public class Element
             i++;
           }
         }
-        children=childList.toArray(new Component[i]);
+      }
+      
+      childList=addLastBoundChildren(focus,childList);
+      
+      if (childList!=null)
+      { children=childList.toArray(new Component[childList.size()]);
       }
     }
     
@@ -775,6 +787,31 @@ public class Element
       }
     }
     
+  }
+
+  /**
+   * Override to generate components to add to the head of the child list
+   * 
+   * @param focus
+   * @param collection
+   * @return
+   */
+  protected LinkedList<Component> 
+    addFirstBoundChildren(Focus<?> focus,LinkedList<Component> collection)
+      throws ContextualException
+  { return collection;
+  }
+  
+  /**
+   * Override to generate components and add them to the tail of the child list
+   * @param focus
+   * @param collection
+   * @return
+   */
+  protected LinkedList<Component> 
+    addLastBoundChildren(Focus<?> focus,LinkedList<Component> collection)
+      throws ContextualException
+  { return collection;
   }
 
   /**
