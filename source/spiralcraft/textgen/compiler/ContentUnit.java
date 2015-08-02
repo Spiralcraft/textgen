@@ -14,14 +14,8 @@
 //
 package spiralcraft.textgen.compiler;
 
-import java.io.IOException;
 
-import spiralcraft.app.Dispatcher;
-import spiralcraft.common.ContextualException;
-import spiralcraft.lang.Focus;
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.OutputContext;
-import spiralcraft.textgen.kit.RenderHandler;
 import spiralcraft.util.string.StringPool;
 import spiralcraft.util.string.StringUtil;
 
@@ -43,7 +37,15 @@ public class ContentUnit
   
   @Override
   public Element createElement()
-  { return new TextElement();
+  { 
+    String elementContent=content;
+      
+      
+    if (elementContent!=null && Boolean.TRUE.equals(trim))
+    { elementContent=StringPool.INSTANCE.get(elementContent.trim());
+    }
+      
+    return new TextElement(elementContent);
   }
   
   @Override
@@ -63,41 +65,7 @@ public class ContentUnit
     // log.fine("Trim end ["+content+"]");
   }
   
-  class TextElement
-    extends Element
-  {
-    private String elementContent;
-    
-    { addHandler
-        (new RenderHandler() 
-          {
-            @Override
-            protected void render(Dispatcher context)
-              throws IOException
-            { 
-              if (elementContent!=null)
-              { OutputContext.get().append(elementContent.toString());
-              }              
-            }
-          } 
-        );
-    }
-    
-    @Override
-    protected Focus<?> bindStandard(Focus<?> focus)
-      throws ContextualException
-    { 
-      elementContent=ContentUnit.this.content;
-      
-      
-      if (elementContent!=null && Boolean.TRUE.equals(trim))
-      { elementContent=StringPool.INSTANCE.get(elementContent.trim());
-      }
-      
-      return super.bindStandard(focus);
-    }
-    
-  }
+
   
   @Override
   public String toString()
@@ -105,3 +73,4 @@ public class ContentUnit
   }
   
 }
+
