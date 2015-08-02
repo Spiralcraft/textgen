@@ -18,6 +18,14 @@ public class Text
 { 
   protected MessageFormat format;
   
+  public Text()
+  {
+  }
+  
+  public Text(String text)
+  { setX(text);
+  }
+  
   /**
    * The expression to output
    * 
