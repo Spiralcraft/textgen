@@ -16,6 +16,61 @@
     <detail>
       <scm:Change>
         
+        <release>-dev27
+        </release>
+        
+        <notes>
+          <scm:Note>Add a convenience constructor to the Text element for
+            direct instantiation by parent elements.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/elements/Text.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+        
+        <release>-dev27
+        </release>
+        
+        <notes>
+          <scm:Note>Improve the efficiency of leaf text/content units by
+            removing the inner class TextElement in favor of an simple 
+            outer class.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/compiler
+        </path>
+        
+        <resources>
+          <URI>ContentUnit.java
+          </URI>
+          <URI>TextElement.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+        
+        <release>-dev27
+        </release>
+        
+        <notes>
+          <scm:Note>Provide a way for an Element to instantiate and bind its own
+            children and insert them before and/or after the children declared
+            at the scaffolding layer.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/Element.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+        
         <release>-dev26
         </release>
         
