@@ -20,6 +20,31 @@
         </release>
         
         <notes>
+          <scm:Note>Streamline the resource usage for static text content
+            inside .tgl files by using a flyweight "leaf" state.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen
+        </path>
+        
+        <resources>
+          <URI>Element.java
+          </URI>
+          <URI>compiler/TextElement.java
+          </URI>
+          <URI>compiler/TextState.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+        
+        <release>-dev28
+        </release>
+        
+        <notes>
           <scm:Note>Support for adding alias URIs for the doclet context
             so local parameters can be accessed consistently even when a
             .tgl file is referenced using different or indirect package URLs.
