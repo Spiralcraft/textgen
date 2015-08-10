@@ -53,7 +53,7 @@ import spiralcraft.app.MessageHandler;
 import spiralcraft.app.MessageHandlerChain;
 import spiralcraft.app.Parent;
 import spiralcraft.app.Scaffold;
-
+import spiralcraft.app.State;
 import spiralcraft.app.kit.StandardMessageHandlerChain;
 import spiralcraft.app.kit.TraceHandler;
 
@@ -999,13 +999,13 @@ public class Element
   }
   
   /**
-   * <p>Create a new ElementState object for this Element. 
+   * <p>Create a new State object for this Element. 
    * </p>
    * 
-   * @return An ElementState object for this Element 
+   * @return An State object for this Element 
    */
   @Override
-  public ElementState createState()
+  public State createState()
   { return new ElementState(children!=null?children.length:0);
   }
   
