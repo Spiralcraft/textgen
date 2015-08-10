@@ -18,6 +18,8 @@ import spiralcraft.common.declare.DeclarationInfo;
 import spiralcraft.common.namespace.NamespaceContext;
 import spiralcraft.lang.Expression;
 import spiralcraft.textgen.Element;
+import spiralcraft.util.URIUtil;
+import spiralcraft.util.refpool.URIPool;
 import spiralcraft.text.ParseException;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.text.markup.Unit;
@@ -52,7 +54,8 @@ public class DocletUnit
     super(parent,compiler);
     this.resource=resource;
     initPrefixResolver();
-
+    addAlias(URIPool.create("class:/spiralcraft/textgen/elements/doclet"));
+    
     if (parent!=null)
     {
       DocletUnit parentDoc=parent.findUnit(DocletUnit.class);
@@ -77,6 +80,23 @@ public class DocletUnit
         if (super.checkUnitAttribute(attrib))
         {
         }
+        else if (attrib.getName().equals("package"))
+        { 
+          try
+          { 
+            addAlias
+              (URIUtil.addPathSegment
+                (URIPool.create(attrib.getValue())
+                ,getLocalName()
+                )
+              );
+          }
+          catch (RuntimeException x)
+          {
+            throw new ParseException
+              ("Error parsing package URI",getPosition(),x);
+          }
+        }
         else if (attrib.getName().equals("contextX"))
         { 
           try
@@ -94,7 +114,7 @@ public class DocletUnit
         else
         { 
           throw new MarkupException
-            ("Attribute '"+attrib.getName()+"' not in {contextX,debug}"
+            ("Attribute '"+attrib.getName()+"' not in {package,contextX,debug}"
             ,compiler.getPosition()
             );
         }
@@ -108,6 +128,15 @@ public class DocletUnit
   @Override
   public String getName()
   { return "__doclet";
+  }
+  
+  public String getLocalName()
+  { return URIUtil.unencodedLocalName
+      (URIUtil.removePathSuffix
+        (resource.getURI()
+        ,".tgl"
+        )
+      );
   }
   
   public URI getSourceURI()

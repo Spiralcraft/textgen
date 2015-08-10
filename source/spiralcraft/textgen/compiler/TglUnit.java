@@ -51,6 +51,7 @@ import spiralcraft.util.refpool.URIPool;
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -85,7 +86,8 @@ public abstract class TglUnit
   private TglPrefixResolver prefixResolver;
   protected boolean namespaceRoot=false;
   protected URI referencedURI;
-  
+  private LinkedList<URI> aliases;
+
   
   public TglUnit(TglUnit parent,TglCompiler<?> compiler)
   { 
@@ -182,6 +184,19 @@ public abstract class TglUnit
    */
   void setReferencedURI(URI uri)
   { this.referencedURI=uri;
+  }
+  
+  /**
+   * Aliases that the contextX parameter block can referenced by
+   * 
+   * @param alias
+   */
+  public void addAlias(URI alias)
+  { 
+    if (aliases==null)
+    { aliases=new LinkedList<URI>();
+    }
+    aliases.add(alias);  
   }
   
   /**
@@ -359,10 +374,23 @@ public abstract class TglUnit
     { 
       // TODO: Replace/augment contextX with "tgconst:varname=''" and
       //   dynamically build struct using passed arguments.
+      URI[] aliasesA=
+        new URI[] 
+          {URIUtil.removePathSuffix(getPosition().getContextURI(),".tgl")
+            ,referencedURI
+          };
+      if (aliases!=null)
+      { 
+        aliasesA
+          =ArrayUtil.concat
+            (aliasesA, 
+              aliases.toArray(new URI[aliases.size()])
+            );
+      }
       focus=bindContext
         (focus
         ,attribs
-        ,new URI[] {URIUtil.removePathSuffix(getPosition().getContextURI(),".tgl"),referencedURI}
+        ,aliasesA
         ,attributePrefixResolver
         );
     }
