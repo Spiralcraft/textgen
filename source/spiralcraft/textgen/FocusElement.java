@@ -250,7 +250,11 @@ public abstract class FocusElement<T>
       ValueState<T> state=(ValueState<T>) context.getState();
       frameChanged=state.isNewFrame();
       if (frameChanged || !state.isValid())
-      { state.setValue(computeExportValue(state));
+      { 
+        if (debug)
+        { log.fine(getDeclarationInfo()+": Computing on "+message+(frameChanged?"  new frame":"  state invalid"));
+        }
+        state.setValue(computeExportValue(state));
       }
       channel.push(state.getValue());
     }
