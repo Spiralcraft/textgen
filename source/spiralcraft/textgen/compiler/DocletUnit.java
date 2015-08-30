@@ -18,6 +18,7 @@ import spiralcraft.common.declare.DeclarationInfo;
 import spiralcraft.common.namespace.NamespaceContext;
 import spiralcraft.lang.Expression;
 import spiralcraft.textgen.Element;
+import spiralcraft.util.ArrayUtil;
 import spiralcraft.util.URIUtil;
 import spiralcraft.util.refpool.URIPool;
 import spiralcraft.text.ParseException;
@@ -66,6 +67,54 @@ public class DocletUnit
     
   }
   
+  protected String[] getValidAttributeNames()
+  { return new String[] {"package","contextX","debug"};
+  }
+  
+  protected boolean checkAttribute(Attribute attrib)
+    throws ParseException
+  {
+    if (super.checkUnitAttribute(attrib))
+    {
+    }
+    else if (attrib.getName().equals("package"))
+    { 
+      try
+      { 
+        addAlias
+          (URIUtil.addPathSegment
+            (URIPool.create(attrib.getValue())
+            ,getLocalName()
+            )
+          );
+      }
+      catch (RuntimeException x)
+      {
+        throw new ParseException
+          ("Error parsing package URI",getPosition(),x);
+      }
+    }
+    else if (attrib.getName().equals("contextX"))
+    { 
+      try
+      { this.contextX=Expression.parse(attrib.getValue());
+      }
+      catch (spiralcraft.lang.ParseException x)
+      { 
+        throw new ParseException
+          ("Error parsing contextX expression",getPosition(),x);
+      }
+    }
+    else if (attrib.getName().equals("debug"))
+    { this.debug="true".equals(attrib.getValue());
+    }
+    else
+    { return false;
+    }
+    return true;
+    
+  }
+  
   public void setAttributes(Attribute[] attribs)
     throws MarkupException,ParseException
   { 
@@ -76,48 +125,14 @@ public class DocletUnit
       // Form <%@insert ...
       for (Attribute attrib: attribs)
       {
-  
-        if (super.checkUnitAttribute(attrib))
+        if (!checkAttribute(attrib))
         {
-        }
-        else if (attrib.getName().equals("package"))
-        { 
-          try
-          { 
-            addAlias
-              (URIUtil.addPathSegment
-                (URIPool.create(attrib.getValue())
-                ,getLocalName()
-                )
-              );
-          }
-          catch (RuntimeException x)
-          {
-            throw new ParseException
-              ("Error parsing package URI",getPosition(),x);
-          }
-        }
-        else if (attrib.getName().equals("contextX"))
-        { 
-          try
-          { this.contextX=Expression.parse(attrib.getValue());
-          }
-          catch (spiralcraft.lang.ParseException x)
-          { 
-            throw new ParseException
-              ("Error parsing contextX expression",getPosition(),x);
-          }
-        }
-        else if (attrib.getName().equals("debug"))
-        { this.debug="true".equals(attrib.getValue());
-        }
-        else
-        { 
           throw new MarkupException
-            ("Attribute '"+attrib.getName()+"' not in {package,contextX,debug}"
+            ("Attribute '"+attrib.getName()+"' not in {"+ArrayUtil.format(getValidAttributeNames(),",","")+"}"
             ,compiler.getPosition()
             );
         }
+            
       }   
     }
     finally
