@@ -16,6 +16,22 @@
     <detail>
       <scm:Change>
         
+        <release>-dev30
+        </release>
+        
+        <notes>
+          <scm:Note>Facilitate case where DocletUnit extensions want to 
+            accept additional parameters.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/compiler/DocletUnit.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+        
         <release>-dev28
         </release>
         
