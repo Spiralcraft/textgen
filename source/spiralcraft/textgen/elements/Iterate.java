@@ -310,7 +310,7 @@ public class Iterate
     {
       if (debug)
       { 
-        log.fine(toString()+": retraversing on message "+message+" ("
+        log.fine(toString()+": retraversing on message "+message+" frame "+genContext.getFrame()+" ("
           +state.getChildCount()+" elements)");
       }
 
@@ -417,7 +417,7 @@ public class Iterate
         if (state.isNewFrame())
         { 
           if (debug)
-          { log.fine(toString()+" refreshing on Frame change");
+          { log.fine(toString()+" refreshing on Frame change for "+message+" frame "+genContext.getFrame());
           }
           refreshState(state);
         }
