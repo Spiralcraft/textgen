@@ -27,8 +27,7 @@ import spiralcraft.textgen.ValueState;
  *   lifetime of the associated State or until a trigger changes.
  * </p>
  * 
- * <p>The expression is recomputed every time the StateFrame changes, unless
- *   otherwise configured.
+ * <p>The expression is not recomputed every time the StateFrame changes
  * </p>
  * 
  * 
