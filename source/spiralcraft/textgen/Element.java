@@ -499,6 +499,8 @@ public class Element
   @Override
   public void setParent(Parent parent)
   { 
+    // XXX: Maybe ok to set the same parent twice- eval on a case basis
+    //   
     if (this.parent!=null)
     { throw new IllegalStateException("Parent already specified");
     }
