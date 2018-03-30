@@ -24,6 +24,7 @@ import spiralcraft.text.ParseException;
 import spiralcraft.app.Component;
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.reflect.BeanFocus;
+import spiralcraft.log.ClassLog;
 import spiralcraft.lang.BindException;
 
 import java.net.URI;
@@ -31,7 +32,7 @@ import java.net.URI;
 
 
 /**
- * <P>A Translator which describes a Resource. The Template is expressed 
+ * A Translator which describes a Resource. The Template is expressed 
  *   in terms of the Resource object, and can provide a formatted 
  *   description of the properties of the resource.
  *
@@ -39,6 +40,8 @@ import java.net.URI;
 public class MetaTranslator
     implements Translator
 {
+  private static final ClassLog log=ClassLog.getInstance(MetaTranslator.class);
+  
   private URI templateURI;
   private TglUnit tglUnit;
   private Resource templateResource;
@@ -70,6 +73,12 @@ public class MetaTranslator
 
   }
   
+  
+  @Override
+  public Resource translate(Resource resource,URI translatedURI,Resource existingResource)
+    throws IOException, TranslationException
+  { return translate(resource,translatedURI);
+  }
   
   @Override
   public Resource translate(Resource resource,URI translatedURI)
@@ -108,8 +117,8 @@ public class MetaTranslator
       throws ContextualException
     { 
       super(translatedURI);
-      System.err.println("MetaResource: "+translatedURI);
-      System.err.println("MetaResource: "+getURI());
+      log.fine("MetaResource: "+translatedURI);
+      log.fine("MetaResource: "+getURI());
       this.resource=resource;
       
       focus = new BeanFocus<MetaResource>(MetaResource.class,this);
