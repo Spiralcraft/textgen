@@ -16,6 +16,21 @@
     <detail>
       <scm:Change>
         
+        <release>-dev31
+        </release>
+        
+        <notes>
+          <scm:Note>Update Metadata translator to enhanced Translator API 
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/util/MetaTranslator.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+        
         <release>-dev30
         </release>
         
