@@ -22,7 +22,7 @@ import spiralcraft.app.Event;
 import spiralcraft.app.Message;
 import spiralcraft.app.State;
 import spiralcraft.app.StateFrame;
-
+import spiralcraft.profiler.ProfilerAgent;
 import spiralcraft.sax.XmlWriter;
 import spiralcraft.util.Sequence;
 
@@ -52,6 +52,7 @@ public class EventContext
   private StateFrame currentFrame;
   private LinkedList<Integer> messagePath;
   private Component component;
+  protected ProfilerAgent profilerAgent;
   
   /**
    * <p>Create a GenerationContext that does not refer to any ancestors,
@@ -86,6 +87,27 @@ public class EventContext
     this.output=output;
     this.stateful=parent.isStateful();
     currentFrame=parent.getFrame();
+  }
+  
+  /**
+   * If set, dispatcher will notify the ProfilerAgent as messages are routed
+   *   
+   * @param profilerAgent
+   */
+  public void setProfilerAgent(ProfilerAgent profilerAgent)
+  { 
+    if (this.profilerAgent!=null)
+    { throw new IllegalStateException("Cannot replace profilerAgent");
+    }
+    this.profilerAgent=profilerAgent;
+  }
+  
+  /**
+   * Provides context to the ProfilerAgent
+   * @param context
+   */
+  public void setProfilerContext(String context)
+  { this.profilerAgent.setContextIdentifier(context);
   }
   
   /**
@@ -183,10 +205,16 @@ public class EventContext
       else
       { this.messagePath=new LinkedList<Integer>();
       }
+      if (profilerAgent!=null)
+      { profilerAgent.enter(root.getClass().getName(),root.getDeclarationInfo());
+      }
       root.message(this,message);
     }
     finally
     { 
+      if (profilerAgent!=null)
+      { profilerAgent.exit(root.getClass().getName(),root.getDeclarationInfo(),null);
+      }
       if (startingState!=null && !message.isOutOfBand())
       { startingState.exitFrame();
       }
@@ -281,17 +309,49 @@ public class EventContext
       final State lastState=this.state;
       
       descend(childIndex,message.isOutOfBand());
+      if (profilerAgent!=null)
+      { 
+        profilerAgent.enter
+          (childComponent.getClass().getName(),childComponent.getDeclarationInfo());
+      }
       try
       { childComponent.message(this,message);
       }
       finally
       {
+        if (profilerAgent!=null)
+        { 
+          profilerAgent.exit
+            (childComponent.getClass().getName()
+            ,childComponent.getDeclarationInfo()
+            , null
+            );
+        }
         ascend(message.isOutOfBand());
         this.state=lastState;
       }
     }
     else
-    { childComponent.message(this,message);
+    { 
+      if (profilerAgent!=null)
+      { 
+        profilerAgent.enter
+          (childComponent.getClass().getName(),childComponent.getDeclarationInfo());
+      }
+      try
+      { childComponent.message(this,message);
+      }
+      finally
+      { 
+        if (profilerAgent!=null)
+        { 
+          profilerAgent.exit
+            (childComponent.getClass().getName()
+            ,childComponent.getDeclarationInfo()
+            , null
+            );
+        }
+      }
     }
   }  
   
