@@ -16,6 +16,21 @@
     <detail>
       <scm:Change>
         
+        <release>-dev32
+        </release>
+        
+        <notes>
+          <scm:Note>Profile textgen components via EventContext dispatcher 
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/textgen/EventContext.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+        
         <release>-dev31
         </release>
         
