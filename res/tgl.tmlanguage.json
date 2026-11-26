@@ -1,0 +1,331 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Spiralcraft TGL Template",
+  "scopeName": "source.tgl",
+  "fileTypes": ["tgl","webui"],
+  "patterns": [
+    { "include": "#comment-directive" },
+    { "include": "#comment-bang" },
+    { "include": "#directive-open" },
+    { "include": "#directive-close" },
+    { "include": "#el-slash-expr" },
+    { "include": "#scriptlet" },
+    { "include": "#sgml-comment" },
+    { "include": "#script-embed" },
+    { "include": "#style-embed" },
+    { "include": "#dtd-tag" },
+    { "include": "#generic-tag" },
+    { "include": "#entity" },
+    { "include": "#el-brace" }
+  ],
+  "repository": {
+
+    "comment-directive": {
+      "comment": "jEdit: COMMENT2 span <%@comment%> ... <%/@comment%>",
+      "begin": "<%@comment%>",
+      "end": "<%/@comment%>",
+      "name": "comment.block.directive.tg"
+    },
+
+    "comment-bang": {
+      "comment": "jEdit: COMMENT2 span <%!%> ... <%/!%>",
+      "begin": "<%!%>",
+      "end": "<%/!%>",
+      "name": "comment.block.bang.tg"
+    },
+
+    "directive-open": {
+      "comment": "jEdit: KEYWORD1 span <%@ ... %> delegate TGTAGS",
+      "begin": "<%@",
+      "beginCaptures": { "0": { "name": "punctuation.definition.tag.directive.tg" } },
+      "end": "%>",
+      "endCaptures": { "0": { "name": "punctuation.definition.tag.directive.tg" } },
+      "name": "meta.tag.directive.tg",
+      "patterns": [{ "include": "#tgtags-content" }]
+    },
+
+    "directive-close": {
+      "comment": "jEdit: KEYWORD1 span <%/@ ... %> delegate TGTAGS",
+      "begin": "<%/@",
+      "beginCaptures": { "0": { "name": "punctuation.definition.tag.directive.tg" } },
+      "end": "%>",
+      "endCaptures": { "0": { "name": "punctuation.definition.tag.directive.tg" } },
+      "name": "meta.tag.directive.close.tg",
+      "patterns": [{ "include": "#tgtags-content" }]
+    },
+
+    "el-slash-expr": {
+      "comment": "jEdit: KEYWORD1 span <%= ... /%> delegate EL. NOTE the unusual close delimiter '/%>' (not '%>') -- kept verbatim from source mode.",
+      "begin": "<%=",
+      "beginCaptures": { "0": { "name": "punctuation.definition.tag.expression.tg" } },
+      "end": "/%>",
+      "endCaptures": { "0": { "name": "punctuation.definition.tag.expression.tg" } },
+      "name": "meta.expression.tg",
+      "patterns": [{ "include": "#expression-language" }]
+    },
+
+    "scriptlet": {
+      "comment": "jEdit: KEYWORD1 span <% ... %> delegate TGTAGS (generic catch-all -- must stay AFTER the more specific <%@, <%/@, <%= rules above, since TextMate tries patterns in array order)",
+      "begin": "<%",
+      "beginCaptures": { "0": { "name": "punctuation.definition.tag.scriptlet.tg" } },
+      "end": "%>",
+      "endCaptures": { "0": { "name": "punctuation.definition.tag.scriptlet.tg" } },
+      "name": "meta.scriptlet.tg",
+      "patterns": [{ "include": "#tgtags-content" }]
+    },
+
+    "sgml-comment": {
+      "comment": "jEdit: COMMENT1 span <!-- ... --> delegate COMMENT ruleset",
+      "begin": "<!--",
+      "end": "-->",
+      "name": "comment.block.sgml.tg",
+      "patterns": [{ "include": "#sgml-comment-content" }]
+    },
+
+    "sgml-comment-content": {
+      "comment": "jEdit RULES SET=COMMENT default=COMMENT1",
+      "patterns": [
+        {
+          "begin": "<%--",
+          "end": "--%>",
+          "name": "comment.block.nested.tg"
+        },
+        {
+          "begin": "<%=",
+          "beginCaptures": { "0": { "name": "punctuation.definition.tag.tg" } },
+          "end": "%>",
+          "endCaptures": { "0": { "name": "punctuation.definition.tag.tg" } },
+          "name": "meta.embedded.block.java",
+          "patterns": [{ "include": "source.java" }]
+        },
+        {
+          "begin": "<%",
+          "beginCaptures": { "0": { "name": "punctuation.definition.tag.tg" } },
+          "end": "%>",
+          "endCaptures": { "0": { "name": "punctuation.definition.tag.tg" } },
+          "name": "meta.embedded.block.java",
+          "patterns": [{ "include": "source.java" }]
+        }
+      ]
+    },
+
+    "script-embed": {
+      "comment": "jEdit: MARKUP span <SCRIPT ... </SCRIPT> delegate html::JAVASCRIPT",
+      "begin": "(?i)<script\\b",
+      "end": "(?i)</script\\s*>",
+      "name": "meta.embedded.block.javascript",
+      "patterns": [{ "include": "source.js" }]
+    },
+
+    "style-embed": {
+      "comment": "jEdit: MARKUP span <STYLE ... </STYLE> delegate html::CSS",
+      "begin": "(?i)<style\\b",
+      "end": "(?i)</style\\s*>",
+      "name": "meta.embedded.block.css",
+      "patterns": [{ "include": "source.css" }]
+    },
+
+    "dtd-tag": {
+      "comment": "jEdit: KEYWORD2 span <! ... > delegate xml::DTD-TAGS. Must come after sgml-comment so <!-- isn't swallowed here first.",
+      "begin": "<!",
+      "end": ">",
+      "name": "meta.tag.dtd.tg"
+    },
+
+    "generic-tag": {
+      "comment": "jEdit: MARKUP span < ... > delegate TAGS",
+      "begin": "<",
+      "end": ">",
+      "name": "meta.tag.tg",
+      "patterns": [{ "include": "#tags-content" }]
+    },
+
+    "entity": {
+      "comment": "jEdit: LITERAL2 span & ... ; NO_WORD_BREAK (SGML entity)",
+      "match": "&\\S*?;",
+      "name": "constant.character.entity.tg"
+    },
+
+    "el-brace": {
+      "comment": "jEdit: KEYWORD2 span ${ ... } delegate EL",
+      "begin": "\\$\\{",
+      "beginCaptures": { "0": { "name": "punctuation.definition.expression.tg" } },
+      "end": "\\}",
+      "endCaptures": { "0": { "name": "punctuation.definition.expression.tg" } },
+      "name": "meta.expression.brace.tg",
+      "patterns": [{ "include": "#expression-language" }]
+    },
+
+    "tgtags-content": {
+      "comment": "jEdit RULES SET=TGTAGS default=KEYWORD3 -- content inside <%@ %>, <%/@ %>, <% %>",
+      "patterns": [
+        { "begin": "<%--", "end": "--%>", "name": "comment.block.nested.tg" },
+        {
+          "begin": "<%=",
+          "beginCaptures": { "0": { "name": "punctuation.definition.tag.tg" } },
+          "end": "%>",
+          "endCaptures": { "0": { "name": "punctuation.definition.tag.tg" } },
+          "name": "meta.embedded.block.java",
+          "patterns": [{ "include": "source.java" }]
+        },
+        {
+          "begin": "style=(['\"])",
+          "beginCaptures": { "0": { "name": "entity.other.attribute-name.style.tg" } },
+          "end": "\\1",
+          "name": "meta.embedded.block.css",
+          "patterns": [{ "include": "#css-with-jsp" }]
+        },
+        {
+          "begin": "\"",
+          "end": "\"",
+          "name": "string.quoted.double.tg",
+          "patterns": [{ "include": "#tg-attrvalue" }]
+        },
+        {
+          "begin": "'",
+          "end": "'",
+          "name": "string.quoted.single.tg",
+          "patterns": [{ "include": "#tg-attrvalue" }]
+        },
+        { "match": "/", "name": "punctuation.separator.tg" },
+        { "match": ":", "name": "keyword.operator.namespace.tg" }
+      ]
+    },
+
+    "tags-content": {
+      "comment": "jEdit RULES SET=TAGS default=MARKUP -- content inside plain < > HTML-style tags",
+      "patterns": [
+        { "begin": "<%--", "end": "--%>", "name": "comment.block.nested.tg" },
+        {
+          "begin": "<%=",
+          "beginCaptures": { "0": { "name": "punctuation.definition.tag.tg" } },
+          "end": "%>",
+          "endCaptures": { "0": { "name": "punctuation.definition.tag.tg" } },
+          "name": "meta.embedded.block.java",
+          "patterns": [{ "include": "source.java" }]
+        },
+        {
+          "begin": "style=(['\"])",
+          "beginCaptures": { "0": { "name": "entity.other.attribute-name.style.tg" } },
+          "end": "\\1",
+          "name": "meta.embedded.block.css",
+          "patterns": [{ "include": "#css-with-jsp" }]
+        },
+        {
+          "begin": "\"",
+          "end": "\"",
+          "name": "string.quoted.double.tg",
+          "patterns": [{ "include": "#attrvalue" }]
+        },
+        {
+          "begin": "'",
+          "end": "'",
+          "name": "string.quoted.single.tg",
+          "patterns": [{ "include": "#attrvalue" }]
+        },
+        { "match": "/", "name": "punctuation.separator.tg" },
+        {
+          "comment": "jEdit MARK_FOLLOWING KEYWORD1 MATCH_TYPE=FUNCTION on ':' -- colors a namespace-prefix word when followed by ':'",
+          "match": "[A-Za-z_][\\w.-]*(?=:)",
+          "name": "entity.name.tag.namespace.tg"
+        },
+        { "match": ":", "name": "punctuation.separator.namespace.tg" }
+      ]
+    },
+
+    "css-with-jsp": {
+      "comment": "jEdit RULES SET='CSS+JSP' default=LITERAL1 -- CSS with JSP/EL escape hatches, then IMPORT css::MAIN",
+      "patterns": [
+        {
+          "begin": "<%=",
+          "end": "%>",
+          "name": "meta.embedded.block.java",
+          "patterns": [{ "include": "source.java" }]
+        },
+        {
+          "begin": "\\$\\{",
+          "end": "\\}",
+          "name": "meta.expression.tg",
+          "patterns": [{ "include": "#expression-language" }]
+        },
+        { "include": "source.css" }
+      ]
+    },
+
+    "javascript-with-jsp": {
+      "comment": "jEdit RULES SET='JAVASCRIPT+JSP' -- JS with JSP/EL escape hatches, then IMPORT javascript::MAIN",
+      "patterns": [
+        {
+          "begin": "<%=",
+          "end": "%>",
+          "name": "meta.embedded.block.java",
+          "patterns": [{ "include": "source.java" }]
+        },
+        {
+          "begin": "\\$\\{",
+          "end": "\\}",
+          "name": "meta.expression.tg",
+          "patterns": [{ "include": "#expression-language" }]
+        },
+        { "include": "source.js" }
+      ]
+    },
+
+    "tg-attrvalue": {
+      "comment": "jEdit RULES SET=TGATTRVALUE default=LITERAL4 ESCAPE=\\ -- same shape as ATTRVALUE below but distinct default scope",
+      "patterns": [
+        {
+          "begin": "<%=",
+          "end": "%>",
+          "name": "meta.embedded.block.java",
+          "patterns": [{ "include": "source.java" }]
+        },
+        {
+          "begin": "\\$\\{",
+          "end": "\\}",
+          "name": "meta.expression.tg",
+          "patterns": [{ "include": "#expression-language" }]
+        },
+        {
+          "begin": "javascript:",
+          "end": "(?=[\"'])",
+          "name": "meta.embedded.block.javascript",
+          "patterns": [{ "include": "#javascript-with-jsp" }]
+        },
+        { "match": "\\\\.", "name": "constant.character.escape.tg" }
+      ]
+    },
+
+    "attrvalue": {
+      "comment": "jEdit RULES SET=ATTRVALUE default=LITERAL1 ESCAPE=\\",
+      "patterns": [
+        {
+          "begin": "<%=",
+          "end": "%>",
+          "name": "meta.embedded.block.java",
+          "patterns": [{ "include": "source.java" }]
+        },
+        {
+          "begin": "\\$\\{",
+          "end": "\\}",
+          "name": "meta.expression.tg",
+          "patterns": [{ "include": "#expression-language" }]
+        },
+        {
+          "begin": "javascript:",
+          "end": "(?=[\"'])",
+          "name": "meta.embedded.block.javascript",
+          "patterns": [{ "include": "#javascript-with-jsp" }]
+        },
+        { "match": "\\\\.", "name": "constant.character.escape.tg" }
+      ]
+    },
+
+    "expression-language": {
+      "comment": "jEdit RULES SET=EL HIGHLIGHT_DIGITS=TRUE DIGIT_RE=... IMPORT java::MAIN. source.java already tokenizes numeric literals on its own, so the digit regex from the jEdit mode is not re-implemented separately here -- it would be redundant. Flag to Mike: if source.java's numeric-literal scope ever needs to differ from this, add an explicit numeric override rule ABOVE the java include.",
+      "patterns": [
+        { "include": "source.java" }
+      ]
+    }
+  }
+}
